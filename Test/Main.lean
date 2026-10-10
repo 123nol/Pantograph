@@ -7,6 +7,7 @@ import Test.Metavar
 import Test.Proofs
 import Test.Serial
 import Test.Tactic
+import Test.Validation
 
 -- Test running infrastructure
 
@@ -44,6 +45,7 @@ def main (args: List String) := do
     (trustLevel := 1)
 
   let suites: List (String × List (String × IO LSpec.TestSeq)) := [
+    ("Validation", Validation.suite env_default),
     ("Environment", Environment.suite),
     ("Frontend", Frontend.suite env_default),
     ("Integration", Integration.suite env_default),

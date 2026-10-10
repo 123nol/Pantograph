@@ -87,11 +87,11 @@ def test_tactic : Test :=
     step "goal.start" [("expr", .str "∀ (p q: Prop), p ∨ q → q ∨ p")]
      ({ stateId := 0, root := "_uniq.9" }: Protocol.GoalStartResult),
     step "goal.tactic" [("stateId", .num 0), ("goalId", .num 0), ("tactic", .str "intro x")]
-     ({ nextStateId? := .some 1, goals? := #[goal1], }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 1, goals? := #[goal1], validation? := some { checked := true } }: Protocol.GoalTacticResult),
     step "goal.print" [("stateId", .num 1)]
      ({ parent? := .some { pp? := .some "fun x => ?m.12 x" }, }: Protocol.GoalPrintResult),
     step "goal.tactic" [("stateId", .num 1), ("goalId", .num 0), ("tactic", .str "intro y")]
-     ({ nextStateId? := .some 2, goals? := #[goal2], }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 2, goals? := #[goal2], validation? := some { checked := true } }: Protocol.GoalTacticResult),
   ]
 def test_automatic_mode (automatic: Bool): Test :=
   let varsPQ := #[
@@ -135,12 +135,12 @@ def test_automatic_mode (automatic: Bool): Test :=
     step "goal.start" [("expr", .str "∀ (p q: Prop), p ∨ q → q ∨ p")]
      ({ stateId := 0, root := "_uniq.9" }: Protocol.GoalStartResult),
     step "goal.tactic" [("stateId", .num 0), ("goalId", .num 0), ("tactic", .str "intro p q h")]
-     ({ nextStateId? := .some 1, goals? := #[goal1], }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 1, goals? := #[goal1], validation? := some { checked := true } }: Protocol.GoalTacticResult),
     step "goal.tactic" [("stateId", .num 1), ("goalId", .num 0), ("tactic", .str "cases h")]
-     ({ nextStateId? := .some 2, goals? := #[goal2l, goal2r], }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 2, goals? := #[goal2l, goal2r], validation? := some { checked := true } }: Protocol.GoalTacticResult),
     let goals? := if automatic then #[goal3l, goal2r] else #[goal3l]
     step "goal.tactic" [("stateId", .num 2), ("goalId", .num 0), ("tactic", .str "apply Or.inr")]
-     ({ nextStateId? := .some 3, goals?, }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 3, goals?, validation? := some { checked := true } }: Protocol.GoalTacticResult),
   ]
 
 def test_env_add_inspect : Test :=
@@ -256,7 +256,7 @@ def test_protocol_compat : Test :=
     ]
   }
   let convGoal: Protocol.Goal := {
-    name := "_uniq.98",
+    name := "_uniq.151",
     isConversion := true,
     fragment := "conv",
     target := { pp? := .some "1 + 2 = 3" },
@@ -272,7 +272,7 @@ def test_protocol_compat : Test :=
      ({ stateId := 0, root := "_uniq.7" }: Protocol.GoalStartResult),
     -- 1. Omit goalId (defaults to 0)
     step "goal.tactic" [("stateId", .num 0), ("tactic", .str "intro p h")]
-     ({ nextStateId? := .some 1, goals? := #[goal1] }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 1, goals? := #[goal1], validation? := some { checked := true } }: Protocol.GoalTacticResult),
     -- 2. Tactic failure: returns structured message objects with kind, severity, pos, data
     step "goal.tactic" [("stateId", .num 1), ("tactic", .str "rfl")]
      ({
@@ -280,23 +280,23 @@ def test_protocol_compat : Test :=
        messages := #[{
          kind := "[anonymous]",
          severity := "error",
-         pos := { line := 0, column := 0 },
-         endPos? := .none,
+         pos := { line := 1, column := 0 },
+         endPos? := some { line := 1, column := 3 },
          data := "The rfl tactic failed. Possible reasons:\n- The goal is not a reflexive relation (neither `=` nor a relation with a @[refl] lemma).\n- The arguments of the relation are not equal.\nTry using the reflexivity lemma for your relation explicitly, e.g. `exact Eq.refl _` or\n`exact HEq.rfl` etc.\np : Prop\nh : p\n⊢ p"
        }]
      }: Protocol.GoalTacticResult),
     -- 3. Sorry detection: returns hasSorry := true
     step "goal.tactic" [("stateId", .num 1), ("tactic", .str "sorry")]
-     ({ nextStateId? := .some 2, goals? := .some #[], hasSorry := true }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 2, goals? := .some #[], hasSorry := true, validation? := some { checked := true } }: Protocol.GoalTacticResult),
     -- 4. Conv mode exits explicitly or when its final goal closes
     step "goal.start" [("expr", .str "1 + 2 = 3")]
      ({ stateId := 3, root := "_uniq.96" }: Protocol.GoalStartResult),
     step "goal.tactic" [("stateId", .num 3), ("mode", .str "conv")]
-     ({ nextStateId? := .some 4, goals? := #[convGoal] }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 4, goals? := #[convGoal], validation? := some { checked := true } }: Protocol.GoalTacticResult),
     step "goal.tactic" [("stateId", .num 4), ("mode", .str "tactic")]
-     ({ nextStateId? := .some 5, goals? := #[exitedConvGoal] }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 5, goals? := #[exitedConvGoal], validation? := some { checked := true } }: Protocol.GoalTacticResult),
     step "goal.tactic" [("stateId", .num 4), ("tactic", .str "rfl")]
-     ({ nextStateId? := .some 6, goals? := #[exitedConvGoal] }: Protocol.GoalTacticResult),
+     ({ nextStateId? := .some 6, goals? := #[exitedConvGoal], validation? := some { checked := true } }: Protocol.GoalTacticResult),
   ]
 
 def test_conv_protocol : Test :=

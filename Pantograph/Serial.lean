@@ -531,8 +531,7 @@ protected def GoalState.serializeGoals
       (state: GoalState)
       (parent: Option GoalState := .none)
       (options: @&Protocol.Options := {}):
-    MetaM (Array Protocol.Goal):= do
-  state.restoreMetaM
+    MetaM (Array Protocol.Goal):= state.withMetaState do
   let goals := state.goals.toArray
   let parentDecl? := parent.bind (λ parentState => parentState.mctx.findDecl? state.parentMVar?.get!)
   goals.mapM fun goal => do
@@ -545,8 +544,7 @@ protected def GoalState.serializeGoals
 /-- Print the metavariables in a readable format -/
 @[export pantograph_goal_state_diag_m]
 protected def GoalState.diag (goalState: GoalState) (parent?: Option GoalState := .none) (options: Protocol.GoalDiag := {}): CoreM String := do
-  let metaM: MetaM String := do
-    goalState.restoreMetaM
+  let metaM: MetaM String := goalState.withMetaState do
     let savedState := goalState.savedState
     let goals := savedState.tactic.goals
     let mctx ← getMCtx

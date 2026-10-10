@@ -1,5 +1,6 @@
 import Lean.Data.HashMap
 import Pantograph
+import Pantograph.Validation
 
 namespace Pantograph.Repl
 
@@ -33,6 +34,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
       | .error ierror => return Lean.toJson ierror
     | .error error => return Lean.toJson $ errorCommand s!"Unable to parse json: {error}"
   match command.cmd with
+  | "protocol.describe" => run protocol_describe
   | "reset"         => run reset
   | "stat"          => run stat
   | "expr.echo"     => run expr_echo
@@ -62,6 +64,8 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
       nextId := state.nextId + 1
     }
     return stateId
+  protocol_describe (_ : Protocol.ProtocolDescribe) : MainM (CR Protocol.ProtocolDescriptor) :=
+    pure (.ok {})
   -- Command Functions
   reset (_: Protocol.Reset): MainM (CR Protocol.StatResult) := do
     let state ← get
@@ -147,6 +151,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
           return if autoMode then .success resumedState else result
         match ← resumedState.convExit with
         | .success exitedState =>
+          let exitedState := { exitedState with messages := nextGoalState.messages ++ exitedState.messages }
           if autoMode then
             let dormantGoals := goalState.convMVar?.map (fun (_, _, goals) => goals) |>.getD []
             match exitedState.resume (exitedState.goals ++ dormantGoals) with
@@ -194,24 +199,19 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
           let .ok result := nextGoalState.resume (nextGoalState.goals ++ dormantGoals) | throwError "Resuming known goals"
           pure result
         | false, _ => pure nextGoalState
-      let nextStateId ← newGoalState nextGoalState
+      let checked ← match validateTransition goalState nextGoalState goal with
+        | .ok checked => pure checked
+        | .error message => return .error (errorI "validation" message)
+      let nextGoalState := checked.state
       let goals ← nextGoalState.serializeGoals (parent := .some goalState) (options := state.options) |>.run'
-      -- Fragment entry can leave the parent unassigned; parentExpr? handles it.
-      -- Auditing the parent also catches sorry/unsafe use in partial branches.
-      let env ← Lean.MonadEnv.getEnv
-      let proofExpr? := nextGoalState.parentExpr?
-      let hasSorry := proofExpr?.map (·.hasSorry) |>.getD false
-      let hasUnsafe := proofExpr?.map (fun expr =>
-        expr.getUsedConstants.any (fun constName =>
-          (env.find? constName).map (·.isUnsafe) |>.getD false
-        )
-      ) |>.getD false
+      let nextStateId ← newGoalState nextGoalState
       return .ok {
         nextStateId? := .some nextStateId,
         goals? := .some goals,
-        messages := #[],
-        hasSorry,
-        hasUnsafe,
+        messages := nextGoalState.messages,
+        hasSorry := checked.hasSorry,
+        hasUnsafe := checked.hasUnsafe,
+        validation? := some { checked := true },
       }
     | .ok (.parseError message) =>
       return .ok {
@@ -220,10 +220,10 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
       }
     | .ok (.invalidAction message) =>
       return .error $ errorI "invalid" message
-    | .ok (.failure messages) =>
+    | .ok (.failure messages diagnostics) =>
       return .ok {
         tacticErrors? := .some messages,
-        messages := messages.map Protocol.Message.error,
+        messages := diagnostics,
       }
   goal_continue (args: Protocol.GoalContinue): MainM (CR Protocol.GoalContinueResult) := do
     let state ← get

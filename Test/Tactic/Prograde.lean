@@ -121,7 +121,7 @@ def test_define_root_expr : TestT Elab.TermElabM Unit := do
   let .success state1 ← state0.tacticOn (goalId := 0) tactic | addTest $ assertUnreachable tactic
   let binderName := `binder
   let value := "x.fst"
-  let expr ← state1.goals[0]!.withContext $ strToTermSyntax value
+  let expr ← state1.withContext (state1.get! 0) $ strToTermSyntax value
   let tacticM := Tactic.evalDefine binderName expr
   let .success state2 ← state1.tryTacticM (state1.get! 0) tacticM | addTest $ assertUnreachable s!"define {binderName} := {value}"
   let tactic := s!"apply {binderName}"
@@ -267,7 +267,7 @@ def test_let (specialized: Bool): TestT Elab.TermElabM Unit := do
 
   let tactic := "exact h"
   match ← state3r.tacticOn (goalId := 0) (tactic := tactic) with
-  | .failure #[message] =>
+  | .failure #[message] _ =>
     addTest $ LSpec.check tactic  (message = s!"type mismatch\n  h\nhas type\n  a : Prop\nbut is expected to have type\n  {mainTarget} : Prop")
   | other => do
     addTest $ assertUnreachable $ other.toString

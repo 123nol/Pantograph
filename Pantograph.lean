@@ -5,4 +5,5 @@ import Pantograph.Goal
 import Pantograph.Library
 import Pantograph.Protocol
 import Pantograph.Serial
+import Pantograph.Validation
 import Pantograph.Version

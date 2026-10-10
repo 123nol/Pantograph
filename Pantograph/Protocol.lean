@@ -267,6 +267,24 @@ structure Message where
 /-- Helper to create an error message from a plain string -/
 def Message.error (s : String) : Message := { severity := "error", data := s }
 
+structure ProtocolDescribe where
+  deriving Lean.FromJson
+structure ProtocolDescriptor where
+  protocol: String := "maths-ai-pantograph"
+  protocolVersion: Nat := 1
+  modelSexpVersion: Nat := 1
+  transitionValidationVersion: Nat := 1
+  messageVersion: Nat := 1
+  goalSelection: String := "explicit-focused-v1"
+  tacticErrorsFormat: String := "string-array-v1"
+  deriving Lean.ToJson
+
+structure TransitionValidation where
+  version: Nat := 1
+  scope: String := "transition-expressions"
+  checked: Bool
+  deriving Lean.ToJson
+
 structure GoalTacticResult where
   -- The next goal state id. Existence of this field shows success
   nextStateId?: Option Nat          := .none
@@ -281,6 +299,8 @@ structure GoalTacticResult where
 
   -- Structured diagnostic / error messages from execution
   messages: Array Message := #[]
+
+  validation?: Option TransitionValidation := .none
 
   -- Soundness audit flags expected by modern clients
   hasSorry: Bool := false

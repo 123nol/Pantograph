@@ -69,7 +69,7 @@ def GoalState.tacticOn (state: GoalState) (goalId: Nat) (tactic: String) := stat
 
 def TacticResult.toString : TacticResult → String
   | .success state => s!".success ({state.goals.length} goals)"
-  | .failure messages =>
+  | .failure messages _ =>
     let messages := "\n".intercalate messages.toList
     s!".failure {messages}"
   | .parseError error => s!".parseError {error}"

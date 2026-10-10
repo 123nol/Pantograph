@@ -3,6 +3,7 @@ Functions for handling metavariables
 
 All the functions starting with `try` resume their inner monadic state.
 -/
+import Pantograph.Diagnostics
 import Pantograph.Tactic
 import Lean
 
@@ -16,7 +17,9 @@ def filename: String := "<pantograph>"
 Represents an interconnected set of metavariables, or a state in proof search
  -/
 structure GoalState where
+  trustedEnv : Environment
   savedState : Elab.Tactic.SavedState
+  messages : Array Protocol.Message := #[]
 
   -- The root hole which is the search target
   root: MVarId
@@ -44,6 +47,7 @@ protected def GoalState.create (expr: Expr): Elab.TermElabM GoalState := do
   return {
     root := root.mvarId!,
     savedState,
+    trustedEnv := ← getEnv,
     parentMVar? := .none,
   }
 @[export pantograph_goal_state_create_from_mvars_m]
@@ -53,6 +57,7 @@ protected def GoalState.createFromMVars (goals: List MVarId) (root: MVarId): Met
   return {
     root,
     savedState,
+    trustedEnv := ← getEnv,
     parentMVar? := .none,
   }
 @[export pantograph_goal_state_is_conv]
@@ -74,8 +79,21 @@ protected def GoalState.metaContextOfGoal (state: GoalState) (mvarId: MVarId): O
 protected def GoalState.metaState (state: GoalState): Meta.State :=
   state.savedState.term.meta.meta
 
-protected def GoalState.withContext (state: GoalState) (mvarId: MVarId) (m: MetaM α): MetaM α := do
-  mvarId.withContext m |>.run' (← read) state.metaState
+/-- Read a goal snapshot without mutating its caller's environment or meta state. -/
+protected def GoalState.withMetaState (state : GoalState) (action : MetaM α) : MetaM α := do
+  let outer ← Meta.saveState
+  try
+    state.savedState.term.meta.restore
+    modifyThe Core.State fun s => { s with cache := state.savedState.term.meta.core.cache }
+    modifyThe Meta.State fun _ => state.metaState
+    action
+  finally
+    outer.restore
+    modifyThe Meta.State fun _ => outer.meta
+    modifyThe Core.State fun s => { s with traceState := outer.core.traceState, cache := outer.core.cache }
+
+protected def GoalState.withContext (state: GoalState) (mvarId: MVarId) (m: MetaM α): MetaM α :=
+  state.withMetaState (mvarId.withContext m)
 
 protected def GoalState.withParentContext { n } [MonadControlT MetaM n] [Monad n] (state: GoalState): n α → n α :=
   Meta.mapMetaM <| state.withContext state.parentMVar?.get!
@@ -88,10 +106,6 @@ protected def GoalState.restoreMetaM (state: GoalState): MetaM Unit :=
   state.savedState.term.meta.restore
 protected def GoalState.restoreElabM (state: GoalState): Elab.TermElabM Unit :=
   state.savedState.term.restore
-private def GoalState.restoreTacticM (state: GoalState) (goal: MVarId): Elab.Tactic.TacticM Unit := do
-  state.savedState.restore
-  Elab.Tactic.setGoals [goal]
-
 @[export pantograph_goal_state_focus]
 protected def GoalState.focus (state: GoalState) (goalId: Nat): Option GoalState := do
   let goal ← state.savedState.tactic.goals.get? goalId
@@ -128,7 +142,7 @@ protected def GoalState.resume (state: GoalState) (goals: List MVarId): Except S
     .error s!"Goals {invalid_goals} are not in scope"
   else
     -- Set goals to the goals that have not been assigned yet, similar to the `focus` tactic.
-    let unassigned := goals.filter (λ goal =>
+    let unassigned := goals.eraseDups.filter (λ goal =>
       let mctx := state.mctx
       ¬(mctx.eAssignment.contains goal || mctx.dAssignment.contains goal))
     .ok {
@@ -188,6 +202,7 @@ protected def GoalState.step (state: GoalState) (goal: MVarId) (tacticM: Elab.Ta
     state with
     savedState := { term := nextElabState, tactic := newGoals },
     parentMVar? := .some goal,
+    messages := #[],
     calcPrevRhs? := .none,
   }
 
@@ -196,38 +211,74 @@ inductive TacticResult where
   -- Goes to next state
   | success (state: GoalState)
   -- Tactic failed with messages
-  | failure (messages: Array String)
+  | failure (errors: Array String) (messages: Array Protocol.Message)
   -- Could not parse tactic
   | parseError (message: String)
   -- The given action cannot be executed in the state
   | invalidAction (message: String)
 
-/-- Executes a `TacticM` monads on this `GoalState`, collecting the errors as necessary -/
-protected def GoalState.tryTacticM (state: GoalState) (goal: MVarId) (tacticM: Elab.Tactic.TacticM Unit):
-      Elab.TermElabM TacticResult := do
+/-- Execute an operation against an isolated snapshot and restore its caller. -/
+protected def GoalState.withOperation (state : GoalState) (action : Elab.TermElabM TacticResult) :
+    Elab.TermElabM TacticResult := do
+  let outer ← Elab.Term.saveState
   try
-    let nextState ← state.step goal tacticM
-    return .success nextState
-  catch exception =>
-    return .failure #[← exception.toMessageData.toString]
+    state.restoreElabM
+    modifyThe Meta.State fun _ => state.metaState
+    modifyThe Core.State fun s => { s with messages := {}, cache := state.savedState.term.meta.core.cache }
+    let result : TacticResult ← try
+      let result ← action
+      match result with
+      | .success next =>
+        Elab.Term.synthesizeSyntheticMVarsUsingDefault
+        Elab.Term.synthesizeSyntheticMVars (postpone := .partial)
+        let term ← Elab.Term.saveState
+        pure (.success { next with savedState := { next.savedState with term } })
+      | other => pure other
+    catch exception => do
+      let text ← exception.toMessageData.toString
+      Elab.logException exception
+      let messages ← renderMessages (← getThe Core.State).messages
+      return TacticResult.failure #[text] (if messages.isEmpty then #[Protocol.Message.error text] else messages)
+    let log := (← getThe Core.State).messages
+    let messages ← renderMessages log
+    match result with
+    | .success next =>
+      if log.hasErrors then
+        let errors := messages.filter (fun (m : Protocol.Message) => m.severity == "error") |>.map (fun m => m.data)
+        return TacticResult.failure (if errors.isEmpty then #["Lean reported an error"] else errors) messages
+      else
+        -- Keep diagnostics outside the saved log so later requests cannot replay them.
+        let savedState := { next.savedState with term := {
+          next.savedState.term with meta := { next.savedState.term.meta with core := {
+            next.savedState.term.meta.core with messages := {}
+          } }
+        } }
+        return TacticResult.success { next with savedState, messages := next.messages ++ messages }
+    | .failure errors diagnostics => return TacticResult.failure errors diagnostics
+    | other => return other
+  finally
+    outer.restore (restoreInfo := true)
+    modifyThe Meta.State fun _ => outer.meta.meta
+    modifyThe Elab.Term.State fun _ => outer.elab
+    modifyThe Core.State fun s => { s with traceState := outer.meta.core.traceState, cache := outer.meta.core.cache }
+
+/-- Shared transaction for tactics supplied by library callers. -/
+protected def GoalState.tryTacticM (state: GoalState) (goal: MVarId)
+    (tacticM: Elab.Tactic.TacticM Unit): Elab.TermElabM TacticResult :=
+  state.withOperation do
+    return .success (← state.step goal tacticM)
 
 /-- Execute a string tactic on given state. Restores TermElabM -/
 protected def GoalState.tryTactic (state: GoalState) (goal: MVarId) (tactic: String):
-    Elab.TermElabM TacticResult := do
-  state.restoreElabM
+    Elab.TermElabM TacticResult := withInputContext tactic <| state.withOperation do
   let isConvGoal := isLHSGoal? (← goal.getType) |>.isSome
-  let tactic ← match Parser.runParserCategory
-    (env := ← MonadEnv.getEnv)
-    (catName := if isConvGoal then `conv else `tactic)
-    (input := tactic)
-    (fileName := filename) with
+  let tactic ← match parseTacticSequence (← getEnv) isConvGoal tactic with
     | .ok stx => pure $ stx
     | .error error => return .parseError error
-  state.tryTacticM goal $ Elab.Tactic.evalTactic tactic
+  return .success (← state.step goal $ Elab.Tactic.evalTactic tactic)
 
 protected def GoalState.tryAssign (state: GoalState) (goal: MVarId) (expr: String):
-      Elab.TermElabM TacticResult := do
-  state.restoreElabM
+      Elab.TermElabM TacticResult := withInputContext expr <| state.withOperation do
   let expr ← match Parser.runParserCategory
     (env := ← MonadEnv.getEnv)
     (catName := `term)
@@ -235,13 +286,12 @@ protected def GoalState.tryAssign (state: GoalState) (goal: MVarId) (expr: Strin
     (fileName := filename) with
     | .ok syn => pure syn
     | .error error => return .parseError error
-  state.tryTacticM goal $ Tactic.evalAssign expr
+  return .success (← state.step goal $ Tactic.evalAssign expr)
 
 -- Specialized Tactics
 
 protected def GoalState.tryLet (state: GoalState) (goal: MVarId) (binderName: String) (type: String):
-      Elab.TermElabM TacticResult := do
-  state.restoreElabM
+      Elab.TermElabM TacticResult := withInputContext type <| state.withOperation do
   let type ← match Parser.runParserCategory
     (env := ← MonadEnv.getEnv)
     (catName := `term)
@@ -249,16 +299,16 @@ protected def GoalState.tryLet (state: GoalState) (goal: MVarId) (binderName: St
     (fileName := filename) with
     | .ok syn => pure syn
     | .error error => return .parseError error
-  state.tryTacticM goal $ Tactic.evalLet binderName.toName type
+  return .success (← state.step goal $ Tactic.evalLet binderName.toName type)
 
 /-- Enter conv tactic mode -/
 protected def GoalState.conv (state: GoalState) (goal: MVarId):
-      Elab.TermElabM TacticResult := do
+      Elab.TermElabM TacticResult := state.withOperation do
   if state.convMVar?.isSome then
     return .invalidAction "Already in conv state"
   goal.checkNotAssigned `GoalState.conv
   let tacticM :  Elab.Tactic.TacticM (Elab.Tactic.SavedState × MVarId) := do
-    state.restoreTacticM goal
+    Elab.Tactic.setGoals [goal]
 
     -- See Lean.Elab.Tactic.Conv.convTarget
     let convMVar ← Elab.Tactic.withMainContext do
@@ -266,30 +316,27 @@ protected def GoalState.conv (state: GoalState) (goal: MVarId):
       Elab.Tactic.replaceMainGoal [newGoal.mvarId!]
       pure rhs.mvarId!
     return (← MonadBacktrack.saveState, convMVar)
-  try
-    let (nextSavedState, convRhs) ← tacticM { elaborator := .anonymous } |>.run' state.savedState.tactic
-    -- Other goals are now dormant
-    let otherGoals := state.goals.filter $ λ g => g != goal
-    return .success {
-      root := state.root,
-      savedState := nextSavedState
-      parentMVar? := .some goal,
-      convMVar? := .some (convRhs, goal, otherGoals),
-      calcPrevRhs? := .none
-    }
-  catch exception =>
-    return .failure #[← exception.toMessageData.toString]
+  let (nextSavedState, convRhs) ← tacticM { elaborator := .anonymous } |>.run' state.savedState.tactic
+  -- Other goals are now dormant
+  let otherGoals := state.goals.filter $ λ g => g != goal
+  return .success {
+    root := state.root,
+    trustedEnv := state.trustedEnv,
+    savedState := nextSavedState
+    parentMVar? := .some goal,
+    convMVar? := .some (convRhs, goal, otherGoals),
+    calcPrevRhs? := .none
+  }
 
 /-- Exit from `conv` mode. Resumes all goals before the mode starts and applys the conv -/
 @[export pantograph_goal_state_conv_exit_m]
 protected def GoalState.convExit (state: GoalState):
-      Elab.TermElabM TacticResult := do
+      Elab.TermElabM TacticResult := state.withOperation do
   let (convRhs, convGoal, _) ← match state.convMVar? with
     | .some mvar => pure mvar
     | .none => return .invalidAction "Not in conv state"
   let tacticM :  Elab.Tactic.TacticM Elab.Tactic.SavedState:= do
     -- Vide `Lean.Elab.Tactic.Conv.convert`
-    state.savedState.restore
 
     -- Close all existing goals with `refl`
     for mvarId in (← Elab.Tactic.getGoals) do
@@ -306,17 +353,15 @@ protected def GoalState.convExit (state: GoalState):
       let proof ← instantiateMVars (.mvar convGoal)
       Elab.Tactic.liftMetaTactic1 fun mvarId => mvarId.replaceTargetEq targetNew proof
     MonadBacktrack.saveState
-  try
-    let nextSavedState ← tacticM { elaborator := .anonymous } |>.run' state.savedState.tactic
-    return .success {
-      root := state.root,
-      savedState := nextSavedState
-      parentMVar? := .some convGoal,
-      convMVar? := .none
-      calcPrevRhs? := .none
-    }
-  catch exception =>
-    return .failure #[← exception.toMessageData.toString]
+  let nextSavedState ← tacticM { elaborator := .anonymous } |>.run' state.savedState.tactic
+  return .success {
+    root := state.root,
+    trustedEnv := state.trustedEnv,
+    savedState := nextSavedState
+    parentMVar? := .some convGoal,
+    convMVar? := .none
+    calcPrevRhs? := .none
+  }
 
 protected def GoalState.calcPrevRhsOf? (state: GoalState) (goal: MVarId): Option Expr := do
   let (mvarId, rhs) ← state.calcPrevRhs?
@@ -326,8 +371,7 @@ protected def GoalState.calcPrevRhsOf? (state: GoalState) (goal: MVarId): Option
     .none
 @[export pantograph_goal_state_try_calc_m]
 protected def GoalState.tryCalc (state: GoalState) (goal: MVarId) (pred: String):
-      Elab.TermElabM TacticResult := do
-  state.restoreElabM
+      Elab.TermElabM TacticResult := withInputContext pred <| state.withOperation do
   if state.convMVar?.isSome then
     return .invalidAction "Cannot initiate `calc` while in `conv` state"
   let `(term|$pred) ← match Parser.runParserCategory
@@ -342,58 +386,56 @@ protected def GoalState.tryCalc (state: GoalState) (goal: MVarId) (pred: String)
   let decl ← goal.getDecl
   let target ← instantiateMVars decl.type
   let tag := decl.userName
-  try
-    goal.withContext do
+  goal.withContext do
 
-    let mut step ← Elab.Term.elabType <| ← do
-      if let some prevRhs := calcPrevRhs? then
-        Elab.Term.annotateFirstHoleWithType pred (← Meta.inferType prevRhs)
-      else
-        pure pred
-
-    let some (_, lhs, rhs) ← Elab.Term.getCalcRelation? step |
-      throwErrorAt pred "invalid 'calc' step, relation expected{indentExpr step}"
+  let mut step ← Elab.Term.elabType <| ← do
     if let some prevRhs := calcPrevRhs? then
-      unless ← Meta.isDefEqGuarded lhs prevRhs do
-        throwErrorAt pred "invalid 'calc' step, left-hand-side is{indentD m!"{lhs} : {← Meta.inferType lhs}"}\nprevious right-hand-side is{indentD m!"{prevRhs} : {← Meta.inferType prevRhs}"}" -- "
+      Elab.Term.annotateFirstHoleWithType pred (← Meta.inferType prevRhs)
+    else
+      pure pred
 
-    -- Creates a mvar to represent the proof that the calc tactic solves the
-    -- current branch
-    -- In the Lean `calc` tactic this is gobbled up by
-    -- `withCollectingNewGoalsFrom`
-    let mut proof ← Meta.mkFreshExprMVarAt (← getLCtx) (← Meta.getLocalInstances) step
-      (userName := tag ++ `calc)
-    let mvarBranch := proof.mvarId!
+  let some (_, lhs, rhs) ← Elab.Term.getCalcRelation? step |
+    throwErrorAt pred "invalid 'calc' step, relation expected{indentExpr step}"
+  if let some prevRhs := calcPrevRhs? then
+    unless ← Meta.isDefEqGuarded lhs prevRhs do
+      throwErrorAt pred "invalid 'calc' step, left-hand-side is{indentD m!"{lhs} : {← Meta.inferType lhs}"}\nprevious right-hand-side is{indentD m!"{prevRhs} : {← Meta.inferType prevRhs}"}" -- "
 
-    let mut proofType ← Meta.inferType proof
-    let mut remainder? := Option.none
+  -- Creates a mvar to represent the proof that the calc tactic solves the
+  -- current branch
+  -- In the Lean `calc` tactic this is gobbled up by
+  -- `withCollectingNewGoalsFrom`
+  let mut proof ← Meta.mkFreshExprMVarAt (← getLCtx) (← Meta.getLocalInstances) step
+    (userName := tag ++ `calc)
+  let mvarBranch := proof.mvarId!
 
-    -- The calc tactic either solves the main goal or leaves another relation.
-    -- Replace the main goal, and save the new goal if necessary
-    unless ← Meta.isDefEq proofType target do
-      let rec throwFailed :=
-        throwError "'calc' tactic failed, has type{indentExpr proofType}\nbut it is expected to have type{indentExpr target}"
-      let some (_, _, rhs) ← Elab.Term.getCalcRelation? proofType | throwFailed
-      let some (r, _, rhs') ← Elab.Term.getCalcRelation? target | throwFailed
-      let lastStep := mkApp2 r rhs rhs'
-      let lastStepGoal ← Meta.mkFreshExprSyntheticOpaqueMVar lastStep tag
-      (proof, proofType) ← Elab.Term.mkCalcTrans proof proofType lastStepGoal lastStep
-      unless ← Meta.isDefEq proofType target do throwFailed
-      remainder? := .some lastStepGoal.mvarId!
-    goal.assign proof
+  let mut proofType ← Meta.inferType proof
+  let mut remainder? := Option.none
 
-    let goals := [ mvarBranch ] ++ remainder?.toList
-    let calcPrevRhs? := remainder?.map $ λ g => (g, rhs)
-    return .success {
-      root := state.root,
-      savedState := {
-        term := ← MonadBacktrack.saveState,
-        tactic := { goals },
-      },
-      parentMVar? := .some goal,
-      calcPrevRhs?
-    }
-  catch exception =>
-    return .failure #[← exception.toMessageData.toString]
+  -- The calc tactic either solves the main goal or leaves another relation.
+  -- Replace the main goal, and save the new goal if necessary
+  unless ← Meta.isDefEq proofType target do
+    let rec throwFailed :=
+      throwError "'calc' tactic failed, has type{indentExpr proofType}\nbut it is expected to have type{indentExpr target}"
+    let some (_, _, rhs) ← Elab.Term.getCalcRelation? proofType | throwFailed
+    let some (r, _, rhs') ← Elab.Term.getCalcRelation? target | throwFailed
+    let lastStep := mkApp2 r rhs rhs'
+    let lastStepGoal ← Meta.mkFreshExprSyntheticOpaqueMVar lastStep tag
+    (proof, proofType) ← Elab.Term.mkCalcTrans proof proofType lastStepGoal lastStep
+    unless ← Meta.isDefEq proofType target do throwFailed
+    remainder? := .some lastStepGoal.mvarId!
+  goal.assign proof
+
+  let goals := [ mvarBranch ] ++ remainder?.toList
+  let calcPrevRhs? := remainder?.map $ λ g => (g, rhs)
+  return .success {
+    root := state.root,
+    trustedEnv := state.trustedEnv,
+    savedState := {
+      term := ← MonadBacktrack.saveState,
+      tactic := { goals },
+    },
+    parentMVar? := .some goal,
+    calcPrevRhs?
+  }
 
 end Pantograph

@@ -127,7 +127,7 @@ def test_nat_add_comm (manual: Bool): TestM Unit := do
     #[buildGoal [("n", "Nat"), ("m", "Nat")] "n + m = m + n"])
 
   match ← state1.tacticOn 0 "assumption" with
-  | .failure #[message] =>
+  | .failure #[message] _ =>
     addTest $ LSpec.check "assumption" (message = "tactic 'assumption' failed\nn m : Nat\n⊢ n + m = m + n")
   | other => do
     addTest $ assertUnreachable $ other.toString
@@ -282,9 +282,9 @@ def test_or_comm: TestM Unit := do
     serializeExpressionSexp (← instantiateAll state2.parentExpr?.get!) (sanitize := false)
   let orPQ := s!"((:c Or) (:fv {fvP}) (:fv {fvQ}))"
   let orQP := s!"((:c Or) (:fv {fvQ}) (:fv {fvP}))"
-  let motive := s!"(:lambda t._@._hyg.26 {orPQ} (:forall h ((:c Eq) ((:c Or) (:fv {fvP}) (:fv {fvQ})) (:fv {fvH}) 0) {orQP}))"
-  let caseL := s!"(:lambda h._@._hyg.27 (:fv {fvP}) (:lambda h._@._hyg.28 ((:c Eq) {orPQ} (:fv {fvH}) ((:c Or.inl) (:fv {fvP}) (:fv {fvQ}) 0)) (:subst (:mv {caseL}) (:fv {fvP}) (:fv {fvQ}) 1)))"
-  let caseR := s!"(:lambda h._@._hyg.29 (:fv {fvQ}) (:lambda h._@._hyg.30 ((:c Eq) {orPQ} (:fv {fvH}) ((:c Or.inr) (:fv {fvP}) (:fv {fvQ}) 0)) (:subst (:mv {caseR}) (:fv {fvP}) (:fv {fvQ}) 1)))"
+  let motive := s!"(:lambda t._@._hyg.30 {orPQ} (:forall h ((:c Eq) ((:c Or) (:fv {fvP}) (:fv {fvQ})) (:fv {fvH}) 0) {orQP}))"
+  let caseL := s!"(:lambda h._@._hyg.31 (:fv {fvP}) (:lambda h._@._hyg.32 ((:c Eq) {orPQ} (:fv {fvH}) ((:c Or.inl) (:fv {fvP}) (:fv {fvQ}) 0)) (:subst (:mv {caseL}) (:fv {fvP}) (:fv {fvQ}) 1)))"
+  let caseR := s!"(:lambda h._@._hyg.33 (:fv {fvQ}) (:lambda h._@._hyg.34 ((:c Eq) {orPQ} (:fv {fvH}) ((:c Or.inr) (:fv {fvP}) (:fv {fvQ}) 0)) (:subst (:mv {caseR}) (:fv {fvP}) (:fv {fvQ}) 1)))"
   let conduit := s!"((:c Eq.refl) {orPQ} (:fv {fvH}))"
   addTest $ LSpec.test "(2 parent)" (state2parent ==
     s!"((:c Or.casesOn) (:fv {fvP}) (:fv {fvQ}) {motive} (:fv {fvH}) {caseL} {caseR} {conduit})")

@@ -124,11 +124,30 @@ def exprEcho (expr: String) (expectedType?: Option String := .none) (levels: Arr
 
 @[export pantograph_goal_start_expr_m]
 def goalStartExpr (expr: String) (levels: Array String): CoreM (Protocol.CR GoalState) :=
-  runTermElabM $ Elab.Term.withLevelNames (levels.toList.map (·.toName)) do
-    let expr ← match ← parseElabType expr with
-      | .error e => return .error e
-      | .ok expr => pure $ expr
-    return .ok $ ← GoalState.create expr
+  runTermElabM <| withInputContext expr <| Elab.Term.withLevelNames (levels.toList.map (·.toName)) do
+    let outer ← Elab.Term.saveState
+    try
+      modifyThe Core.State fun s => { s with messages := {} }
+      let expr ← match ← parseElabType expr with
+        | .error e => return .error e
+        | .ok expr => pure expr
+      let state ← GoalState.create expr
+      Elab.Term.synthesizeSyntheticMVarsUsingDefault
+      Elab.Term.synthesizeSyntheticMVars (postpone := .partial)
+      let term ← Elab.Term.saveState
+      let state := { state with savedState := { state.savedState with term } }
+      let log := (← getThe Core.State).messages
+      if log.hasErrors then
+        let messages ← renderMessages log
+        return .error (errorI "elab" (String.intercalate "\n" (messages.map (·.data)).toList))
+      return .ok { state with trustedEnv := outer.meta.core.env }
+    catch exception =>
+      return .error (errorI "elab" (← exception.toMessageData.toString))
+    finally
+      outer.restore (restoreInfo := true)
+      modifyThe Meta.State fun _ => outer.meta.meta
+      modifyThe Elab.Term.State fun _ => outer.elab
+      modifyThe Core.State fun s => { s with traceState := outer.meta.core.traceState, cache := outer.meta.core.cache }
 
 @[export pantograph_goal_resume]
 def goalResume (target: GoalState) (goals: Array String): Except String GoalState :=
@@ -158,37 +177,35 @@ def goalTactic (state: GoalState) (goal:  MVarId) (tactic: String): CoreM Tactic
 def goalAssign (state: GoalState) (goal: MVarId) (expr: String): CoreM TacticResult :=
   runTermElabM <| state.tryAssign goal expr
 @[export pantograph_goal_have_m]
-protected def GoalState.tryHave (state: GoalState) (goal: MVarId) (binderName: String) (type: String): CoreM TacticResult := do
-  let type ← match (← parseTermM type) with
-    | .ok syn => pure syn
-    | .error error => return .parseError error
-  runTermElabM do
-    state.restoreElabM
-    state.tryTacticM goal $ Tactic.evalHave binderName.toName type
+protected def GoalState.tryHave (state: GoalState) (goal: MVarId) (binderName: String) (type: String): CoreM TacticResult :=
+  runTermElabM <| withInputContext type <| state.withOperation do
+    let type ← match (← parseTermM type) with
+      | .ok syn => pure syn
+      | .error error => return .parseError error
+    return .success (← state.step goal $ Tactic.evalHave binderName.toName type)
 @[export pantograph_goal_try_define_m]
-protected def GoalState.tryDefine (state: GoalState) (goal: MVarId) (binderName: String) (expr: String): CoreM TacticResult := do
-  let expr ← match (← parseTermM expr) with
-    | .ok syn => pure syn
-    | .error error => return .parseError error
-  runTermElabM do
-    state.restoreElabM
-    state.tryTacticM goal (Tactic.evalDefine binderName.toName expr)
+protected def GoalState.tryDefine (state: GoalState) (goal: MVarId) (binderName: String) (expr: String): CoreM TacticResult :=
+  runTermElabM <| withInputContext expr <| state.withOperation do
+    let expr ← match (← parseTermM expr) with
+      | .ok syn => pure syn
+      | .error error => return .parseError error
+    return .success (← state.step goal $ Tactic.evalDefine binderName.toName expr)
 @[export pantograph_goal_try_motivated_apply_m]
 protected def GoalState.tryMotivatedApply (state: GoalState) (goal: MVarId) (recursor: String):
-      Elab.TermElabM TacticResult := do
-  state.restoreElabM
+      Elab.TermElabM TacticResult := withInputContext recursor <| state.withOperation do
   let recursor ← match (← parseTermM recursor) with
     | .ok syn => pure syn
     | .error error => return .parseError error
-  state.tryTacticM goal (tacticM := Tactic.evalMotivatedApply recursor)
+  return .success (← state.step goal (tacticM := Tactic.evalMotivatedApply recursor))
+
 @[export pantograph_goal_try_no_confuse_m]
 protected def GoalState.tryNoConfuse (state: GoalState) (goal: MVarId) (eq: String):
-      Elab.TermElabM TacticResult := do
-  state.restoreElabM
+      Elab.TermElabM TacticResult := withInputContext eq <| state.withOperation do
   let eq ← match (← parseTermM eq) with
     | .ok syn => pure syn
     | .error error => return .parseError error
-  state.tryTacticM goal (tacticM := Tactic.evalNoConfuse eq)
+  return .success (← state.step goal (tacticM := Tactic.evalNoConfuse eq))
+
 @[export pantograph_goal_let_m]
 def goalLet (state: GoalState) (goal: MVarId) (binderName: String) (type: String): CoreM TacticResult :=
   runTermElabM <| state.tryLet goal binderName type
