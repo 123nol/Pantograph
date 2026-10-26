@@ -1,5 +1,6 @@
 import Test.Common
 import Test.ContractFixtures
+import Pantograph.Certify
 import Repl
 
 namespace Pantograph.Test.Snapshot
@@ -40,6 +41,15 @@ private def inspect (id : Nat) (goals : List String) : MainM (Array Json) := do
 
 private def status (obligation : Json) : String :=
   obligation.getObjValAs? String "status" |>.toOption |>.getD ""
+
+private def certify (id : Nat) : MainM Json :=
+  request "goal.certify" [("stateId", toJson id)]
+
+private def certified (result : Json) : Bool :=
+  (result.getObjValAs? String "status").toOption == some "certified"
+
+private def outcome (result : Json) : String :=
+  result.getObjValAs? String "status" |>.toOption |>.getD ""
 
 private def provenanceTests : MainM LSpec.TestSeq := do
   let mut tests := LSpec.TestSeq.done
@@ -114,10 +124,114 @@ private def provenanceTests : MainM LSpec.TestSeq := do
   discard <| request "goal.delete" [("stateIds", toJson ids)]
   return tests
 
-def suite (_env : Environment) : List (String × IO LSpec.TestSeq) := [
+private def certificationTests : MainM LSpec.TestSeq := do
+  let mut tests := LSpec.TestSeq.done
+  let root ← start "True ∧ True"
+  let pair ← next (← tactic root "constructor")
+  tests := tests ++ LSpec.test "remaining goals are incomplete" (outcome (← certify pair) == "incomplete")
+  let done ← next (← tactic (← next (← tactic pair "trivial" 1)) "trivial")
+  let first ← certify done
+  tests := tests ++ LSpec.test "complete root certifies" (certified first)
+  let count := (← get).goalStates.size
+  let repeated ← certify done
+  tests := tests ++ LSpec.test "repeated certification is read-only"
+    (repeated == first && (← get).goalStates.size == count)
+  tests := tests ++ LSpec.test "input of a certified state still usable"
+    ((names (← tactic pair "trivial" 0)).size == 1)
+
+  let witness ← start "∃ n : Nat, n = 0 ∧ n = 1"
+  let parts ← next (← tactic witness "refine ⟨?w, ?a, ?b⟩")
+  let solvedZero ← next (← tactic parts "exact (rfl : 0 = 0)" 1)
+  tests := tests ++ LSpec.test "conflicting witness cannot complete" (outcome (← certify solvedZero) == "incomplete")
+
+  let poly ← start "∀ (α : Sort u), α → α" ["u"]
+  let done ← next (← tactic poly "intro α a\nexact a")
+  let receipt ← certify done
+  tests := tests ++ LSpec.test "universe-polymorphic term certifies"
+    (certified receipt && ((receipt.getObjVal? "receipt").bind (·.getObjValAs? (Array String) "levels")).toOption == some #["u"])
+
+  let equality ← start "∀ (α : Sort u) (a : α), a = a" ["u"]
+  let done ← next (← tactic equality "intro α a\nrfl")
+  tests := tests ++ LSpec.test "universe-polymorphic proposition certifies" (certified (← certify done))
+
+  let classical ← start "∀ (p : Prop), p ∨ ¬p"
+  let done ← next (← tactic classical "intro p\nexact Classical.em p")
+  let receipt ← certify done
+  tests := tests ++ LSpec.test "baseline axioms are reported"
+    (certified receipt && (((receipt.getObjVal? "receipt").bind (·.getObjValAs? (Array String) "axioms")).toOption.getD #[]).contains "Classical.choice")
+
+  let axiomRoot ← start "1 = 2"
+  let done ← next (← tactic axiomRoot "contract_new_axiom")
+  tests := tests ++ LSpec.test "a new axiom is rejected" (outcome (← certify done) == "rejected")
+
+  let auxiliary ← start "True"
+  let done ← next (← tactic auxiliary "contract_auxiliary_lemma")
+  let receipt ← certify done
+  tests := tests ++ LSpec.test "a new checked lemma is rechecked and reported"
+    (certified receipt && ((receipt.getObjVal? "receipt").bind (·.getObjValAs? (Array String) "auxiliary")).toOption == some #["ContractFixtures.auxiliaryLemma"])
+
+  let admitted ← start "True"
+  let done ← next (← tactic admitted "contract_dependency_sorry")
+  tests := tests ++ LSpec.test "a new admitted dependency is rejected" (outcome (← certify done) == "rejected")
+
+  discard <| request "env.add" [("name", .str "ContractFixtures.trustedAdmission"), ("type", .str "True"),
+    ("value", .str "sorry"), ("isTheorem", .bool true)]
+  let transitive ← start "True"
+  let used ← tactic transitive "exact ContractFixtures.trustedAdmission"
+  let done ← next used
+  tests := tests ++ LSpec.test "an admission in the trusted basis passes transition checks"
+    ((used.getObjValAs? Bool "hasSorry").toOption == some false)
+  tests := tests ++ LSpec.test "a transitive admission is rejected" (outcome (← certify done) == "rejected")
+
+  let field (result : Json) (key : String) : Option String :=
+    (result.getObjVal? "receipt").bind (·.getObjValAs? String key) |>.toOption
+  let first ← start "∀ (p q : Prop), p → q → p ∧ q"
+  let one ← certify (← next (← tactic first "intro p q hp hq\nexact ⟨hp, hq⟩"))
+  let second ← start "∀ (p q : Prop), p → q → p ∧ q"
+  let other ← certify (← next (← tactic second "intro a b ha hb\nexact ⟨ha, hb⟩"))
+  tests := tests ++ LSpec.test "identities ignore bound variable names"
+    (field one "rootType" == field other "rootType" && (field one "rootType").isSome &&
+      field one "proof" == field other "proof")
+
+  let unknown ← certify 999999
+  tests := tests ++ LSpec.test "unknown state is an index error"
+    ((unknown.getObjValAs? String "error").toOption == some "index")
+  let ids := (← get).goalStates.toList.map (·.1)
+  discard <| request "goal.delete" [("stateIds", toJson ids)]
+  return tests
+
+/-- States the REPL cannot build: an ill-typed assignment and a replaced root type. -/
+private def kernelTests : Elab.TermElabM LSpec.TestSeq := do
+  let mut tests := LSpec.TestSeq.done
+  let state ← GoalState.create (mkConst ``True)
+  state.restoreElabM
+  state.root.assign (mkNatLit 0)
+  let illTyped := { state with savedState := { state.savedState with
+    term := ← Elab.Term.saveState, tactic := { goals := [] } } }
+  let result ← withOptions (debug.skipKernelTC.set · true) <| certifyRoot illTyped 200000
+  tests := tests ++ LSpec.test "ill-typed assignment rejected with skipKernelTC" (result.status == "rejected")
+  let state ← GoalState.create (mkConst ``True)
+  state.restoreElabM
+  state.root.assign (mkConst ``True.intro)
+  let solved := { state with savedState := { state.savedState with
+    term := ← Elab.Term.saveState, tactic := { goals := [] } } }
+  tests := tests ++ LSpec.test "proof of the started statement certifies"
+    ((← certifyRoot solved 200000).status == "certified")
+  let replaced := { solved with rootType := mkConst ``False }
+  tests := tests ++ LSpec.test "a replaced root statement is rejected"
+    ((← certifyRoot replaced 200000).status == "rejected")
+  tests := tests ++ LSpec.test "certification leaves the environment unchanged"
+    (!(← getEnv).contains `_pantograph_certificate)
+  return tests
+
+def suite (env : Environment) : List (String × IO LSpec.TestSeq) := [
+  ("Kernel boundary", runTermElabMSeq env kernelTests),
   ("Transition provenance and inspection", do
     let env ← importModules #[{ module := `Test.ContractFixtures }] {} (trustLevel := 1)
     runCoreMSeq env (provenanceTests.run { imports := ["Test.ContractFixtures"] } |>.run' {})),
+  ("Root certification", do
+    let env ← importModules #[{ module := `Test.ContractFixtures }] {} (trustLevel := 1)
+    runCoreMSeq env (certificationTests.run { imports := ["Test.ContractFixtures"] } |>.run' {})),
 ]
 
 end Pantograph.Test.Snapshot

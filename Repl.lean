@@ -2,6 +2,7 @@ import Lean.Data.HashMap
 import Pantograph
 import Pantograph.Validation
 import Pantograph.Transition
+import Pantograph.Certify
 
 namespace Pantograph.Repl
 
@@ -49,6 +50,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
   | "goal.continue" => run goal_continue
   | "goal.delete"   => run goal_delete
   | "goal.inspect"  => run goal_inspect
+  | "goal.certify"  => run goal_certify
   | "goal.print"    => run goal_print
   | "frontend.process"  => run frontend_process
   | cmd =>
@@ -116,7 +118,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
       | .none, .some copyFrom =>
         (match env.find? <| copyFrom.toName with
         | .none => return .error <| errorIndex s!"Symbol not found: {copyFrom}"
-        | .some cInfo => return .ok (← GoalState.create cInfo.type))
+        | .some cInfo => return .ok { (← GoalState.create cInfo.type) with rootLevels := cInfo.levelParams })
       | _, _ =>
         return .error <| errorI "arguments" "Exactly one of {expr, copyFrom} must be supplied")
     match expr? with
@@ -271,6 +273,14 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
         return .error $ errorIndex s!"Unknown obligation {name}"
       obligations := obligations.push obligation
     return .ok { obligations }
+  goal_certify (args: Protocol.GoalCertify): MainM (CR Protocol.GoalCertifyResult) := do
+    let state ← get
+    let .some goalState := state.goalStates.find? args.stateId |
+      return .error $ errorIndex s!"Invalid state index {args.stateId}"
+    let maxHeartbeats := args.maxHeartbeats?.getD 200000
+    if maxHeartbeats == 0 then
+      return .error <| errorI "arguments" "maxHeartbeats must be positive"
+    return .ok (← certifyRoot goalState maxHeartbeats)
   goal_print (args: Protocol.GoalPrint): MainM (CR Protocol.GoalPrintResult) := do
     let state ← get
     let .some goalState := state.goalStates.find? args.stateId | return .error $ errorIndex s!"Invalid state index {args.stateId}"

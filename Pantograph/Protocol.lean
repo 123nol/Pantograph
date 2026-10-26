@@ -276,6 +276,7 @@ structure ProtocolDescriptor where
   transitionValidationVersion: Nat := 1
   transitionProvenanceVersion: Nat := 1
   inspectionVersion: Nat := 1
+  certificationVersion: Nat := 1
   messageVersion: Nat := 1
   goalSelection: String := "explicit-focused-v1"
   tacticErrorsFormat: String := "string-array-v1"
@@ -383,6 +384,32 @@ structure ObligationInspection where
   deriving Lean.ToJson
 structure GoalInspectResult where
   obligations: Array ObligationInspection
+  deriving Lean.ToJson
+
+-- Kernel-check the complete proof of a state's root
+structure GoalCertify where
+  stateId: Nat
+  -- In thousands, as the `maxHeartbeats` option
+  maxHeartbeats?: Option Nat := .none
+  deriving Lean.FromJson
+structure CertificateReceipt where
+  version: Nat := 1
+  identity: String := "lean-expr-digest-v1"
+  root: String
+  levels: Array String
+  rootType: String
+  proof: String
+  environment: String
+  lean: String
+  axioms: Array String
+  auxiliary: Array String
+  deriving Lean.ToJson
+structure GoalCertifyResult where
+  version: Nat := 1
+  -- certified | incomplete | rejected | inconclusive
+  status: String
+  reason?: Option String := .none
+  receipt?: Option CertificateReceipt := .none
   deriving Lean.ToJson
 
 -- Diagnostic Options, not available in REPL

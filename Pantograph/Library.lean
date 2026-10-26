@@ -140,7 +140,10 @@ def goalStartExpr (expr: String) (levels: Array String): CoreM (Protocol.CR Goal
       if log.hasErrors then
         let messages ← renderMessages log
         return .error (errorI "elab" (String.intercalate "\n" (messages.map (·.data)).toList))
-      return .ok { state with trustedEnv := outer.meta.core.env }
+      return .ok { state with
+        trustedEnv := outer.meta.core.env,
+        rootType := ← instantiateMVars state.rootType,
+        rootLevels := levels.toList.map (·.toName) }
     catch exception =>
       return .error (errorI "elab" (← exception.toMessageData.toString))
     finally
