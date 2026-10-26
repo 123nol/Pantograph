@@ -13,6 +13,10 @@ def step { α } [Lean.ToJson α] (cmd: String) (payload: List (String × Lean.Js
   let payload := Lean.Json.mkObj payload
   let name := name?.getD s!"{cmd} {payload.compress}"
   let result ← Repl.execute { cmd, payload }
+  -- Transition provenance is checked by the snapshot suite.
+  let result := match result with
+    | .obj fields => Lean.Json.obj (fields.erase compare "transition")
+    | other => other
   return LSpec.test name (toString result = toString (Lean.toJson expected))
 
 def stepGoalFragments (payload: List (String × Lean.Json)) (expected: Array String):

@@ -4,9 +4,11 @@ Stage 4 extends merged PR #1 at
 `0dd5d2225e2d093f66a4b6231c1aa35004f2c8f3` on `client_centric_repo`.
 The Lean toolchain and Mathlib deployment pin remain unchanged.
 
-`protocol.describe {}` identifies `maths-ai-pantograph`, protocol version 1,
+`protocol.describe {}` identifies `maths-ai-pantograph`, protocol version 2,
 model S-expression version 1, transition validation version 1, message version 1,
 `explicit-focused-v1` goal selection, and `string-array-v1` tactic errors.
+Version 2 adds transition provenance and `goal.inspect`; see
+[snapshot_protocol.md](snapshot_protocol.md).
 The planning document's contract revision 2 is not a runtime compatibility mode.
 
 Successful `goal.tactic` responses retain `nextStateId`, `goals`, `messages`,

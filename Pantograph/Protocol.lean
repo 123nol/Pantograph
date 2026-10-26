@@ -271,9 +271,11 @@ structure ProtocolDescribe where
   deriving Lean.FromJson
 structure ProtocolDescriptor where
   protocol: String := "maths-ai-pantograph"
-  protocolVersion: Nat := 1
+  protocolVersion: Nat := 2
   modelSexpVersion: Nat := 1
   transitionValidationVersion: Nat := 1
+  transitionProvenanceVersion: Nat := 1
+  inspectionVersion: Nat := 1
   messageVersion: Nat := 1
   goalSelection: String := "explicit-focused-v1"
   tacticErrorsFormat: String := "string-array-v1"
@@ -283,6 +285,30 @@ structure TransitionValidation where
   version: Nat := 1
   scope: String := "transition-expressions"
   checked: Bool
+  deriving Lean.ToJson
+
+/-- How the goals of a successful transition relate to its input snapshot.
+    `goals` is partitioned by `direct`, `siblings` and `extra`; names are
+    metavariable IDs of the result snapshot. -/
+structure TransitionProvenance where
+  version: Nat := 1
+  -- The input obligation the operation ran on
+  selected: String
+  -- Unassigned goals the operation produced for `selected`, in tactic order.
+  -- Contains `selected` itself if the operation left it open.
+  direct: Array String
+  -- For each direct goal, the visible locals it has that `selected` does not
+  introduced: Array (Array String)
+  -- Input goals other than `selected` that are still listed
+  siblings: Array String
+  -- Siblings whose instantiated target or local context changed
+  changed: Array String
+  -- Input goals other than `selected` that this transition assigned
+  closed: Array String
+  -- Input goals other than `selected` that are unassigned but no longer listed
+  dormant: Array String
+  -- Remaining listed obligations, such as reachable holes restored by validation
+  extra: Array String
   deriving Lean.ToJson
 
 structure GoalTacticResult where
@@ -301,6 +327,7 @@ structure GoalTacticResult where
   messages: Array Message := #[]
 
   validation?: Option TransitionValidation := .none
+  transition?: Option TransitionProvenance := .none
 
   -- Soundness audit flags expected by modern clients
   hasSorry: Bool := false
@@ -337,6 +364,25 @@ structure GoalPrintResult where
   root?: Option Expression := .none
   -- The filling expression of the parent goal
   parent?: Option Expression
+  deriving Lean.ToJson
+
+-- Read obligations of a retained state, listed or not
+structure GoalInspect where
+  stateId: Nat
+  goals: Array String
+  deriving Lean.FromJson
+structure ObligationInspection where
+  name: String
+  -- active | pending | assigned | delayed | complete
+  status: String
+  -- Present for active and pending obligations
+  goal?: Option Goal := .none
+  -- Unassigned metavariables reachable from the obligation
+  holes: Array String := #[]
+  universeHoles: Bool := false
+  deriving Lean.ToJson
+structure GoalInspectResult where
+  obligations: Array ObligationInspection
   deriving Lean.ToJson
 
 -- Diagnostic Options, not available in REPL

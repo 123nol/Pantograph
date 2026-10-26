@@ -1,6 +1,7 @@
 import Lean.Data.HashMap
 import Pantograph
 import Pantograph.Validation
+import Pantograph.Transition
 
 namespace Pantograph.Repl
 
@@ -47,6 +48,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
   | "goal.tactic"   => run goal_tactic
   | "goal.continue" => run goal_continue
   | "goal.delete"   => run goal_delete
+  | "goal.inspect"  => run goal_inspect
   | "goal.print"    => run goal_print
   | "frontend.process"  => run frontend_process
   | cmd =>
@@ -187,6 +189,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
     match nextGoalState? with
     | .error error => return .error error
     | .ok (.success nextGoalState) => do
+      let produced := nextGoalState.goals
       let nextGoalState ← match autoMode, isConvExit with
         | true, false => do
           if goalState.convMVar?.isNone && nextGoalState.convMVar?.isNone then
@@ -204,6 +207,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
         | .error message => return .error (errorI "validation" message)
       let nextGoalState := checked.state
       let goals ← nextGoalState.serializeGoals (parent := .some goalState) (options := state.options) |>.run'
+      let transition := transitionProvenance state.options goalState nextGoalState goal produced
       let nextStateId ← newGoalState nextGoalState
       return .ok {
         nextStateId? := .some nextStateId,
@@ -212,6 +216,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
         hasSorry := checked.hasSorry,
         hasUnsafe := checked.hasUnsafe,
         validation? := some { checked := true },
+        transition? := some transition,
       }
     | .ok (.parseError message) =>
       return .ok {
@@ -254,6 +259,18 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
     let goalStates := args.stateIds.foldl (λ map id => map.erase id) state.goalStates
     set { state with goalStates }
     return .ok {}
+  goal_inspect (args: Protocol.GoalInspect): MainM (CR Protocol.GoalInspectResult) := do
+    let state ← get
+    let .some goalState := state.goalStates.find? args.stateId |
+      return .error $ errorIndex s!"Invalid state index {args.stateId}"
+    if args.goals.isEmpty || args.goals.toList.eraseDups.length != args.goals.size then
+      return .error <| errorI "arguments" "goals must be a nonempty list of distinct names"
+    let mut obligations := #[]
+    for name in args.goals do
+      let some obligation ← runMetaInMainM <| inspectObligation goalState ⟨name.toName⟩ state.options |
+        return .error $ errorIndex s!"Unknown obligation {name}"
+      obligations := obligations.push obligation
+    return .ok { obligations }
   goal_print (args: Protocol.GoalPrint): MainM (CR Protocol.GoalPrintResult) := do
     let state ← get
     let .some goalState := state.goalStates.find? args.stateId | return .error $ errorIndex s!"Invalid state index {args.stateId}"
