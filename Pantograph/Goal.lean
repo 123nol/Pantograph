@@ -23,6 +23,10 @@ structure GoalState where
 
   -- The root hole which is the search target
   root: MVarId
+  -- The statement the root was started with and its universe parameters.
+  -- Certification checks the proof against these, not the root's current type.
+  rootType: Expr
+  rootLevels: List Name := []
 
   -- Parent state metavariable source
   parentMVar?: Option MVarId
@@ -46,6 +50,7 @@ protected def GoalState.create (expr: Expr): Elab.TermElabM GoalState := do
   let savedState ← savedStateMonad { elaborator := .anonymous } |>.run' { goals := [root.mvarId!]}
   return {
     root := root.mvarId!,
+    rootType := expr,
     savedState,
     trustedEnv := ← getEnv,
     parentMVar? := .none,
@@ -56,6 +61,10 @@ protected def GoalState.createFromMVars (goals: List MVarId) (root: MVarId): Met
   let savedState ← savedStateMonad { elaborator := .anonymous } |>.run' { goals } |>.run' {}
   return {
     root,
+    -- Frontend states have an anonymous root, which cannot be certified.
+    rootType := ← match (← getMCtx).findDecl? root with
+      | .some decl => instantiateMVars decl.type
+      | .none => pure (mkSort levelZero),
     savedState,
     trustedEnv := ← getEnv,
     parentMVar? := .none,
@@ -321,6 +330,8 @@ protected def GoalState.conv (state: GoalState) (goal: MVarId):
   let otherGoals := state.goals.filter $ λ g => g != goal
   return .success {
     root := state.root,
+    rootType := state.rootType,
+    rootLevels := state.rootLevels,
     trustedEnv := state.trustedEnv,
     savedState := nextSavedState
     parentMVar? := .some goal,
@@ -356,6 +367,8 @@ protected def GoalState.convExit (state: GoalState):
   let nextSavedState ← tacticM { elaborator := .anonymous } |>.run' state.savedState.tactic
   return .success {
     root := state.root,
+    rootType := state.rootType,
+    rootLevels := state.rootLevels,
     trustedEnv := state.trustedEnv,
     savedState := nextSavedState
     parentMVar? := .some convGoal,
@@ -429,6 +442,8 @@ protected def GoalState.tryCalc (state: GoalState) (goal: MVarId) (pred: String)
   let calcPrevRhs? := remainder?.map $ λ g => (g, rhs)
   return .success {
     root := state.root,
+    rootType := state.rootType,
+    rootLevels := state.rootLevels,
     trustedEnv := state.trustedEnv,
     savedState := {
       term := ← MonadBacktrack.saveState,

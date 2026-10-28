@@ -87,3 +87,19 @@ elab "contract_hidden_local_value" : tactic => withMainContext do
   Meta.withLetDecl `hiddenValue (mkConst ``True) hole fun value => do
     goal.assign (← Meta.mkLetFVars #[value] value)
   setGoals []
+
+/-- Close the goal with an axiom added during the search. -/
+elab "contract_new_axiom" : tactic => do
+  let goal ← getMainGoal
+  let name := `ContractFixtures.searchAxiom
+  addDecl (.axiomDecl { name, levelParams := [], type := ← instantiateMVars (← goal.getType), isUnsafe := false })
+  goal.assign (mkConst name)
+  setGoals []
+
+/-- Close the goal with a checked auxiliary lemma added during the search. -/
+elab "contract_auxiliary_lemma" : tactic => do
+  let goal ← getMainGoal
+  let name := `ContractFixtures.auxiliaryLemma
+  addDecl (.thmDecl { name, levelParams := [], type := mkConst ``True, value := mkConst ``True.intro })
+  goal.assign (mkConst name)
+  setGoals []
