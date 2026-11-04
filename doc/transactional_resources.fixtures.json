@@ -1,0 +1,62 @@
+[
+  {
+    "error": "resource",
+    "desc": "Lean command heartbeat budget exhausted",
+    "resource": {
+      "version": 1,
+      "kind": "heartbeats",
+      "phase": "execute",
+      "limit": 200000
+    },
+    "recovery": "command-rolled-back"
+  },
+  {
+    "error": "resource",
+    "desc": "Lean command heartbeat budget exhausted",
+    "resource": {
+      "version": 1,
+      "kind": "heartbeats",
+      "phase": "validate",
+      "limit": 200000
+    },
+    "recovery": "command-rolled-back"
+  },
+  {
+    "error": "resource",
+    "desc": "Lean command heartbeat budget exhausted",
+    "resource": {
+      "version": 1,
+      "kind": "heartbeats",
+      "phase": "observe",
+      "limit": 200000
+    },
+    "recovery": "command-rolled-back"
+  },
+  {
+    "error": "resource",
+    "desc": "Lean command heartbeat budget exhausted",
+    "resource": {
+      "version": 1,
+      "kind": "heartbeats",
+      "phase": "serialize",
+      "limit": 200000
+    },
+    "recovery": "command-rolled-back"
+  },
+  {
+    "error": "resource",
+    "desc": "Lean command heartbeat budget exhausted",
+    "resource": {
+      "version": 1,
+      "kind": "heartbeats",
+      "phase": "execute",
+      "limit": 200000
+    },
+    "recovery": "session-unusable"
+  },
+  {
+    "error": "internal",
+    "desc": "Unexpected REPL command failure",
+    "recovery": "session-unusable"
+  }
+]

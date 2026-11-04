@@ -88,6 +88,19 @@ structure TacticInvocation where
   info : Elab.TacticInfo
   ctx : Elab.ContextInfo
   children : PersistentArray Elab.InfoTree
+/-- Observe an info-tree snapshot under the caller's command budget and restore its state. -/
+private def observeMeta (info : Elab.ContextInfo) (lctx : LocalContext) (action : MetaM α) : CoreM α := do
+  let outer ← get
+  try
+    modify fun s => { s with env := info.env, ngen := info.ngen, cache := {} }
+    withTheReader Core.Context (fun ctx => { ctx with
+      currNamespace := info.currNamespace, openDecls := info.openDecls,
+      fileName := "<InfoTree>", fileMap := info.fileMap }) <|
+      withOptions (fun _ => info.options) <|
+        withCommandPhase "observe" <| action.run' { lctx } { mctx := info.mctx }
+  finally
+    set outer
+
 namespace TacticInvocation
 
 /-- Return the range of the tactic, as a pair of file positions. -/
@@ -95,33 +108,34 @@ namespace TacticInvocation
 protected def range (t : TacticInvocation) : Position × Position := t.ctx.fileMap.stxRange t.info.stx
 
 /-- Pretty print a tactic. -/
-protected def pp (t : TacticInvocation) : IO Format :=
-  t.ctx.runMetaM {} try
+protected def pp (t : TacticInvocation) : CoreM Format :=
+  observeMeta t.ctx {} try
     Lean.PrettyPrinter.ppTactic ⟨t.info.stx⟩
-  catch _ =>
+  catch ex =>
+    rethrowInfrastructure ex
     pure "<failed to pretty print>"
 
 /-- Run a tactic on the goals stored in a `TacticInvocation`. -/
-protected def runMetaMGoalsBefore (t : TacticInvocation) (x : List MVarId → MetaM α) : IO α := do
-  t.ctx.runMetaM {} <| Meta.withMCtx t.info.mctxBefore <| x t.info.goalsBefore
+protected def runMetaMGoalsBefore (t : TacticInvocation) (x : List MVarId → MetaM α) : CoreM α := do
+  observeMeta t.ctx {} <| Meta.withMCtx t.info.mctxBefore <| x t.info.goalsBefore
 
 /-- Run a tactic on the after goals stored in a `TacticInvocation`. -/
-protected def runMetaMGoalsAfter (t : TacticInvocation) (x : List MVarId → MetaM α) : IO α := do
-  t.ctx.runMetaM {} <| Meta.withMCtx t.info.mctxAfter <| x t.info.goalsAfter
+protected def runMetaMGoalsAfter (t : TacticInvocation) (x : List MVarId → MetaM α) : CoreM α := do
+  observeMeta t.ctx {} <| Meta.withMCtx t.info.mctxAfter <| x t.info.goalsAfter
 
 /-- Run a tactic on the main goal stored in a `TacticInvocation`. -/
-protected def runMetaM (t : TacticInvocation) (x : MVarId → MetaM α) : IO α := do
+protected def runMetaM (t : TacticInvocation) (x : MVarId → MetaM α) : CoreM α := do
   match t.info.goalsBefore.head? with
-  | none => throw <| IO.userError s!"No goals at {← t.pp}"
+  | none => throwError "No goals at {← t.pp}"
   | some g => t.runMetaMGoalsBefore fun _ => do g.withContext <| x g
 
-protected def goalState (t : TacticInvocation) : IO (List Format) := do
+protected def goalState (t : TacticInvocation) : CoreM (List Format) := do
   t.runMetaMGoalsBefore (fun gs => gs.mapM fun g => do Meta.ppGoal g)
 
-protected def goalStateAfter (t : TacticInvocation) : IO (List Format) := do
+protected def goalStateAfter (t : TacticInvocation) : CoreM (List Format) := do
   t.runMetaMGoalsAfter (fun gs => gs.mapM fun g => do Meta.ppGoal g)
 
-protected def ppExpr (t : TacticInvocation) (e : Expr) : IO Format :=
+protected def ppExpr (t : TacticInvocation) (e : Expr) : CoreM Format :=
   t.runMetaM (fun _ => do Meta.ppExpr (← instantiateMVars e))
 
 end TacticInvocation
@@ -250,10 +264,10 @@ private def outermostOwnedTerms (invocation : TacticInvocation) : List Elab.Term
 
 private def serializeInvokedTerm
     (invocation : TacticInvocation)
-    (term : Elab.TermInfo) : IO Protocol.InvokedTerm := do
+    (term : Elab.TermInfo) : CoreM Protocol.InvokedTerm := do
   let some (sourceStart, sourceEnd) := termRange term
-    | throw <| IO.userError "Elaborated tactic term has no source range"
-  invocation.ctx.runMetaM {} <| Meta.withMCtx invocation.info.mctxAfter <|
+    | throwError "Elaborated tactic term has no source range"
+  observeMeta invocation.ctx {} <| Meta.withMCtx invocation.info.mctxAfter <|
     Meta.withLCtx term.lctx #[] do
       let some goal := invocation.info.goalsBefore.head?
         | throwError "Tactic invocation has no input goal"
@@ -270,8 +284,8 @@ private def serializeInvokedTerm
 
 private def serializeInvokedTacticSyntax
     (invocation : TacticInvocation)
-    (termInfos : List Elab.TermInfo) : IO String := do
-  invocation.ctx.runMetaM {} <| Meta.withMCtx invocation.info.mctxAfter do
+    (termInfos : List Elab.TermInfo) : CoreM String := do
+  observeMeta invocation.ctx {} <| Meta.withMCtx invocation.info.mctxAfter do
     let some goal := invocation.info.goalsBefore.head?
       | throwError "Tactic invocation has no input goal"
     let goalDecl ← goal.getDecl
@@ -294,7 +308,7 @@ private partial def collectOriginalIdentifiers : Syntax → List Syntax
   | .node _ _ args => args.toList.bind collectOriginalIdentifiers
   | _ => []
 
-private def newlyIntroducedUserNames (invocation : TacticInvocation) : IO (Array Name) := do
+private def newlyIntroducedUserNames (invocation : TacticInvocation) : CoreM (Array Name) := do
   let beforeIds ← invocation.runMetaMGoalsBefore fun goals => do
     let mut ids := #[]
     for goal in goals do
@@ -311,7 +325,7 @@ private def newlyIntroducedUserNames (invocation : TacticInvocation) : IO (Array
     pure names
 
 private def collectSyntaxArguments
-    (invocation : TacticInvocation) : IO (Array Protocol.InvokedSyntaxArgument) := do
+    (invocation : TacticInvocation) : CoreM (Array Protocol.InvokedSyntaxArgument) := do
   if !isBinderIntroducingTactic invocation.info.stx then
     return #[]
   let introducedNames ← newlyIntroducedUserNames invocation
@@ -332,7 +346,7 @@ private def collectSyntaxArguments
 
 @[export pantograph_frontend_collect_tactics_from_compilation_step_m]
 def collectTacticsFromCompilationStep (step : CompilationStep)
-    (options : Protocol.Options := {}) : IO (List Protocol.InvokedTactic) := do
+    (options : Protocol.Options := {}) : CoreM (List Protocol.InvokedTactic) := do
   let tactics := step.trees.bind collectTactics |>.filter fun invocation =>
     (Elab.Info.ofTacticInfo invocation.info).isOriginal
   tactics.mapM λ invocation => do
@@ -358,7 +372,8 @@ def collectTacticsFromCompilationStep (step : CompilationStep)
         goalBefore, goalAfter, goalsBefore, goalsAfter, tactic, sourceSyntax, terms, syntaxArgs
       }
     catch e =>
-      let captureError := toString e
+      rethrowInfrastructure e
+      let captureError ← withCommandPhase "observe" e.toMessageData.toString
       return {
         goalBefore,
         goalAfter,

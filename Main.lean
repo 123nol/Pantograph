@@ -23,30 +23,33 @@ def parseCommand (s: String): Except String Command := do
       return { cmd := s.take offset, payload := payload }
   | .none => throw "Command is empty"
 
-partial def loop : MainM Unit := do
-  let state ← get
+/-- A failed write ends the process; it never triggers a second response. -/
+def writeResponse (bytes : String) : IO Unit := do
+  let stdout ← IO.getStdout
+  stdout.putStr (bytes ++ "\n")
+  stdout.flush
+
+partial def loop : MainM UInt32 := do
   let command ← (← IO.getStdin).getLine
-  if command.trim.length = 0 then return ()
+  if command.trim.length = 0 then return (0 : UInt32)
   match parseCommand command with
   | .error error =>
-    let error  := Lean.toJson ({ error := "command", desc := error }: InteractionError)
-    -- Using `Lean.Json.compress` here to prevent newline
-    IO.println error.compress
+    let error := Lean.toJson ({ error := "command", desc := error.take 2048 } : InteractionError)
+    writeResponse error.compress
   | .ok command =>
-    let ret ← execute command
-    let str := match state.options.printJsonPretty with
-      | true => ret.pretty
-      | false => ret.compress
-    IO.println str
+    let result ← executeCommand command
+    writeResponse result.bytes
+    if result.fatal then
+      (← IO.getStderr).putStrLn "REPL command failed; session is unusable"
+      return (1 : UInt32)
   loop
 
-
-unsafe def main (args: List String): IO Unit := do
+private unsafe def runRepl (args: List String): IO UInt32 := do
   -- NOTE: A more sophisticated scheme of command line argument handling is needed.
   -- Separate imports and options
   if args == ["--version"] then do
     println! s!"{Pantograph.version}"
-    return
+    return (0 : UInt32)
 
   Pantograph.initSearch ""
 
@@ -57,10 +60,13 @@ unsafe def main (args: List String): IO Unit := do
   let context: Context := {
     imports
   }
+  let coreM := loop.run context |>.run' {}
+  writeResponse "ready."
+  return (← coreM.toIO coreContext coreState).1
+
+unsafe def main (args : List String) : IO UInt32 := do
   try
-    let coreM := loop.run context |>.run' {}
-    IO.println "ready."
-    discard <| coreM.toIO coreContext coreState
-  catch ex =>
-    IO.println "Uncaught IO exception"
-    IO.println ex.toString
+    runRepl args
+  catch _ =>
+    (← IO.getStderr).putStrLn "REPL startup or transport failure; session is unusable"
+    return (1 : UInt32)

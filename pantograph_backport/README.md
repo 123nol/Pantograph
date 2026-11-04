@@ -1,3 +1,8 @@
+Current transactional resource-error work is documented in
+[the revision-3 handoff](transactional_resources/README.md). The captures and
+patch below are historical revision-1/revision-2 evidence and are not the current
+wire contract.
+
 # Stage 4 companion delivery
 
 Implemented on `client_centric_repo` over PR #1 merge

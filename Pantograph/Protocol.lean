@@ -11,9 +11,6 @@ namespace Pantograph.Protocol
 
 /-- Main Option structure, placed here to avoid name collision -/
 structure Options where
-  -- When false, suppress newlines in Json objects. Useful for machine-to-machine interaction.
-  -- This should be  false` by default to avoid any surprises with parsing.
-  printJsonPretty: Bool    := false
   -- When enabled, pretty print every expression
   printExprPretty: Bool    := true
   -- When enabled, print the raw AST of expressions
@@ -97,6 +94,21 @@ structure Command where
 structure InteractionError where
   error: String
   desc: String
+  deriving Lean.ToJson
+
+/-- Resource limits use Lean option units, which count thousands of heartbeats. -/
+structure ResourceDetails where
+  version : Nat := 1
+  kind : String := "heartbeats"
+  phase : String
+  limit : Nat
+  deriving Lean.ToJson
+
+structure CommandFailure where
+  error : String
+  desc : String
+  resource? : Option ResourceDetails := none
+  recovery : String
   deriving Lean.ToJson
 
 def errorIndex (desc: String): InteractionError := { error := "index", desc }
@@ -201,7 +213,6 @@ structure EnvAddResult where
 
 /-- Set options; See `Options` struct above for meanings -/
 structure OptionsSet where
-  printJsonPretty?: Option Bool
   printExprPretty?: Option Bool
   printExprAST?: Option Bool
   printExprModelAST?: Option Bool
@@ -271,7 +282,9 @@ structure ProtocolDescribe where
   deriving Lean.FromJson
 structure ProtocolDescriptor where
   protocol: String := "maths-ai-pantograph"
-  protocolVersion: Nat := 2
+  protocolVersion: Nat := 3
+  resourceErrorVersion: Nat := 1
+  commandTransactionVersion: Nat := 1
   modelSexpVersion: Nat := 1
   transitionValidationVersion: Nat := 1
   transitionProvenanceVersion: Nat := 1

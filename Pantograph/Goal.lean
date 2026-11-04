@@ -244,7 +244,8 @@ protected def GoalState.withOperation (state : GoalState) (action : Elab.TermEla
         pure (.success { next with savedState := { next.savedState with term } })
       | other => pure other
     catch exception => do
-      let text ← exception.toMessageData.toString
+      rethrowInfrastructure exception
+      let text ← withCommandPhase "observe" exception.toMessageData.toString
       Elab.logException exception
       let messages ← renderMessages (← getThe Core.State).messages
       return TacticResult.failure #[text] (if messages.isEmpty then #[Protocol.Message.error text] else messages)

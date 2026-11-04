@@ -1,5 +1,6 @@
 import Lean.Parser
 import Lean.Elab.Frontend
+import Pantograph.Resources
 
 open Lean
 
@@ -69,15 +70,25 @@ def processOneCommand: FrontendM (CompilationStep × Bool) := do
   let ⟨_, fileName, fileMap⟩  := (← read).inputCtx
   return ({ fileName, fileMap, src, stx, before, after, msgs, trees }, done)
 
-partial def mapCompilationSteps { α } (f: CompilationStep → IO α) : FrontendM (List α) := do
-  let (cmd, done) ← processOneCommand
-  if done then
-    if cmd.src.isEmpty then
-      return []
-    else
-      return [← f cmd]
-  else
-    return (← f cmd) :: (← mapCompilationSteps f)
+/-- Native frontend commands receive only the remaining request allowance.
+    Observation stays in CoreM so restoring an info tree cannot reset its origin. -/
+partial def mapCompilationSteps { α } (context : Elab.Frontend.Context)
+    (state : Elab.Frontend.State) (f : CompilationStep → CoreM α) : CoreM (List α) := do
+  withCommandPhase "execute" do
+    let ctx ← read
+    let used := (← IO.getNumHeartbeats) - ctx.initHeartbeats
+    let remaining := (ctx.maxHeartbeats - used + 999) / 1000
+    -- Lean uses zero for unlimited, so exhaustion must throw before installing options.
+    if remaining == 0 then Core.throwMaxHeartbeat `frontend `maxHeartbeats ctx.maxHeartbeats
+    let state := { state with commandState := { state.commandState with
+      scopes := state.commandState.scopes.map fun scope =>
+        { scope with opts := scope.opts.setNat `maxHeartbeats remaining } } }
+    let ((step, done), next) ← processOneCommand.run context |>.run state
+    Core.checkMaxHeartbeats "frontend"
+    if done && step.src.isEmpty then return []
+    let observed ← withCommandPhase "observe" <| f step
+    if done then return [observed]
+    return observed :: (← mapCompilationSteps context next f)
 
 
 @[export pantograph_frontend_find_source_path_m]

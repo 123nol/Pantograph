@@ -8,6 +8,7 @@ import Test.Proofs
 import Test.Serial
 import Test.Snapshot
 import Test.Tactic
+import Test.Transaction
 import Test.Validation
 
 -- Test running infrastructure
@@ -46,6 +47,7 @@ def main (args: List String) := do
     (trustLevel := 1)
 
   let suites: List (String × List (String × IO LSpec.TestSeq)) := [
+    ("Transaction", Transaction.suite env_default),
     ("Validation", Validation.suite env_default),
     ("Environment", Environment.suite),
     ("Frontend", Frontend.suite env_default),

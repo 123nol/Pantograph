@@ -11,6 +11,7 @@ structure Context where
 
 /-- Stores state of the REPL -/
 structure State where
+  usable : Bool := true
   options: Protocol.Options := {}
   nextId: Nat := 0
   goalStates: Lean.HashMap Nat GoalState := Lean.HashMap.empty
@@ -27,13 +28,13 @@ def runMetaInMainM { α } (metaM: Lean.MetaM α): MainM α :=
 def runTermElabInMainM { α } (termElabM: Lean.Elab.TermElabM α) : MainM α :=
   termElabM.run' (ctx := Condensed.elabContext) |>.run'
 
-def execute (command: Protocol.Command): MainM Lean.Json := do
+private def dispatch (command: Protocol.Command): MainM Lean.Json := do
   let run { α β: Type } [Lean.FromJson α] [Lean.ToJson β] (comm: α → MainM (CR β)): MainM Lean.Json :=
     match Lean.fromJson? command.payload with
     | .ok args => do
       match (← comm args) with
-      | .ok result =>  return Lean.toJson result
-      | .error ierror => return Lean.toJson ierror
+      | .ok result => withCommandPhase "serialize" <| pure (Lean.toJson result)
+      | .error ierror => withCommandPhase "serialize" <| pure (Lean.toJson ierror)
     | .error error => return Lean.toJson $ errorCommand s!"Unable to parse json: {error}"
   match command.cmd with
   | "protocol.describe" => run protocol_describe
@@ -81,11 +82,11 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
     let nGoals := state.goalStates.size
     return .ok { nGoals }
   env_catalog (args: Protocol.EnvCatalog): MainM (CR Protocol.EnvCatalogResult) := do
-    let result ← Environment.catalog args
+    let result ← withCommandPhase "observe" <| Environment.catalog args
     return .ok result
   env_inspect (args: Protocol.EnvInspect): MainM (CR Protocol.EnvInspectResult) := do
     let state ← get
-    Environment.inspect args state.options
+    withCommandPhase "observe" <| Environment.inspect args state.options
   env_add (args: Protocol.EnvAdd): MainM (CR Protocol.EnvAddResult) := do
     Environment.addDecl args
   expr_echo (args: Protocol.ExprEcho): MainM (CR Protocol.ExprEchoResult) := do
@@ -97,7 +98,6 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
     set { state with
       options := {
         -- FIXME: This should be replaced with something more elegant
-        printJsonPretty := args.printJsonPretty?.getD options.printJsonPretty,
         printExprPretty := args.printExprPretty?.getD options.printExprPretty,
         printExprAST := args.printExprAST?.getD options.printExprAST,
         printExprModelAST := args.printExprModelAST?.getD options.printExprModelAST,
@@ -204,12 +204,13 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
           let .ok result := nextGoalState.resume (nextGoalState.goals ++ dormantGoals) | throwError "Resuming known goals"
           pure result
         | false, _ => pure nextGoalState
-      let checked ← match validateTransition goalState nextGoalState goal with
+      let validation ← withCommandPhase "validate" <| pure (validateTransition goalState nextGoalState goal)
+      let checked ← match validation with
         | .ok checked => pure checked
         | .error message => return .error (errorI "validation" message)
       let nextGoalState := checked.state
-      let goals ← nextGoalState.serializeGoals (parent := .some goalState) (options := state.options) |>.run'
-      let transition := transitionProvenance state.options goalState nextGoalState goal produced
+      let goals ← withCommandPhase "observe" <| nextGoalState.serializeGoals (parent := .some goalState) (options := state.options) |>.run'
+      let transition ← withCommandPhase "observe" <| pure (transitionProvenance state.options goalState nextGoalState goal produced)
       let nextStateId ← newGoalState nextGoalState
       return .ok {
         nextStateId? := .some nextStateId,
@@ -251,7 +252,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
         goalStates := state.goalStates.insert nextStateId nextGoalState,
         nextId := state.nextId + 1
       }
-      let goals ← goalSerialize nextGoalState (options := state.options)
+      let goals ← withCommandPhase "observe" <| goalSerialize nextGoalState (options := state.options)
       return .ok {
         nextStateId,
         goals,
@@ -269,7 +270,7 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
       return .error <| errorI "arguments" "goals must be a nonempty list of distinct names"
     let mut obligations := #[]
     for name in args.goals do
-      let some obligation ← runMetaInMainM <| inspectObligation goalState ⟨name.toName⟩ state.options |
+      let some obligation ← withCommandPhase "observe" <| runMetaInMainM <| inspectObligation goalState ⟨name.toName⟩ state.options |
         return .error $ errorIndex s!"Unknown obligation {name}"
       obligations := obligations.push obligation
     return .ok { obligations }
@@ -284,60 +285,126 @@ def execute (command: Protocol.Command): MainM Lean.Json := do
   goal_print (args: Protocol.GoalPrint): MainM (CR Protocol.GoalPrintResult) := do
     let state ← get
     let .some goalState := state.goalStates.find? args.stateId | return .error $ errorIndex s!"Invalid state index {args.stateId}"
-    let result ← runMetaInMainM <| goalPrint goalState state.options
+    let result ← withCommandPhase "observe" <| runMetaInMainM <| goalPrint goalState state.options
     return .ok result
   frontend_process (args: Protocol.FrontendProcess): MainM (CR Protocol.FrontendProcessResult) := do
     let options := (← get).options
-    try
-      let (fileName, file) ← match args.fileName?, args.file? with
-        | .some fileName, .none => do
-          let file ← IO.FS.readFile fileName
-          pure (fileName, file)
-        | .none, .some file =>
-          pure ("<anonymous>", file)
-        | _, _ => return .error <| errorI "arguments" "Exactly one of {fileName, file} must be supplied"
-      let env?: Option Lean.Environment ← if args.fileName?.isSome then
+    let (fileName, file) ← match args.fileName?, args.file? with
+      | .some fileName, .none => do
+        let file ← IO.FS.readFile fileName
+        pure (fileName, file)
+      | .none, .some file =>
+        pure ("<anonymous>", file)
+      | _, _ => return .error <| errorI "arguments" "Exactly one of {fileName, file} must be supplied"
+    let env?: Option Lean.Environment ← if args.fileName?.isSome then
+        pure .none
+      else do
+        let env ← Lean.MonadEnv.getEnv
+        pure <| .some env
+    let (context, state) ← do Frontend.createContextStateFromFile file fileName env? (← Lean.getOptions)
+    let li ← Frontend.mapCompilationSteps context state λ step => do
+      let boundary := (step.src.startPos.byteIdx, step.src.stopPos.byteIdx)
+      let invocations?: Option (List Protocol.InvokedTactic) ← if args.invocations then
+          let invocations ← Frontend.collectTacticsFromCompilationStep step options
+          pure $ .some invocations
+        else
           pure .none
+      let sorrys := if args.sorrys then
+          Frontend.collectSorrys step
+        else
+          []
+      let messages ← step.messageStrings
+      return (boundary, invocations?, sorrys, messages)
+    let units ← withCommandPhase "observe" <| li.mapM λ (boundary, invocations?, sorrys, messages) => do
+      let (goalStateId?, goals) ← if sorrys.isEmpty then do
+          pure (.none, #[])
         else do
-          let env ← Lean.MonadEnv.getEnv
-          pure <| .some env
-      let (context, state) ← do Frontend.createContextStateFromFile file fileName env? {}
-      let frontendM := Frontend.mapCompilationSteps λ step => do
-        let boundary := (step.src.startPos.byteIdx, step.src.stopPos.byteIdx)
-        let invocations?: Option (List Protocol.InvokedTactic) ← if args.invocations then
-            let invocations ← Frontend.collectTacticsFromCompilationStep step options
-            pure $ .some invocations
+          let goalState ← runMetaInMainM $ Frontend.sorrysToGoalState sorrys
+          let stateId ← newGoalState goalState
+          let goals ← goalSerialize goalState options
+          pure (.some stateId, goals)
+      return {
+        boundary,
+        invocations?,
+        goalStateId?,
+        goals,
+        messages,
+      }
+    let result : Protocol.FrontendProcessResult := { units }
+    if let some outputFile := args.outputFile? then
+      IO.FS.writeFile outputFile (Lean.Json.compress (Lean.toJson result))
+      return .ok { units := [] }
+    else
+      return .ok result
+
+/-- Bytes are fully encoded before the staged states become visible. -/
+structure CommandResult where
+  response : Lean.Json
+  bytes : String
+  fatal : Bool := false
+
+/-- A separate Core state reference owns all changes until encoding completes.
+    Failure discards that reference; restoration requires no Lean computation. -/
+def runTransaction (command : Protocol.Command) (action : MainM Lean.Json) : MainM CommandResult := do
+  let entry ← get
+  let coreEntry ← getThe Lean.Core.State
+  let ctx ← read
+  let coreCtx ← readThe Lean.Core.Context
+  let fail (error desc recovery : String) (resource? : Option Protocol.ResourceDetails := none) : CommandResult :=
+    let response := Lean.toJson ({ error, desc, resource?, recovery } : Protocol.CommandFailure)
+    { response, bytes := response.compress, fatal := recovery == "session-unusable" }
+  unless entry.usable do
+    return fail "internal" "Unexpected REPL command failure" "session-unusable"
+  let stagedAction : Lean.CoreM ((Lean.Json × String) × State) := Lean.withCurrHeartbeats do
+    withCommandPhase "execute" <| (do
+      let response ← action
+      let bytes ← withCommandPhase "serialize" <| pure response.compress
+      return (response, bytes)).run ctx |>.run entry
+  let started ← IO.getNumHeartbeats
+  let outcome ← (stagedAction.run coreCtx coreEntry).toBaseIO
+  if pantograph.traceCommands.get coreCtx.options then
+    let phase := match outcome with
+      | .error (.internal _ details) => details.getString `phase "unknown"
+      | _ => "complete"
+    let text := command.payload.getObjValAs? String "tactic" |>.toOption |>.getD ""
+    let selected := command.payload.getObjValAs? Nat "stateId" |>.toOption
+    let goal := command.payload.getObjValAs? Nat "goalId" |>.toOption
+    let trace := Lean.Json.mkObj [
+      ("command", .str (command.cmd.take 128)), ("tactic", .str (text.take 512)),
+      ("stateId", Lean.toJson selected), ("goalId", Lean.toJson goal),
+      ("phase", .str phase), ("heartbeats", Lean.toJson ((← IO.getNumHeartbeats) - started))]
+    (← IO.getStderr).putStrLn trace.compress
+  match outcome with
+  | .ok (((response, bytes), staged), coreStaged) =>
+    set staged
+    modifyThe Lean.Core.State fun _ => coreStaged
+    return { response, bytes }
+  | .error ex =>
+    let result := match ex with
+      | .internal id details =>
+        if id == commandResourceExceptionId && details.getNat `limit > 0 &&
+            ["execute", "validate", "observe", "serialize"].contains (details.getString `phase) then
+          if command.cmd == "goal.certify" then
+            let response := Lean.toJson ({
+              status := "inconclusive",
+              reason? := some "Lean command heartbeat budget exhausted" } : Protocol.GoalCertifyResult)
+            { response, bytes := response.compress }
           else
-            pure .none
-        let sorrys := if args.sorrys then
-            Frontend.collectSorrys step
-          else
-            []
-        let messages ← step.messageStrings
-        return (boundary, invocations?, sorrys, messages)
-      let li ← frontendM.run context |>.run' state
-      let units ← li.mapM λ (boundary, invocations?, sorrys, messages) => do
-        let (goalStateId?, goals) ← if sorrys.isEmpty then do
-            pure (.none, #[])
-          else do
-            let goalState ← runMetaInMainM $ Frontend.sorrysToGoalState sorrys
-            let stateId ← newGoalState goalState
-            let goals ← goalSerialize goalState options
-            pure (.some stateId, goals)
-        return {
-          boundary,
-          invocations?,
-          goalStateId?,
-          goals,
-          messages,
-        }
-      let result : Protocol.FrontendProcessResult := { units }
-      if let some outputFile := args.outputFile? then
-        IO.FS.writeFile outputFile (Lean.Json.compress (Lean.toJson result))
-        return .ok { units := [] }
-      else
-        return .ok result
-    catch e =>
-      return .error $ errorI "frontend" (← e.toMessageData.toString)
+            -- Frontend imports and output files may have effects outside retained Lean state.
+            fail "resource" "Lean command heartbeat budget exhausted"
+              (if command.cmd == "frontend.process" then "session-unusable" else "command-rolled-back")
+              (some { phase := details.getString `phase, limit := details.getNat `limit })
+        else fail "internal" "Unexpected REPL command failure" "session-unusable"
+      | _ => fail "internal" "Unexpected REPL command failure" "session-unusable"
+    set { entry with usable := !result.fatal }
+    return result
+
+/-- Every dispatch path uses the same transaction and encoding boundary. -/
+def executeCommand (command : Protocol.Command) : MainM CommandResult :=
+  runTransaction command (dispatch command)
+
+/-- Native callers share the executable's transaction boundary. -/
+def execute (command : Protocol.Command) : MainM Lean.Json := do
+  return (← executeCommand command).response
 
 end Pantograph.Repl

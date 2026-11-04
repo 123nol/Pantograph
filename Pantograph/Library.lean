@@ -59,6 +59,8 @@ def createCoreContext (options: Array String): IO Core.Context := do
   let options ← match options? with
     | .ok options => pure options
     | .error e => throw $ IO.userError s!"Options cannot be parsed: {e}"
+  if Lean.Core.getMaxHeartbeats options == 0 then
+    throw <| IO.userError "maxHeartbeats must be positive"
   return {
     currNamespace := Name.str .anonymous "Aniva"
     openDecls := [],     -- No 'open' directives needed
@@ -119,8 +121,9 @@ def exprEcho (expr: String) (expectedType?: Option String := .none) (levels: Arr
           type := (← serializeExpression options type),
           expr := (← serializeExpression options expr)
       }
-    catch exception =>
-      return .error $ errorI "typing" (← exception.toMessageData.toString)
+    catch exception => do
+      rethrowInfrastructure exception
+      return .error $ errorI "typing" (← withCommandPhase "observe" exception.toMessageData.toString)
 
 @[export pantograph_goal_start_expr_m]
 def goalStartExpr (expr: String) (levels: Array String): CoreM (Protocol.CR GoalState) :=
@@ -144,8 +147,9 @@ def goalStartExpr (expr: String) (levels: Array String): CoreM (Protocol.CR Goal
         trustedEnv := outer.meta.core.env,
         rootType := ← instantiateMVars state.rootType,
         rootLevels := levels.toList.map (·.toName) }
-    catch exception =>
-      return .error (errorI "elab" (← exception.toMessageData.toString))
+    catch exception => do
+      rethrowInfrastructure exception
+      return .error (errorI "elab" (← withCommandPhase "observe" exception.toMessageData.toString))
     finally
       outer.restore (restoreInfo := true)
       modifyThe Meta.State fun _ => outer.meta.meta
@@ -162,8 +166,7 @@ def goalSerialize (state: GoalState) (options: @&Protocol.Options): CoreM (Array
 
 @[export pantograph_goal_print_m]
 def goalPrint (state: GoalState) (options: @&Protocol.Options): CoreM Protocol.GoalPrintResult :=
-  runMetaM do
-    state.restoreMetaM
+  runMetaM <| state.withMetaState do
     return {
       root? := ← state.rootExpr?.mapM (λ expr =>
         state.withRootContext do

@@ -103,3 +103,23 @@ elab "contract_auxiliary_lemma" : tactic => do
   addDecl (.thmDecl { name, levelParams := [], type := mkConst ``True, value := mkConst ``True.intro })
   goal.assign (mkConst name)
   setGoals []
+
+/-- Exercise Lean's native reduction heartbeat checks without completing the proof. -/
+elab "contract_heartbeat" : tactic => do
+  let mut expr := mkNatLit 0
+  for _ in [:1000000] do
+    expr := mkApp (mkConst ``Nat.succ) expr
+    discard <| Meta.whnf expr
+
+/-- Exercise a fatal exception at the executable transaction boundary. -/
+elab "contract_internal_failure" : tactic => do
+  throw <| Exception.internal Pantograph.commandResourceExceptionId
+
+/-- Spend allocations while a lazy diagnostic is rendered, after tactic execution. -/
+elab "contract_diagnostic_heartbeat" : tactic => do
+  let data := MessageData.ofLazy (fun _ => do
+    let values ← IO.mkRef (#[] : Array Nat)
+    for index in [:1000000] do
+      values.modify (·.push index)
+    return Dynamic.mk ("rendered" : MessageData)) (fun _ => false)
+  logInfo data

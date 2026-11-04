@@ -38,12 +38,16 @@ def elabType (syn: Syntax): Elab.TermElabM (Except String Expr) := do
   try
     let expr ← Elab.Term.elabType syn
     return .ok expr
-  catch ex => return .error (← ex.toMessageData.toString)
+  catch ex =>
+    rethrowInfrastructure ex
+    return .error (← withCommandPhase "observe" ex.toMessageData.toString)
 def elabTerm (syn: Syntax) (expectedType? : Option Expr := .none): Elab.TermElabM (Except String Expr) := do
   try
     let expr ← Elab.Term.elabTerm (stx := syn) expectedType?
     return .ok expr
-  catch ex => return .error (← ex.toMessageData.toString)
+  catch ex =>
+    rethrowInfrastructure ex
+    return .error (← withCommandPhase "observe" ex.toMessageData.toString)
 
 
 --- Output Functions ---
@@ -264,7 +268,8 @@ where
       let args := app.getAppArgs
       let info? ← try
         pure (some (← Meta.getFunInfoNArgs fn args.size))
-      catch _ =>
+      catch ex =>
+        rethrowInfrastructure ex
         pure none
       let explicitArgs := args.mapIdx (fun index arg =>
         match info?.bind fun info => info.paramInfo[index.val]? with
@@ -362,7 +367,8 @@ where
       let args := app.getAppArgs
       let info? ← try
         pure (some (← Meta.getFunInfoNArgs fn args.size))
-      catch _ =>
+      catch ex =>
+        rethrowInfrastructure ex
         pure none
       let fn' ← go currentCtx fn
       let args' ← args.mapIdxM fun index arg => do
@@ -407,7 +413,7 @@ where
 def serializeExpression
     (options: @&Protocol.Options)
     (e: Expr)
-    (modelCtx : ModelSexpContext := {}): MetaM Protocol.Expression := do
+    (modelCtx : ModelSexpContext := {}): MetaM Protocol.Expression := withCommandPhase "observe" do
   let pp?: Option String ← match options.printExprPretty with
     | true => pure $ .some $ toString $ ← Meta.ppExpr e
     | false => pure $ .none

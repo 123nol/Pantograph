@@ -9,9 +9,8 @@ namespace Pantograph.Test.Frontend
 def collectSorrysFromSource (source: String) : MetaM (List GoalState) := do
   let filename := "<anonymous>"
   let (context, state) ← do Frontend.createContextStateFromFile source filename (← getEnv) {}
-  let m := Frontend.mapCompilationSteps λ step => do
+  let li ← Frontend.mapCompilationSteps context state λ step => do
     return Frontend.collectSorrys step
-  let li ← m.run context |>.run' state
   let goalStates ← li.filterMapM λ sorrys => do
     if sorrys.isEmpty then
       return .none
@@ -22,9 +21,8 @@ def collectSorrysFromSource (source: String) : MetaM (List GoalState) := do
 def collectInvocationsFromSource (source: String) : MetaM (List Protocol.InvokedTactic) := do
   let filename := "<anonymous>"
   let (context, state) ← do Frontend.createContextStateFromFile source filename (← getEnv) {}
-  let m := Frontend.mapCompilationSteps fun step =>
+  let invocations ← Frontend.mapCompilationSteps context state fun step =>
     Frontend.collectTacticsFromCompilationStep step { printExprModelAST := true }
-  let invocations ← m.run context |>.run' state
   return invocations.join
 
 def findStructuredTerm? (invocations : List Protocol.InvokedTactic)

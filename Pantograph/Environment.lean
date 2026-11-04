@@ -139,7 +139,9 @@ def addDecl (args: Protocol.EnvAdd): CoreM (Protocol.CR Protocol.EnvAddResult) :
           Lean.Elab.Term.synthesizeSyntheticMVarsNoPostponing
           let expr ← instantiateMVars expr
           pure $ expr
-        catch ex => return .error (← ex.toMessageData.toString)
+        catch ex =>
+          rethrowInfrastructure ex
+          return .error (← withCommandPhase "observe" ex.toMessageData.toString)
       | .error e => return .error e
     pure $ .ok (type, value)
   let (type, value) ← match ← tvM.run' (ctx := {}) |>.run' with

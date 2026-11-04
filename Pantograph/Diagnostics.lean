@@ -1,5 +1,6 @@
 import Pantograph.Protocol
 import Lean
+import Pantograph.Resources
 
 namespace Pantograph
 open Lean
@@ -17,7 +18,7 @@ def withInputContext (input : String) (action : Elab.TermElabM α) : Elab.TermEl
 
 /-- Render diagnostics without introducing source locations absent from Lean. -/
 def renderMessages (log : MessageLog) : CoreM (Array Protocol.Message) := do
-  log.toArray.mapM fun message => do
+  withCommandPhase "observe" <| log.toArray.mapM fun message => do
     let context ← read
     let known := message.pos.line > 0 && !context.fileMap.source.isEmpty && message.fileName == context.fileName
     let pos : Protocol.MessagePos := if known then

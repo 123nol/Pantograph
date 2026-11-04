@@ -6,7 +6,7 @@ form. It adds what such a client needs: how a transition's goals relate to its
 input, a read-only view of obligations a state no longer lists, and a kernel
 check of a complete root proof.
 
-`protocol.describe` reports `protocolVersion: 2` together with
+`protocol.describe` reports `protocolVersion: 3` together with
 `transitionProvenanceVersion: 1`, `inspectionVersion: 1` and
 `certificationVersion: 1`. The model S-expression version stays 1, and model
 goal serialization is unchanged.
@@ -115,3 +115,5 @@ conflicting witness, universe-polymorphic roots, reported baseline axioms, a
 new axiom, a rechecked auxiliary lemma, new and trusted-basis admissions, an
 ill-typed assignment under `debug.skipKernelTC=true`, and a replaced root
 statement.
+
+Resource errors and complete command rollback follow [the revision-3 transaction contract](transactional_resources.md).

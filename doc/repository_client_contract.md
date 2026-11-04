@@ -1,3 +1,8 @@
+The current descriptor is revision 3. Complete command transactions, resource
+errors, and compact response framing are specified in
+[Transactional resource errors](transactional_resources.md). Earlier capture
+artifacts retain their original protocol revisions.
+
 # Repository-owned client companion contract
 
 Stage 4 extends merged PR #1 at

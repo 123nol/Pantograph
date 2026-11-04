@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pantograph revision 3 command failure",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error",
+        "desc",
+        "resource",
+        "recovery"
+      ],
+      "properties": {
+        "error": {
+          "const": "resource"
+        },
+        "desc": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "recovery": {
+          "enum": [
+            "command-rolled-back",
+            "session-unusable"
+          ]
+        },
+        "resource": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "kind",
+            "phase",
+            "limit"
+          ],
+          "properties": {
+            "version": {
+              "const": 1
+            },
+            "kind": {
+              "const": "heartbeats"
+            },
+            "phase": {
+              "enum": [
+                "execute",
+                "validate",
+                "observe",
+                "serialize"
+              ]
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error",
+        "desc",
+        "recovery"
+      ],
+      "properties": {
+        "error": {
+          "const": "internal"
+        },
+        "desc": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "recovery": {
+          "const": "session-unusable"
+        }
+      }
+    }
+  ]
+}

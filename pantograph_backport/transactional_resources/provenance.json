@@ -1,0 +1,92 @@
+{
+  "source_base": "9ecaaea242f427e534aff29314513c358b4d21ad",
+  "source_status": "uncommitted implementation on maintained base",
+  "branch": "feat/transactional-resource-errors",
+  "source_sha256": {
+    "Main.lean": "858dd49d714da1e2e349fee8c151e5f2df76ae9e701e9a86a55e95d99bc12672",
+    "Pantograph.lean": "68e0f53f75a10feb52a9aa22d7d1e05f86ad9a1b0dcaf406c6e8949f01dbf802",
+    "Pantograph/Certify.lean": "8051a52a016a99380e7e533cb92d482f02742a60f198befd505faaeccd5edd20",
+    "Pantograph/Condensed.lean": "e3b7fc23e7b408872ed26e9bbd024e479328a9df212932b66302a148a50ffd1f",
+    "Pantograph/Diagnostics.lean": "3e56d216d05212a780c1054bee813ed1d14ab03ad7095e92bf9f3479ebd9bd40",
+    "Pantograph/Environment.lean": "910046d1dc6bcf5bd19a1f829e6457ba97b8e10de83230238847074aefbee9ea",
+    "Pantograph/Expr.lean": "8e239c3b16a9789d38380d61297c566f9dea13f998c993353cc369445bb8d2c2",
+    "Pantograph/Frontend.lean": "4425ad03bbc794db171f894c168684cf7d74e1633b8333cd8909f0a56872e29e",
+    "Pantograph/Frontend/Basic.lean": "cc4c2b7b5f5b15181c76d09a1839d0caa00ad531441e78382a5bdd8fba18b23d",
+    "Pantograph/Frontend/Elab.lean": "73b444eb441401768985da9ece4610c6c76f584182d91af6b664493a3d5dfa4b",
+    "Pantograph/Frontend/MetaTranslate.lean": "79143e772811cf19e3b0c87555a201e589cbc2af857b95d2ea3a5c737e325ea4",
+    "Pantograph/Goal.lean": "b8cc5634e3699dff16f631f2a0670b594b384634cc17973379fb4f0b074463d3",
+    "Pantograph/Library.lean": "85b9ff712196f971ff4beabf895fbf241a721a90f478e9c58377870871b124f5",
+    "Pantograph/Protocol.lean": "16e48dcaf93bf6fa1b2994e3b5e1e3e9a3e4736e809f5b77022141dc257fc73e",
+    "Pantograph/Resources.lean": "e818c4aacc4bcfcca96a53610b4d7cf50e232590376caebb9d4feb49114c0460",
+    "Pantograph/Serial.lean": "9856407c0082928e439e03b8799f073f9e301dc0964f2afe295ee0a5737c8a61",
+    "Pantograph/Tactic.lean": "e491a2d53c3054e133841f5382a4ae7f2bb5b455b1b1d9474ed2f37c4e392654",
+    "Pantograph/Tactic/Assign.lean": "e7c04dd543d7c7c1c51d3ab9804e4fd6227371988d651460c23b72f4502ab177",
+    "Pantograph/Tactic/Congruence.lean": "b8129f2ef57d7e9d1cd9b09ce9310bf68e0182947a660998e212196f4277e1e1",
+    "Pantograph/Tactic/MotivatedApply.lean": "b77203f9849a47ecaba0f630287d7df41b0716ddb908d0bd976af67765cc4c13",
+    "Pantograph/Tactic/NoConfuse.lean": "e8a70e53c23361a78b0fe0e779350c0f3a0aec8ededdc36f59918b127ff7fdd6",
+    "Pantograph/Tactic/Prograde.lean": "76023846e7178d830d139346aab081658bafbd7cbe8939c3de3c8e6731930829",
+    "Pantograph/Transition.lean": "ca5a61e1c87563af15707a47b66da73d4714a3bbbccf1e3a494d5d16bddb56ad",
+    "Pantograph/Validation.lean": "299aa1b4fa911182bf0531559697b02d46f7d3443917de7d59d9fa1cd6fd5235",
+    "Pantograph/Version.lean": "5788a6204864323311c96af23def749e1d5fa6bdefb04499e69d23538506a224",
+    "Repl.lean": "f4115aabcc1e84622cc4fc2709a59876328f8db59165d2e8b8a23ed7d5cd1c51",
+    "Test/Common.lean": "eb42eb050f70fca876f8a419165741b9acfc339442e89f971aba5112dfbb0c10",
+    "Test/ContractFixtures.lean": "39ca3ae7072c1854214108a4d5a58d713d14a53e8c4f015bd283e6fa93242384",
+    "Test/Environment.lean": "613bf86efe1dbaee2146b7f0572f61ddc4750a23ff3e39a1d5fe8df7b61f6cfe",
+    "Test/Frontend.lean": "23a571fc55f6fa1d614e6bda468bc3b7daf6178c2ffe1649a483f6fe3715acc3",
+    "Test/Integration.lean": "ccf09b60d297e56f619b5a35653eb94b57d27a5467cb1d3d2652f9f3f70e8e03",
+    "Test/Library.lean": "5b1069032e1dbd0aa333d32b225b463e82ef67f9bc30bb54a2220c48ec53c889",
+    "Test/Main.lean": "321817830fd5a9375006ab9ab3f59bd0cbf2efc1266a53e39d4e3742e096140b",
+    "Test/Metavar.lean": "6a4d7d3357cbfc8817b3f69cf738064c336af10a65573873b2a215d06f8ed942",
+    "Test/Proofs.lean": "3ba0d58a2399ab0e671cee54f0540543e1ce56aa2dee4b0fa269ed0ee464db71",
+    "Test/Serial.lean": "b4aee6c30c893b389d212f984436dd51b2da999507c64cf11009c28fa546ea91",
+    "Test/Snapshot.lean": "b6adfde2bac25c91d9ee3b475e67d044b31a6fce8329852c138bcc6fb8a0c7ba",
+    "Test/Tactic.lean": "d966367ed57e454f57c2da6d05810cfee5793b79a867b78b94b647f79aef722d",
+    "Test/Tactic/Congruence.lean": "37432712eae7591ef6f1a53dc32356cc578d6811a1c8b010e764122262d6f0ae",
+    "Test/Tactic/MotivatedApply.lean": "65f69a8eef0b47b381f7fdcc7f3999d006204224819fd7e68c346e9cd84b1663",
+    "Test/Tactic/NoConfuse.lean": "4bff765a17b16a08ee5de520f9a2c132db8f6d259f20ce5c691fe1ea4123ddd7",
+    "Test/Tactic/Prograde.lean": "2b55553a8beb856c11c2abb316610de278b3c06c4395e59adcd4a41c7e5820d4",
+    "Test/Transaction.lean": "14f9344b0f9ca96b3b7141b6fe0608745ef1adc39d64f115b6ae13bf689204ae",
+    "Test/Validation.lean": "21922d2f18bc1c17882c8b05a8d126be10368e8a865b022ba8047980f9dd8d66",
+    "doc/transactional_resources.fixtures.json": "394881fd33dd66f07a936fb70b8272806bc37b332f2e9eaa55085b00577386fd",
+    "doc/transactional_resources.md": "a483bd1d89ef6c988f030fa3056afc9d75a134390dc7af68595474c39fb92fa1",
+    "doc/transactional_resources.schema.json": "97e00eb158ca69230a36a13d71f516fa4e1ad79e17dc74fbccf5d6f6df9bce71",
+    "docs/dev_plans/pantograph_repl_transactional_resource_errors.md": "0d39c84c6deef104920561b017842edf63129c9239a85dfd59a7d5bbcb8843e7",
+    "lake-manifest.json": "2657450ebbdaff9b20c2f6cfcc04781802b0177f9279895e892a02da54f17973",
+    "lakefile.lean": "260e81382ba1ec4c3671c44e3e8751e13c85e5d02f7f43061dcf0602fd8ff136",
+    "lean-toolchain": "423ae714bbbb56154fe3934bc715dee2bd624ac1337c47b7cd4719fc155086c8",
+    "pantograph_backport/transactional_resources/README.md": "5b821a06b375fc287bcdd14c356c2e646e6b902b0c063497ce1005567c7fd40e",
+    "scripts/test_transactional_resources.py": "0f6fb68925fc27e5ddd7c21c6edd1403a1486531b046ccdc5d98e4da57e042eb"
+  },
+  "binary_sha256": "1c29397e4c0e9d3af499b6d18872cf9562c64fde3fc4c0bc59cec5494c772f30",
+  "toolchain": "leanprover/lean4:v4.10.0-rc1",
+  "lean": "Lean (version 4.10.0-rc1, x86_64-unknown-linux-gnu, commit 3b58e0649156, Release)",
+  "imports": [
+    "Init",
+    "Test.ContractFixtures"
+  ],
+  "mathlib": null,
+  "verification": {
+    "lake build repl test": "passed",
+    "lake test": {
+      "status": "passed",
+      "assertions": 351
+    },
+    "raw executable harness": {
+      "status": "passed",
+      "captured_exchanges": 22
+    },
+    "JSON Schema fixtures and captured errors": "passed; unexpected allocation fields rejected",
+    "git diff --check": "passed"
+  },
+  "evidence_sha256": {
+    "capture.json": "131db3ef2ccab463a293a9f2dff58be4c729eeeac1f93d2b1e48c774e2c4d6ad",
+    "native-tests.log": "1e101193ab63c2fdd21f965bd25a58cbbd14a465b341a4d44e30850bb154c280"
+  },
+  "not_run": [
+    "companion client acceptance",
+    "application search modes",
+    "Docker runtime",
+    "trained JupyterHub trials",
+    "production deployment"
+  ]
+}
