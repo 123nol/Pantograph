@@ -9,7 +9,7 @@ check of a complete root proof.
 `protocol.describe` reports `protocolVersion: 3` together with
 `transitionProvenanceVersion: 1`, `inspectionVersion: 1` and
 `certificationVersion: 1`. Transition validation uses
-[version 2](scope_aware_validation.md). The model S-expression version stays 1, and model
+[version 3](compiler_aware_validation.md). The model S-expression version stays 1, and model
 goal serialization is unchanged.
 
 Names below are metavariable and free-variable IDs (`_uniq.N`). They identify

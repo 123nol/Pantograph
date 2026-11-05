@@ -1,15 +1,16 @@
 # Repository-owned REPL contract
 
 `protocol.describe {}` identifies `maths-ai-pantograph`, protocol version 3,
-transition validation version 2, and the existing version-1 model expressions,
+transition validation version 3, and the existing version-1 model expressions,
 transition provenance, inspection, certification, messages, resource errors, and
 command transactions. Goal selection is `explicit-focused-v1`; tactic errors use
 `string-array-v1`.
 
 Successful `goal.tactic` responses retain `nextStateId`, `goals`, `messages`,
 `hasSorry`, and `hasUnsafe`. Validation metadata is exactly
-`{version: 2, scope: "execution-closure-and-transition-audit", checked: true}`.
-See [the scope-aware contract](scope_aware_validation.md) and
+`{version: 3, scope: "execution-closure-and-representation-aware-audit", checked: true}`.
+See [the scope-aware contract](scope_aware_validation.md),
+[the representation-aware audit](compiler_aware_validation.md) and
 [the ownership inventory](scope_aware_ownership.md).
 
 A positive admission or unsafe flag remains a successful allocation for the
@@ -60,7 +61,8 @@ conversion exit, model normalization, local identities, and serialization fields
 retain their existing representations. See [retained snapshots](snapshot_protocol.md).
 
 Current native evidence and separate Mathlib controls are recorded in
-[the scope-aware handoff](../pantograph_backport/scope_aware_validation/README.md).
-Historical Stage 4 and transactional-resource captures retain their original
+[the representation-aware handoff](../pantograph_backport/compiler_aware_validation/README.md).
+The [scope-aware handoff](../pantograph_backport/scope_aware_validation/README.md),
+Stage 4 and transactional-resource captures retain their original
 validation versions and source/binary identities. Their old application codec
 and graph results are not current-client acceptance evidence.
