@@ -1,4 +1,5 @@
 import LSpec
+import Test.CompilerValidation
 import Test.Environment
 import Test.Frontend
 import Test.Integration
@@ -50,6 +51,7 @@ def main (args: List String) := do
   let suites: List (String × List (String × IO LSpec.TestSeq)) := [
     ("Transaction", Transaction.suite env_default),
     ("Validation", Validation.suite env_default),
+    ("CompilerValidation", CompilerValidation.suite env_default),
     ("Environment", Environment.suite),
     ("Frontend", Frontend.suite env_default),
     ("Integration", Integration.suite env_default),

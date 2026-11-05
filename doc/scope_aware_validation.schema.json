@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Pantograph transition validation version 2",
+  "title": "Pantograph transition validation version 3",
   "$defs": {
     "validation": {
       "type": "object",
@@ -12,10 +12,10 @@
       ],
       "properties": {
         "version": {
-          "const": 2
+          "const": 3
         },
         "scope": {
-          "const": "execution-closure-and-transition-audit"
+          "const": "execution-closure-and-representation-aware-audit"
         },
         "checked": {
           "const": true

@@ -1,4 +1,5 @@
 import Pantograph.Goal
+import Pantograph.DeclarationAudit
 
 namespace Pantograph
 open Lean
@@ -25,6 +26,7 @@ private structure Scan where
   nextScope : Nat := 0
   mvars : HashSet (MVarId × ValidationPurpose) := {}
   constants : HashSet (Name × ValidationPurpose) := {}
+  compilerEntries : HashSet Name := {}
   fvars : HashSet (Nat × FVarId × ValidationPurpose) := {}
   activeLocals : HashSet (Nat × FVarId × ValidationPurpose) := {}
   activeMVars : HashSet (MVarId × ValidationPurpose) := {}
@@ -120,12 +122,26 @@ mutual
       inspectExpr purpose o (path ++ "/projection") depth body
     | .lit _ => pure ()
 
+  /-- `audit` marks the environment enumeration; every other call is a reference
+      from an expression. -/
   private partial def inspectConstant (purpose : ValidationPurpose) (o : ExpressionOwner)
-      (path : String) (name : Name) : ScanM Unit := do
+      (path : String) (name : Name) (audit : Bool := false) : ScanM Unit := do
     poll
+    let ctx ← read
+    -- Classification precedes memoization, so an entry audited as compiler data is
+    -- still rejected when an expression later reaches it.
+    if let some (.compiler stage producer) := classifyName ctx.state.env ctx.trusted name then
+      unless audit do problem purpose o path s!"Compiler-only declaration {name} is not a proof dependency"
+      unless (← get).compilerEntries.contains name do
+        modify fun s => { s with compilerEntries := s.compilerEntries.insert name }
+        let some info := ctx.state.env.find? name | problem purpose o path s!"Missing compiler declaration {name}"
+        let problems := compilerEntryProblems ctx.state.env stage info
+        unless problems.isEmpty do
+          let entry ← owner s!"compiler stage {stage} of {producer}" {}
+          problem .execution entry (path ++ s!"/compiler {name}") (String.intercalate "; " problems.toList)
+      return
     unless (← get).constants.contains (name, purpose) do
       modify fun s => { s with constants := s.constants.insert (name, purpose) }
-      let ctx ← read
       let some info := ctx.state.env.find? name | problem purpose o path s!"Missing proof dependency {name}"
       if info.isUnsafe then modify fun s => { s with hasUnsafe := true }
       unless ctx.trusted.contains name do
@@ -275,7 +291,7 @@ private def auditAuxiliary : ScanM Unit := do
   let additions := ctx.state.env.constants.foldStage2 (fun acc name _ =>
     if ctx.trusted.contains name then acc else name :: acc) []
   let closed ← owner "retained environment additions" {}
-  for name in additions do inspectConstant .auxiliary closed "environment audit" name
+  for name in additions do inspectConstant .auxiliary closed "environment audit" name (audit := true)
   for info in ctx.state.savedState.term.elab.mvarErrorInfos do
     if let .implicitArg expression := info.kind then
       let lctx := (ctx.state.mctx.findDecl? info.mvarId).map (·.lctx) |>.getD {}

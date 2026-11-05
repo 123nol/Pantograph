@@ -1,0 +1,11 @@
+{"unresolved":
+ ["3033 × _cstage2 _unreachable",
+  "160817 × _cstage2 _obj",
+  "49209 × _cstage2 _neutral"],
+ "shapes":
+ ["19863 × _cstage1 definition unsafe ownerIR=true ownerConst=true levels=false looseBVars=false fvar=false mvar=false",
+  "5657 × _cstage1 definition unsafe ownerIR=false ownerConst=true levels=true looseBVars=false fvar=false mvar=false",
+  "34214 × _cstage2 definition unsafe ownerIR=true ownerConst=true levels=false looseBVars=false fvar=false mvar=false",
+  "83918 × _cstage2 definition unsafe ownerIR=true ownerConst=false levels=false looseBVars=false fvar=false mvar=false",
+  "1836 × _cstage1 definition unsafe ownerIR=true ownerConst=true levels=true looseBVars=false fvar=false mvar=false"],
+ "entries": 145488}

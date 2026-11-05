@@ -3,7 +3,7 @@
 `protocol.describe` reports `protocolVersion: 3`, `resourceErrorVersion: 1`, and
 `commandTransactionVersion: 1`. Model expressions, transition provenance,
 inspection, messages, and certification keep their version-1 representations.
-Transition validation now uses [version 2](scope_aware_validation.md). Startup still emits `ready.`.
+Transition validation now uses [version 3](compiler_aware_validation.md). Startup still emits `ready.`.
 
 Every subsequent response is one compact JSON line. Diagnostic newlines are
 escaped inside strings. The `printJsonPretty` option has been removed from both

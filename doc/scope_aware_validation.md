@@ -1,22 +1,25 @@
-# Scope-aware transition validation, version 2
+# Scope-aware transition validation
 
 The shared validator accepts inert elaboration residue while requiring valid
 owners for executable references. A missing local in an orphan assignment does
 not establish a dangling reference in the retained proof. It also does not grant
 the record an exemption when a later operation makes it executable.
 
-`protocol.describe` reports `transitionValidationVersion: 2`. Successful tactic
+Version 2 introduced this boundary. Version 3 keeps it and reads compiler-stage
+environment entries by their representation; see
+[the representation-aware audit](compiler_aware_validation.md).
+`protocol.describe` reports `transitionValidationVersion: 3`. Successful tactic
 responses include exactly:
 
 ```json
-{"version":2,"scope":"execution-closure-and-transition-audit","checked":true}
+{"version":3,"scope":"execution-closure-and-representation-aware-audit","checked":true}
 ```
 
 This object is the `validation` field. Protocol version 3, compact framing,
 resource errors, provenance, inspection, and certification keep their existing
 versions. [The schema](scope_aware_validation.schema.json) and
-[fixtures](scope_aware_validation.fixtures.json) are the strict version-2 contract.
-Current client consumers must migrate together; no version-1 fallback exists.
+[fixtures](scope_aware_validation.fixtures.json) are the strict version-3 contract.
+Current client consumers must migrate together; no earlier-version fallback exists.
 
 ## Ownership and traversal
 

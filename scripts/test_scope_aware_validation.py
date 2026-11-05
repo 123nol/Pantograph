@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Native scope-aware validation controls; Mathlib is an explicit separate gate."""
+"""Native validation controls, including compiler-producing tactics; Mathlib is an explicit separate gate."""
 import argparse
 import hashlib
 import json
@@ -10,7 +10,8 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-SCOPE = "execution-closure-and-transition-audit"
+SCOPE = "execution-closure-and-representation-aware-audit"
+VERSION = 3
 MATHLIB_PIN = "29dcec074de168ac2bf835a77ef68bbe069194c5"
 
 
@@ -56,7 +57,7 @@ class Session:
         if "nextStateId" in response:
             self.ids.add(response["nextStateId"])
             if command == "goal.tactic":
-                assert response["validation"] == dict(version=2, scope=SCOPE, checked=True)
+                assert response["validation"] == dict(version=VERSION, scope=SCOPE, checked=True)
                 self.roots[response["nextStateId"]] = self.roots[payload["stateId"]]
             elif command == "goal.continue":
                 self.roots[response["nextStateId"]] = self.roots[payload["target"]]
@@ -131,7 +132,7 @@ def core_gate(env):
     imports = ["Init", "Test.ContractFixtures"]
     with Session(entries, env, imports) as session:
         descriptor = session.call("protocol.describe", {})
-        assert descriptor["protocolVersion"] == 3 and descriptor["transitionValidationVersion"] == 2
+        assert descriptor["protocolVersion"] == 3 and descriptor["transitionValidationVersion"] == VERSION
         root = session.start("True")
         done = session.tactic(root["stateId"], "contract_inert_residue")
         assert not done["goals"] and not done["hasSorry"] and not done["hasUnsafe"]
@@ -151,6 +152,7 @@ def core_gate(env):
         solved = session.tactic(frontend["goalStateId"], "exact a")
         assert session.certify(solved["nextStateId"])["receipt"]["levels"] == ["u"]
         session.finish()
+    compiler_controls(entries, env, imports)
     with Session(entries, env, imports) as session:
         root = session.start("True")
         session.proc.stdin.write('goal.tactic {"stateId":0,"tactic":"contract_invalid_mutation"}\nstat {}\n')
@@ -165,6 +167,41 @@ def core_gate(env):
         assert session.proc.wait(timeout=30) != 0
         assert session.proc.stdout.read() == "", "accepted input after integrity failure"
     return entries
+
+
+def compiler_sequence(session, statement):
+    """`unfold Nat.pow` compiles the match splitter; the state must stay usable and certify."""
+    root = session.start(statement)
+    middle = session.tactic(root["stateId"], "intro m n")
+    unfolded = session.tactic(middle["nextStateId"], "unfold Nat.pow")
+    assert unfolded["goals"] and not unfolded["hasSorry"] and not unfolded["hasUnsafe"], unfolded
+    inspected = session.call("goal.inspect", dict(stateId=unfolded["nextStateId"], goals=[root["root"]]))
+    assert inspected["obligations"][0]["status"] != "complete", inspected
+    split = session.tactic(unfolded["nextStateId"], "split")
+    assert len(split["goals"]) == 2, split
+    first = session.tactic(split["nextStateId"], "rfl")
+    last = session.tactic(first["nextStateId"], "rfl")
+    assert not last["goals"] and not last["hasSorry"] and not last["hasUnsafe"]
+    receipt = session.certify(last["nextStateId"])["receipt"]
+    assert "_cstage" not in " ".join(receipt["auxiliary"]) and any("splitter" in name for name in receipt["auxiliary"])
+
+
+def compiler_controls(entries, env, imports):
+    statement = "∀ m n : Nat, Nat.pow m n = Nat.pow m n"
+    with Session(entries, env, imports) as session:
+        compiler_sequence(session, statement)
+        session.finish()
+    # Warmed history: an earlier simp and a rewrite through generated equations.
+    with Session(entries, env, imports) as session:
+        warm = session.start("True ∧ True")
+        session.certify(session.tactic(warm["stateId"], "simp")["nextStateId"])
+        root = session.start("∀ m n : Nat, Nat.pow m (n+1) = Nat.pow m n * m")
+        middle = session.tactic(root["stateId"], "intro m n")
+        for text in ["rw [Nat.pow]", "simp only [Nat.pow]"]:
+            rewritten = session.tactic(middle["nextStateId"], text)
+            assert rewritten["goals"] and not rewritten["hasUnsafe"], rewritten
+        compiler_sequence(session, statement)
+        session.finish()
 
 
 def mathlib_gate(mathlib, env):
@@ -205,6 +242,12 @@ def mathlib_gate(mathlib, env):
         assert {value["status"] for value in inspected["obligations"]} == {"active", "complete"}
         last = session.tactic(first["nextStateId"], "tauto")
         session.certify(last["nextStateId"])
+        # The reported search context: compiler-producing simp under Mathlib.
+        compiler_sequence(session, "∀ m n : Nat, Nat.pow m n = Nat.pow m n")
+        root = session.start("∀ m n : Nat, 0 < Nat.pow (m+1) n")
+        middle = session.tactic(root["stateId"], "intro m n")
+        simp = session.tactic(middle["nextStateId"], "cases n <;> simp [Nat.pow]")
+        assert not simp["hasSorry"] and not simp["hasUnsafe"]
         session.finish()
     diagnostic = subprocess.run([str(ROOT / ".lake/build/bin/scope_diagnostic")], cwd=ROOT,
                                 env=env, text=True, capture_output=True, timeout=180)
@@ -234,7 +277,7 @@ def main():
                     toolchain=(ROOT / "lean-toolchain").read_text().strip(), core=core, mathlib=math,
                     diagnostic=diagnostic, ordinary_lean=ordinary, mathlib_source_verification=source_verification)
         (args.capture / "capture.json").write_text(json.dumps(data, indent=2) + "\n")
-    print(f"PASS: {len(core)} core and {len(math)} Mathlib exchanges; validation version 2, kernel receipts, lifecycle, and fatal integrity failures")
+    print(f"PASS: {len(core)} core and {len(math)} Mathlib exchanges; validation version {VERSION}, compiler-producing transitions, kernel receipts, lifecycle, and fatal integrity failures")
 
 
 if __name__ == "__main__":

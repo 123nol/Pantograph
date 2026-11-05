@@ -1,7 +1,7 @@
 {
   "validation": {
-    "version": 2,
-    "scope": "execution-closure-and-transition-audit",
+    "version": 3,
+    "scope": "execution-closure-and-representation-aware-audit",
     "checked": true
   },
   "integrityError": {

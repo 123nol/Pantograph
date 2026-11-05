@@ -33,6 +33,9 @@ private partial def scanConstant (name : Name) : ScanM Unit := do
   let (trusted, final) ← read
   let some info := final.find? name | problem s!"Missing dependency {name}"
   let isNew := !trusted.contains name
+  if isNew && isCompilerRepresentation final trusted name then
+    problem s!"Compiler-only declaration {name} is not a proof dependency"
+    return
   if name == ``sorryAx then problem "Proof depends on an admission (sorryAx)"
   if info.isUnsafe then problem s!"Unsafe dependency {name}"
   let scanExpr (expr : Expr) : ScanM Unit := expr.getUsedConstants.forM scanConstant

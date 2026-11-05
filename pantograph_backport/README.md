@@ -1,5 +1,7 @@
-Current scope-aware transition-validation work and its separate native Mathlib
-gate are documented in [the validation handoff](scope_aware_validation/README.md).
+Current representation-aware validation (version 3) and its native evidence are
+documented in [the compiler-aware handoff](compiler_aware_validation/README.md).
+The version-2 scope-aware work and its separate native Mathlib gate are
+documented in [the validation handoff](scope_aware_validation/README.md).
 
 Current transactional resource-error work is documented in
 [the revision-3 handoff](transactional_resources/README.md). The captures and

@@ -1,0 +1,30 @@
+{"withFreeVariables":
+ [{"name": "addMonoidHomLequivNat._elambda_1._cstage1",
+   "module": "Mathlib.Algebra.Module.Equiv",
+   "fvars": ["_kernel_fresh.14", "_kernel_fresh.14"]},
+  {"name": "AlgebraicGeometry.sectionInBasicOpen._cstage1",
+   "module": "Mathlib.AlgebraicGeometry.ProjectiveSpectrum.StructureSheaf",
+   "fvars": ["_kernel_fresh.12"]},
+  {"name":
+   "CategoryTheory.Limits.PushoutCocone.isColimitEquivIsLimitUnop._cstage1",
+   "module": "Mathlib.CategoryTheory.Limits.Opposites",
+   "fvars": ["_kernel_fresh.16"]},
+  {"name": "CategoryTheory.FreeBicategory.inclusion._cstage1",
+   "module": "Mathlib.CategoryTheory.Bicategory.Coherence",
+   "fvars": ["_kernel_fresh.15"]},
+  {"name": "addMonoidHomLequivInt._elambda_1._cstage1",
+   "module": "Mathlib.Algebra.Module.Equiv",
+   "fvars": ["_kernel_fresh.18", "_kernel_fresh.18"]}],
+ "unresolved":
+ ["4478 × _cstage2 _unreachable",
+  "566778 × _cstage2 _obj",
+  "306748 × _cstage2 _neutral"],
+ "shapes":
+ ["36085 × _cstage1 definition unsafe ownerIR=true ownerConst=true levels=false looseBVars=false fvar=false mvar=false",
+  "10050 × _cstage1 definition unsafe ownerIR=false ownerConst=true levels=true looseBVars=false fvar=false mvar=false",
+  "128723 × _cstage2 definition unsafe ownerIR=true ownerConst=true levels=false looseBVars=false fvar=false mvar=false",
+  "262059 × _cstage2 definition unsafe ownerIR=true ownerConst=false levels=false looseBVars=false fvar=false mvar=false",
+  "24960 × _cstage1 definition unsafe ownerIR=true ownerConst=true levels=true looseBVars=false fvar=false mvar=false",
+  "2 × _cstage1 definition unsafe ownerIR=true ownerConst=true levels=false looseBVars=false fvar=true mvar=false",
+  "3 × _cstage1 definition unsafe ownerIR=true ownerConst=true levels=true looseBVars=false fvar=true mvar=false"],
+ "entries": 461882}
