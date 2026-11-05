@@ -1,0 +1,1651 @@
+{
+  "source_base": "5cab95e132bcdd1d3cb715505d1694ac7bb0e0d6",
+  "source_uncommitted": true,
+  "binary_sha256": "e3c11038b1d0fa463f6ef439788dd4d70ed425a9928b67d3942546614939dd78",
+  "toolchain": "leanprover/lean4:v4.10.0-rc1",
+  "core": [
+    {
+      "command": "protocol.describe",
+      "request": {},
+      "request_line": "protocol.describe {}",
+      "response": {
+        "transitionValidationVersion": 2,
+        "transitionProvenanceVersion": 1,
+        "tacticErrorsFormat": "string-array-v1",
+        "resourceErrorVersion": 1,
+        "protocolVersion": 3,
+        "protocol": "maths-ai-pantograph",
+        "modelSexpVersion": 1,
+        "messageVersion": 1,
+        "inspectionVersion": 1,
+        "goalSelection": "explicit-focused-v1",
+        "commandTransactionVersion": 1,
+        "certificationVersion": 1
+      },
+      "response_line": "{\"transitionValidationVersion\":2,\"transitionProvenanceVersion\":1,\"tacticErrorsFormat\":\"string-array-v1\",\"resourceErrorVersion\":1,\"protocolVersion\":3,\"protocol\":\"maths-ai-pantograph\",\"modelSexpVersion\":1,\"messageVersion\":1,\"inspectionVersion\":1,\"goalSelection\":\"explicit-focused-v1\",\"commandTransactionVersion\":1,\"certificationVersion\":1}"
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "True",
+        "levels": []
+      },
+      "request_line": "goal.start {\"expr\":\"True\",\"levels\":[]}",
+      "response": {
+        "stateId": 0,
+        "root": "_uniq.2"
+      },
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.2\"}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "goalId": 0,
+        "tactic": "contract_inert_residue"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"goalId\":0,\"tactic\":\"contract_inert_residue\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.2",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 1,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.2\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":1,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 1
+      },
+      "request_line": "goal.certify {\"stateId\":1}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "50ed216148291d73",
+          "root": "_uniq.2",
+          "proof": "8bf67748f3048ada",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "ad29a3804996ae80",
+          "axioms": [],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"50ed216148291d73\",\"root\":\"_uniq.2\",\"proof\":\"8bf67748f3048ada\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"ad29a3804996ae80\",\"axioms\":[],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.inspect",
+      "request": {
+        "stateId": 1,
+        "goals": [
+          "_uniq.2"
+        ]
+      },
+      "request_line": "goal.inspect {\"stateId\":1,\"goals\":[\"_uniq.2\"]}",
+      "response": {
+        "obligations": [
+          {
+            "universeHoles": false,
+            "status": "complete",
+            "name": "_uniq.2",
+            "holes": []
+          }
+        ]
+      },
+      "response_line": "{\"obligations\":[{\"universeHoles\":false,\"status\":\"complete\",\"name\":\"_uniq.2\",\"holes\":[]}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "goalId": 0,
+        "tactic": "exact Nat.zero"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"goalId\":0,\"tactic\":\"exact Nat.zero\"}",
+      "response": {
+        "tacticErrors": [
+          "type mismatch\n  Nat.zero\nhas type\n  Nat : Type\nbut is expected to have type\n  True : Prop"
+        ],
+        "messages": [
+          {
+            "severity": "error",
+            "pos": {
+              "line": 1,
+              "column": 0
+            },
+            "kind": "[anonymous]",
+            "endPos": {
+              "line": 1,
+              "column": 14
+            },
+            "data": "type mismatch\n  Nat.zero\nhas type\n  Nat : Type\nbut is expected to have type\n  True : Prop"
+          }
+        ],
+        "hasUnsafe": false,
+        "hasSorry": false
+      },
+      "response_line": "{\"tacticErrors\":[\"type mismatch\\n  Nat.zero\\nhas type\\n  Nat : Type\\nbut is expected to have type\\n  True : Prop\"],\"messages\":[{\"severity\":\"error\",\"pos\":{\"line\":1,\"column\":0},\"kind\":\"[anonymous]\",\"endPos\":{\"line\":1,\"column\":14},\"data\":\"type mismatch\\n  Nat.zero\\nhas type\\n  Nat : Type\\nbut is expected to have type\\n  True : Prop\"}],\"hasUnsafe\":false,\"hasSorry\":false}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "goalId": 0,
+        "tactic": "exact True.intro"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"goalId\":0,\"tactic\":\"exact True.intro\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.2",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 2,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.2\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":2,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 2
+      },
+      "request_line": "goal.certify {\"stateId\":2}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "50ed216148291d73",
+          "root": "_uniq.2",
+          "proof": "8bf67748f3048ada",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "ad29a3804996ae80",
+          "axioms": [],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"50ed216148291d73\",\"root\":\"_uniq.2\",\"proof\":\"8bf67748f3048ada\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"ad29a3804996ae80\",\"axioms\":[],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.continue",
+      "request": {
+        "target": 2,
+        "goals": [
+          "_uniq.2"
+        ]
+      },
+      "request_line": "goal.continue {\"target\":2,\"goals\":[\"_uniq.2\"]}",
+      "response": {
+        "nextStateId": 3,
+        "goals": []
+      },
+      "response_line": "{\"nextStateId\":3,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 3
+      },
+      "request_line": "goal.certify {\"stateId\":3}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "50ed216148291d73",
+          "root": "_uniq.2",
+          "proof": "8bf67748f3048ada",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "ad29a3804996ae80",
+          "axioms": [],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"50ed216148291d73\",\"root\":\"_uniq.2\",\"proof\":\"8bf67748f3048ada\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"ad29a3804996ae80\",\"axioms\":[],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "frontend.process",
+      "request": {
+        "file": "universe u\nexample (\u03b1 : Sort u) (a : \u03b1) : \u03b1 := by sorry",
+        "sorrys": true,
+        "invocations": false
+      },
+      "request_line": "frontend.process {\"file\":\"universe u\\nexample (\\u03b1 : Sort u) (a : \\u03b1) : \\u03b1 := by sorry\",\"sorrys\":true,\"invocations\":false}",
+      "response": {
+        "units": [
+          {
+            "messages": [],
+            "goals": [],
+            "boundary": [
+              0,
+              11
+            ]
+          },
+          {
+            "messages": [
+              "<anonymous>:2:0: warning: declaration uses 'sorry'\n"
+            ],
+            "goals": [
+              {
+                "vars": [
+                  {
+                    "userName": "\u03b1",
+                    "type": {
+                      "pp": "Sort u"
+                    },
+                    "name": "_uniq.8",
+                    "isLet": false,
+                    "isInstance": false,
+                    "isInaccessible": false
+                  },
+                  {
+                    "userName": "a",
+                    "type": {
+                      "pp": "\u03b1"
+                    },
+                    "name": "_uniq.9",
+                    "isLet": false,
+                    "isInstance": false,
+                    "isInaccessible": false
+                  }
+                ],
+                "target": {
+                  "pp": "\u03b1"
+                },
+                "name": "_uniq.10",
+                "isConversion": false,
+                "fragment": "tactic"
+              }
+            ],
+            "goalStateId": 4,
+            "boundary": [
+              11,
+              58
+            ]
+          }
+        ]
+      },
+      "response_line": "{\"units\":[{\"messages\":[],\"goals\":[],\"boundary\":[0,11]},{\"messages\":[\"<anonymous>:2:0: warning: declaration uses 'sorry'\\n\"],\"goals\":[{\"vars\":[{\"userName\":\"\u03b1\",\"type\":{\"pp\":\"Sort u\"},\"name\":\"_uniq.8\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"a\",\"type\":{\"pp\":\"\u03b1\"},\"name\":\"_uniq.9\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"\u03b1\"},\"name\":\"_uniq.10\",\"isConversion\":false,\"fragment\":\"tactic\"}],\"goalStateId\":4,\"boundary\":[11,58]}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 4,
+        "goalId": 0,
+        "tactic": "exact a"
+      },
+      "request_line": "goal.tactic {\"stateId\":4,\"goalId\":0,\"tactic\":\"exact a\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.10",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 5,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.10\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":5,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 5
+      },
+      "request_line": "goal.certify {\"stateId\":5}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "1ce0b5fdf72bcbe2",
+          "root": "_uniq.10",
+          "proof": "855469f34238e977",
+          "levels": [
+            "u"
+          ],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "ad29a3804996ae80",
+          "axioms": [],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"1ce0b5fdf72bcbe2\",\"root\":\"_uniq.10\",\"proof\":\"855469f34238e977\",\"levels\":[\"u\"],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"ad29a3804996ae80\",\"axioms\":[],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.delete",
+      "request": {
+        "stateIds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "request_line": "goal.delete {\"stateIds\":[0,1,2,3,4,5]}",
+      "response": {},
+      "response_line": "{}"
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response": {
+        "nGoals": 0
+      },
+      "response_line": "{\"nGoals\":0}"
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "True",
+        "levels": []
+      },
+      "request_line": "goal.start {\"expr\":\"True\",\"levels\":[]}",
+      "response": {
+        "stateId": 0,
+        "root": "_uniq.2"
+      },
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.2\"}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "contract_invalid_mutation"
+      },
+      "response": {
+        "error": "validation",
+        "desc": "execution owner=metavariable _uniq.2 path=root/assignment: Missing local declaration _uniq.3"
+      },
+      "response_line": "{\"error\":\"validation\",\"desc\":\"execution owner=metavariable _uniq.2 path=root/assignment: Missing local declaration _uniq.3\"}"
+    }
+  ],
+  "mathlib": [
+    {
+      "command": "protocol.describe",
+      "request": {},
+      "request_line": "protocol.describe {}",
+      "response": {
+        "transitionValidationVersion": 2,
+        "transitionProvenanceVersion": 1,
+        "tacticErrorsFormat": "string-array-v1",
+        "resourceErrorVersion": 1,
+        "protocolVersion": 3,
+        "protocol": "maths-ai-pantograph",
+        "modelSexpVersion": 1,
+        "messageVersion": 1,
+        "inspectionVersion": 1,
+        "goalSelection": "explicit-focused-v1",
+        "commandTransactionVersion": 1,
+        "certificationVersion": 1
+      },
+      "response_line": "{\"transitionValidationVersion\":2,\"transitionProvenanceVersion\":1,\"tacticErrorsFormat\":\"string-array-v1\",\"resourceErrorVersion\":1,\"protocolVersion\":3,\"protocol\":\"maths-ai-pantograph\",\"modelSexpVersion\":1,\"messageVersion\":1,\"inspectionVersion\":1,\"goalSelection\":\"explicit-focused-v1\",\"commandTransactionVersion\":1,\"certificationVersion\":1}"
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "\u2200 (p q : Prop), p \u2227 q \u2192 q \u2227 p",
+        "levels": []
+      },
+      "request_line": "goal.start {\"expr\":\"\\u2200 (p q : Prop), p \\u2227 q \\u2192 q \\u2227 p\",\"levels\":[]}",
+      "response": {
+        "stateId": 0,
+        "root": "_uniq.9"
+      },
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.9\"}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "goalId": 0,
+        "tactic": "intro p q"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"goalId\":0,\"tactic\":\"intro p q\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.9",
+          "introduced": [
+            [
+              "_uniq.10",
+              "_uniq.13"
+            ]
+          ],
+          "extra": [],
+          "dormant": [],
+          "direct": [
+            "_uniq.14"
+          ],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 1,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": [
+          {
+            "vars": [
+              {
+                "userName": "p",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.10",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "q",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.13",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              }
+            ],
+            "target": {
+              "pp": "p \u2227 q \u2192 q \u2227 p"
+            },
+            "name": "_uniq.14",
+            "isConversion": false,
+            "fragment": "tactic"
+          }
+        ]
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.9\",\"introduced\":[[\"_uniq.10\",\"_uniq.13\"]],\"extra\":[],\"dormant\":[],\"direct\":[\"_uniq.14\"],\"closed\":[],\"changed\":[]},\"nextStateId\":1,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.10\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.13\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"p \u2227 q \u2192 q \u2227 p\"},\"name\":\"_uniq.14\",\"isConversion\":false,\"fragment\":\"tactic\"}]}"
+    },
+    {
+      "command": "goal.inspect",
+      "request": {
+        "stateId": 1,
+        "goals": [
+          "_uniq.9",
+          "_uniq.14"
+        ]
+      },
+      "request_line": "goal.inspect {\"stateId\":1,\"goals\":[\"_uniq.9\",\"_uniq.14\"]}",
+      "response": {
+        "obligations": [
+          {
+            "universeHoles": false,
+            "status": "assigned",
+            "name": "_uniq.9",
+            "holes": [
+              "_uniq.12"
+            ]
+          },
+          {
+            "universeHoles": false,
+            "status": "active",
+            "name": "_uniq.14",
+            "holes": [],
+            "goal": {
+              "vars": [
+                {
+                  "userName": "p",
+                  "type": {
+                    "pp": "Prop"
+                  },
+                  "name": "_uniq.10",
+                  "isLet": false,
+                  "isInstance": false,
+                  "isInaccessible": false
+                },
+                {
+                  "userName": "q",
+                  "type": {
+                    "pp": "Prop"
+                  },
+                  "name": "_uniq.13",
+                  "isLet": false,
+                  "isInstance": false,
+                  "isInaccessible": false
+                }
+              ],
+              "target": {
+                "pp": "p \u2227 q \u2192 q \u2227 p"
+              },
+              "name": "_uniq.14",
+              "isConversion": false,
+              "fragment": "tactic"
+            }
+          }
+        ]
+      },
+      "response_line": "{\"obligations\":[{\"universeHoles\":false,\"status\":\"assigned\",\"name\":\"_uniq.9\",\"holes\":[\"_uniq.12\"]},{\"universeHoles\":false,\"status\":\"active\",\"name\":\"_uniq.14\",\"holes\":[],\"goal\":{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.10\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.13\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"p \u2227 q \u2192 q \u2227 p\"},\"name\":\"_uniq.14\",\"isConversion\":false,\"fragment\":\"tactic\"}}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 1,
+        "goalId": 0,
+        "tactic": "tauto"
+      },
+      "request_line": "goal.tactic {\"stateId\":1,\"goalId\":0,\"tactic\":\"tauto\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.14",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 2,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.14\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":2,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 2
+      },
+      "request_line": "goal.certify {\"stateId\":2}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "f8ce7b4991494a80",
+          "root": "_uniq.9",
+          "proof": "3f3974e0eb11c0de",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "1f25fae908fae89b",
+          "axioms": [],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"f8ce7b4991494a80\",\"root\":\"_uniq.9\",\"proof\":\"3f3974e0eb11c0de\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"1f25fae908fae89b\",\"axioms\":[],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.inspect",
+      "request": {
+        "stateId": 2,
+        "goals": [
+          "_uniq.9",
+          "_uniq.14"
+        ]
+      },
+      "request_line": "goal.inspect {\"stateId\":2,\"goals\":[\"_uniq.9\",\"_uniq.14\"]}",
+      "response": {
+        "obligations": [
+          {
+            "universeHoles": false,
+            "status": "complete",
+            "name": "_uniq.9",
+            "holes": []
+          },
+          {
+            "universeHoles": false,
+            "status": "complete",
+            "name": "_uniq.14",
+            "holes": []
+          }
+        ]
+      },
+      "response_line": "{\"obligations\":[{\"universeHoles\":false,\"status\":\"complete\",\"name\":\"_uniq.9\",\"holes\":[]},{\"universeHoles\":false,\"status\":\"complete\",\"name\":\"_uniq.14\",\"holes\":[]}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 1,
+        "goalId": 0,
+        "tactic": "tauto"
+      },
+      "request_line": "goal.tactic {\"stateId\":1,\"goalId\":0,\"tactic\":\"tauto\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.14",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 3,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.14\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":3,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 3
+      },
+      "request_line": "goal.certify {\"stateId\":3}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "f8ce7b4991494a80",
+          "root": "_uniq.9",
+          "proof": "3f3974e0eb11c0de",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "1f25fae908fae89b",
+          "axioms": [],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"f8ce7b4991494a80\",\"root\":\"_uniq.9\",\"proof\":\"3f3974e0eb11c0de\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"1f25fae908fae89b\",\"axioms\":[],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "\u2200 (p q : Prop), p \u2228 q \u2192 q \u2228 p",
+        "levels": []
+      },
+      "request_line": "goal.start {\"expr\":\"\\u2200 (p q : Prop), p \\u2228 q \\u2192 q \\u2228 p\",\"levels\":[]}",
+      "response": {
+        "stateId": 4,
+        "root": "_uniq.338"
+      },
+      "response_line": "{\"stateId\":4,\"root\":\"_uniq.338\"}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 4,
+        "goalId": 0,
+        "tactic": "intro p q"
+      },
+      "request_line": "goal.tactic {\"stateId\":4,\"goalId\":0,\"tactic\":\"intro p q\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.338",
+          "introduced": [
+            [
+              "_uniq.339",
+              "_uniq.342"
+            ]
+          ],
+          "extra": [],
+          "dormant": [],
+          "direct": [
+            "_uniq.343"
+          ],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 5,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": [
+          {
+            "vars": [
+              {
+                "userName": "p",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.339",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "q",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.342",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              }
+            ],
+            "target": {
+              "pp": "p \u2228 q \u2192 q \u2228 p"
+            },
+            "name": "_uniq.343",
+            "isConversion": false,
+            "fragment": "tactic"
+          }
+        ]
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.338\",\"introduced\":[[\"_uniq.339\",\"_uniq.342\"]],\"extra\":[],\"dormant\":[],\"direct\":[\"_uniq.343\"],\"closed\":[],\"changed\":[]},\"nextStateId\":5,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.339\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.342\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"p \u2228 q \u2192 q \u2228 p\"},\"name\":\"_uniq.343\",\"isConversion\":false,\"fragment\":\"tactic\"}]}"
+    },
+    {
+      "command": "goal.inspect",
+      "request": {
+        "stateId": 5,
+        "goals": [
+          "_uniq.338",
+          "_uniq.343"
+        ]
+      },
+      "request_line": "goal.inspect {\"stateId\":5,\"goals\":[\"_uniq.338\",\"_uniq.343\"]}",
+      "response": {
+        "obligations": [
+          {
+            "universeHoles": false,
+            "status": "assigned",
+            "name": "_uniq.338",
+            "holes": [
+              "_uniq.341"
+            ]
+          },
+          {
+            "universeHoles": false,
+            "status": "active",
+            "name": "_uniq.343",
+            "holes": [],
+            "goal": {
+              "vars": [
+                {
+                  "userName": "p",
+                  "type": {
+                    "pp": "Prop"
+                  },
+                  "name": "_uniq.339",
+                  "isLet": false,
+                  "isInstance": false,
+                  "isInaccessible": false
+                },
+                {
+                  "userName": "q",
+                  "type": {
+                    "pp": "Prop"
+                  },
+                  "name": "_uniq.342",
+                  "isLet": false,
+                  "isInstance": false,
+                  "isInaccessible": false
+                }
+              ],
+              "target": {
+                "pp": "p \u2228 q \u2192 q \u2228 p"
+              },
+              "name": "_uniq.343",
+              "isConversion": false,
+              "fragment": "tactic"
+            }
+          }
+        ]
+      },
+      "response_line": "{\"obligations\":[{\"universeHoles\":false,\"status\":\"assigned\",\"name\":\"_uniq.338\",\"holes\":[\"_uniq.341\"]},{\"universeHoles\":false,\"status\":\"active\",\"name\":\"_uniq.343\",\"holes\":[],\"goal\":{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.339\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.342\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"p \u2228 q \u2192 q \u2228 p\"},\"name\":\"_uniq.343\",\"isConversion\":false,\"fragment\":\"tactic\"}}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 5,
+        "goalId": 0,
+        "tactic": "tauto"
+      },
+      "request_line": "goal.tactic {\"stateId\":5,\"goalId\":0,\"tactic\":\"tauto\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.343",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 6,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.343\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":6,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 6
+      },
+      "request_line": "goal.certify {\"stateId\":6}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "956ecbd65840853e",
+          "root": "_uniq.338",
+          "proof": "2c2a3f68249786ce",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "1f25fae908fae89b",
+          "axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"956ecbd65840853e\",\"root\":\"_uniq.338\",\"proof\":\"2c2a3f68249786ce\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"1f25fae908fae89b\",\"axioms\":[\"Classical.choice\",\"Quot.sound\",\"propext\"],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.inspect",
+      "request": {
+        "stateId": 6,
+        "goals": [
+          "_uniq.338",
+          "_uniq.343"
+        ]
+      },
+      "request_line": "goal.inspect {\"stateId\":6,\"goals\":[\"_uniq.338\",\"_uniq.343\"]}",
+      "response": {
+        "obligations": [
+          {
+            "universeHoles": false,
+            "status": "complete",
+            "name": "_uniq.338",
+            "holes": []
+          },
+          {
+            "universeHoles": false,
+            "status": "complete",
+            "name": "_uniq.343",
+            "holes": []
+          }
+        ]
+      },
+      "response_line": "{\"obligations\":[{\"universeHoles\":false,\"status\":\"complete\",\"name\":\"_uniq.338\",\"holes\":[]},{\"universeHoles\":false,\"status\":\"complete\",\"name\":\"_uniq.343\",\"holes\":[]}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 5,
+        "goalId": 0,
+        "tactic": "tauto"
+      },
+      "request_line": "goal.tactic {\"stateId\":5,\"goalId\":0,\"tactic\":\"tauto\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.343",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 7,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.343\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":7,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 7
+      },
+      "request_line": "goal.certify {\"stateId\":7}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "956ecbd65840853e",
+          "root": "_uniq.338",
+          "proof": "2c2a3f68249786ce",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "1f25fae908fae89b",
+          "axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"956ecbd65840853e\",\"root\":\"_uniq.338\",\"proof\":\"2c2a3f68249786ce\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"1f25fae908fae89b\",\"axioms\":[\"Classical.choice\",\"Quot.sound\",\"propext\"],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "\u2200 (\u03b1 : Type u_1) (\u03b2 : Type u_2) (\u03b3 : Type u_3) [DecidableEq \u03b1] (s t u v : Finset \u03b1) (a b : \u03b1), a \u2209 s \u2192 ((\u2200 a \u2208 t, a \u2209 s) \u2194 \u2200 \u2983a : \u03b1\u2984, a \u2208 s \u2192 a \u2209 t)",
+        "levels": [
+          "u_1",
+          "u_2",
+          "u_3"
+        ]
+      },
+      "request_line": "goal.start {\"expr\":\"\\u2200 (\\u03b1 : Type u_1) (\\u03b2 : Type u_2) (\\u03b3 : Type u_3) [DecidableEq \\u03b1] (s t u v : Finset \\u03b1) (a b : \\u03b1), a \\u2209 s \\u2192 ((\\u2200 a \\u2208 t, a \\u2209 s) \\u2194 \\u2200 \\u2983a : \\u03b1\\u2984, a \\u2208 s \\u2192 a \\u2209 t)\",\"levels\":[\"u_1\",\"u_2\",\"u_3\"]}",
+      "response": {
+        "stateId": 8,
+        "root": "_uniq.1226"
+      },
+      "response_line": "{\"stateId\":8,\"root\":\"_uniq.1226\"}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 8,
+        "goalId": 0,
+        "tactic": "intro \u03b1 \u03b2 \u03b3 inst s t u v a b"
+      },
+      "request_line": "goal.tactic {\"stateId\":8,\"goalId\":0,\"tactic\":\"intro \\u03b1 \\u03b2 \\u03b3 inst s t u v a b\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.1226",
+          "introduced": [
+            [
+              "_uniq.1227",
+              "_uniq.1230",
+              "_uniq.1233",
+              "_uniq.1236",
+              "_uniq.1241",
+              "_uniq.1244",
+              "_uniq.1247",
+              "_uniq.1250",
+              "_uniq.1253",
+              "_uniq.1256"
+            ]
+          ],
+          "extra": [],
+          "dormant": [],
+          "direct": [
+            "_uniq.1257"
+          ],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 9,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": [
+          {
+            "vars": [
+              {
+                "userName": "\u03b1",
+                "type": {
+                  "pp": "Type u_1"
+                },
+                "name": "_uniq.1227",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "\u03b2",
+                "type": {
+                  "pp": "Type u_2"
+                },
+                "name": "_uniq.1230",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "\u03b3",
+                "type": {
+                  "pp": "Type u_3"
+                },
+                "name": "_uniq.1233",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "inst",
+                "type": {
+                  "pp": "DecidableEq \u03b1"
+                },
+                "name": "_uniq.1236",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "s",
+                "type": {
+                  "pp": "Finset \u03b1"
+                },
+                "name": "_uniq.1241",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "t",
+                "type": {
+                  "pp": "Finset \u03b1"
+                },
+                "name": "_uniq.1244",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "u",
+                "type": {
+                  "pp": "Finset \u03b1"
+                },
+                "name": "_uniq.1247",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "v",
+                "type": {
+                  "pp": "Finset \u03b1"
+                },
+                "name": "_uniq.1250",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "a",
+                "type": {
+                  "pp": "\u03b1"
+                },
+                "name": "_uniq.1253",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "b",
+                "type": {
+                  "pp": "\u03b1"
+                },
+                "name": "_uniq.1256",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              }
+            ],
+            "target": {
+              "pp": "a \u2209 s \u2192 ((\u2200 a \u2208 t, a \u2209 s) \u2194 \u2200 \u2983a : \u03b1\u2984, a \u2208 s \u2192 a \u2209 t)"
+            },
+            "name": "_uniq.1257",
+            "isConversion": false,
+            "fragment": "tactic"
+          }
+        ]
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.1226\",\"introduced\":[[\"_uniq.1227\",\"_uniq.1230\",\"_uniq.1233\",\"_uniq.1236\",\"_uniq.1241\",\"_uniq.1244\",\"_uniq.1247\",\"_uniq.1250\",\"_uniq.1253\",\"_uniq.1256\"]],\"extra\":[],\"dormant\":[],\"direct\":[\"_uniq.1257\"],\"closed\":[],\"changed\":[]},\"nextStateId\":9,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[{\"vars\":[{\"userName\":\"\u03b1\",\"type\":{\"pp\":\"Type u_1\"},\"name\":\"_uniq.1227\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"\u03b2\",\"type\":{\"pp\":\"Type u_2\"},\"name\":\"_uniq.1230\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"\u03b3\",\"type\":{\"pp\":\"Type u_3\"},\"name\":\"_uniq.1233\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"inst\",\"type\":{\"pp\":\"DecidableEq \u03b1\"},\"name\":\"_uniq.1236\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"s\",\"type\":{\"pp\":\"Finset \u03b1\"},\"name\":\"_uniq.1241\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"t\",\"type\":{\"pp\":\"Finset \u03b1\"},\"name\":\"_uniq.1244\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"u\",\"type\":{\"pp\":\"Finset \u03b1\"},\"name\":\"_uniq.1247\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"v\",\"type\":{\"pp\":\"Finset \u03b1\"},\"name\":\"_uniq.1250\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"a\",\"type\":{\"pp\":\"\u03b1\"},\"name\":\"_uniq.1253\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"b\",\"type\":{\"pp\":\"\u03b1\"},\"name\":\"_uniq.1256\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"a \u2209 s \u2192 ((\u2200 a \u2208 t, a \u2209 s) \u2194 \u2200 \u2983a : \u03b1\u2984, a \u2208 s \u2192 a \u2209 t)\"},\"name\":\"_uniq.1257\",\"isConversion\":false,\"fragment\":\"tactic\"}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 9,
+        "goalId": 0,
+        "tactic": "tauto"
+      },
+      "request_line": "goal.tactic {\"stateId\":9,\"goalId\":0,\"tactic\":\"tauto\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.1257",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 10,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.1257\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":10,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 10
+      },
+      "request_line": "goal.certify {\"stateId\":10}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "eabe3e9a225d7f83",
+          "root": "_uniq.1226",
+          "proof": "68c49ff1ebe045c5",
+          "levels": [
+            "u_1",
+            "u_2",
+            "u_3"
+          ],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "1f25fae908fae89b",
+          "axioms": [
+            "Quot.sound",
+            "propext"
+          ],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"eabe3e9a225d7f83\",\"root\":\"_uniq.1226\",\"proof\":\"68c49ff1ebe045c5\",\"levels\":[\"u_1\",\"u_2\",\"u_3\"],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"1f25fae908fae89b\",\"axioms\":[\"Quot.sound\",\"propext\"],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "\u2200 (p q : Prop), (p \u2227 q \u2192 q \u2227 p) \u2227 (p \u2228 q \u2192 q \u2228 p)",
+        "levels": []
+      },
+      "request_line": "goal.start {\"expr\":\"\\u2200 (p q : Prop), (p \\u2227 q \\u2192 q \\u2227 p) \\u2227 (p \\u2228 q \\u2192 q \\u2228 p)\",\"levels\":[]}",
+      "response": {
+        "stateId": 11,
+        "root": "_uniq.3638"
+      },
+      "response_line": "{\"stateId\":11,\"root\":\"_uniq.3638\"}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 11,
+        "goalId": 0,
+        "tactic": "intro p q; constructor"
+      },
+      "request_line": "goal.tactic {\"stateId\":11,\"goalId\":0,\"tactic\":\"intro p q; constructor\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.3638",
+          "introduced": [
+            [
+              "_uniq.3639",
+              "_uniq.3642"
+            ],
+            [
+              "_uniq.3639",
+              "_uniq.3642"
+            ]
+          ],
+          "extra": [],
+          "dormant": [],
+          "direct": [
+            "_uniq.3651",
+            "_uniq.3652"
+          ],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 12,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": [
+          {
+            "vars": [
+              {
+                "userName": "p",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.3639",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "q",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.3642",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              }
+            ],
+            "userName": "left",
+            "target": {
+              "pp": "p \u2227 q \u2192 q \u2227 p"
+            },
+            "name": "_uniq.3651",
+            "isConversion": false,
+            "fragment": "tactic"
+          },
+          {
+            "vars": [
+              {
+                "userName": "p",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.3639",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "q",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.3642",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              }
+            ],
+            "userName": "right",
+            "target": {
+              "pp": "p \u2228 q \u2192 q \u2228 p"
+            },
+            "name": "_uniq.3652",
+            "isConversion": false,
+            "fragment": "tactic"
+          }
+        ]
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.3638\",\"introduced\":[[\"_uniq.3639\",\"_uniq.3642\"],[\"_uniq.3639\",\"_uniq.3642\"]],\"extra\":[],\"dormant\":[],\"direct\":[\"_uniq.3651\",\"_uniq.3652\"],\"closed\":[],\"changed\":[]},\"nextStateId\":12,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3639\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3642\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"userName\":\"left\",\"target\":{\"pp\":\"p \u2227 q \u2192 q \u2227 p\"},\"name\":\"_uniq.3651\",\"isConversion\":false,\"fragment\":\"tactic\"},{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3639\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3642\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"userName\":\"right\",\"target\":{\"pp\":\"p \u2228 q \u2192 q \u2228 p\"},\"name\":\"_uniq.3652\",\"isConversion\":false,\"fragment\":\"tactic\"}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 12,
+        "goalId": 1,
+        "tactic": "tauto"
+      },
+      "request_line": "goal.tactic {\"stateId\":12,\"goalId\":1,\"tactic\":\"tauto\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [
+            "_uniq.3651"
+          ],
+          "selected": "_uniq.3652",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 13,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": [
+          {
+            "vars": [
+              {
+                "userName": "p",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.3639",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              },
+              {
+                "userName": "q",
+                "type": {
+                  "pp": "Prop"
+                },
+                "name": "_uniq.3642",
+                "isLet": false,
+                "isInstance": false,
+                "isInaccessible": false
+              }
+            ],
+            "userName": "left",
+            "target": {
+              "pp": "p \u2227 q \u2192 q \u2227 p"
+            },
+            "name": "_uniq.3651",
+            "isConversion": false,
+            "fragment": "tactic"
+          }
+        ]
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[\"_uniq.3651\"],\"selected\":\"_uniq.3652\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":13,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3639\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3642\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"userName\":\"left\",\"target\":{\"pp\":\"p \u2227 q \u2192 q \u2227 p\"},\"name\":\"_uniq.3651\",\"isConversion\":false,\"fragment\":\"tactic\"}]}"
+    },
+    {
+      "command": "goal.inspect",
+      "request": {
+        "stateId": 13,
+        "goals": [
+          "_uniq.3651",
+          "_uniq.3652"
+        ]
+      },
+      "request_line": "goal.inspect {\"stateId\":13,\"goals\":[\"_uniq.3651\",\"_uniq.3652\"]}",
+      "response": {
+        "obligations": [
+          {
+            "universeHoles": false,
+            "status": "active",
+            "name": "_uniq.3651",
+            "holes": [],
+            "goal": {
+              "vars": [
+                {
+                  "userName": "p",
+                  "type": {
+                    "pp": "Prop"
+                  },
+                  "name": "_uniq.3639",
+                  "isLet": false,
+                  "isInstance": false,
+                  "isInaccessible": false
+                },
+                {
+                  "userName": "q",
+                  "type": {
+                    "pp": "Prop"
+                  },
+                  "name": "_uniq.3642",
+                  "isLet": false,
+                  "isInstance": false,
+                  "isInaccessible": false
+                }
+              ],
+              "userName": "left",
+              "target": {
+                "pp": "p \u2227 q \u2192 q \u2227 p"
+              },
+              "name": "_uniq.3651",
+              "isConversion": false,
+              "fragment": "tactic"
+            }
+          },
+          {
+            "universeHoles": false,
+            "status": "complete",
+            "name": "_uniq.3652",
+            "holes": []
+          }
+        ]
+      },
+      "response_line": "{\"obligations\":[{\"universeHoles\":false,\"status\":\"active\",\"name\":\"_uniq.3651\",\"holes\":[],\"goal\":{\"vars\":[{\"userName\":\"p\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3639\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"q\",\"type\":{\"pp\":\"Prop\"},\"name\":\"_uniq.3642\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"userName\":\"left\",\"target\":{\"pp\":\"p \u2227 q \u2192 q \u2227 p\"},\"name\":\"_uniq.3651\",\"isConversion\":false,\"fragment\":\"tactic\"}},{\"universeHoles\":false,\"status\":\"complete\",\"name\":\"_uniq.3652\",\"holes\":[]}]}"
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 13,
+        "goalId": 0,
+        "tactic": "tauto"
+      },
+      "request_line": "goal.tactic {\"stateId\":13,\"goalId\":0,\"tactic\":\"tauto\"}",
+      "response": {
+        "validation": {
+          "version": 2,
+          "scope": "execution-closure-and-transition-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.3651",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 14,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      },
+      "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.3651\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":14,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 14
+      },
+      "request_line": "goal.certify {\"stateId\":14}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "ceb9818b9d49148a",
+          "root": "_uniq.3638",
+          "proof": "f8db6f769a75c8c5",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "1f25fae908fae89b",
+          "axioms": [
+            "Classical.choice",
+            "Quot.sound",
+            "propext"
+          ],
+          "auxiliary": []
+        }
+      },
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"ceb9818b9d49148a\",\"root\":\"_uniq.3638\",\"proof\":\"f8db6f769a75c8c5\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"1f25fae908fae89b\",\"axioms\":[\"Classical.choice\",\"Quot.sound\",\"propext\"],\"auxiliary\":[]}}"
+    },
+    {
+      "command": "goal.delete",
+      "request": {
+        "stateIds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ]
+      },
+      "request_line": "goal.delete {\"stateIds\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]}",
+      "response": {},
+      "response_line": "{}"
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response": {
+        "nGoals": 0
+      },
+      "response_line": "{\"nGoals\":0}"
+    }
+  ],
+  "diagnostic": {
+    "zetaDeltaCount": 0,
+    "validator": "accepted",
+    "synthetic": [],
+    "rootCertificate": {
+      "version": 1,
+      "status": "certified",
+      "receipt": {
+        "version": 1,
+        "rootType": "f8ce7b4991494a80",
+        "root": "_uniq.9",
+        "proof": "3f3974e0eb11c0de",
+        "levels": [],
+        "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+        "identity": "lean-expr-digest-v1",
+        "environment": "1f25fae908fae89b",
+        "axioms": [],
+        "auxiliary": []
+      }
+    },
+    "postponedCount": 0,
+    "pending": [],
+    "letRecCount": 0,
+    "errorOwners": [],
+    "auxiliaryAudit": [
+      "owner=metavariable _uniq.18 path=retained record audit/assignment: Missing local declaration _uniq.19"
+    ],
+    "assignments": [
+      {
+        "value": "_uniq.19",
+        "type": "Prop",
+        "rootReachable": false,
+        "owner": "_uniq.18",
+        "missingInOwner": [
+          "_uniq.19"
+        ],
+        "assignmentKind": "ordinary"
+      }
+    ]
+  },
+  "ordinary_lean": "Test/Mathlib/ScopeControls.lean:7:24: warning: unused variable `\u03b2`\nnote: this linter can be disabled with `set_option linter.unusedVariables false`\nTest/Mathlib/ScopeControls.lean:7:39: warning: unused variable `\u03b3`\nnote: this linter can be disabled with `set_option linter.unusedVariables false`\nTest/Mathlib/ScopeControls.lean:8:25: warning: unused variable `u`\nnote: this linter can be disabled with `set_option linter.unusedVariables false`\nTest/Mathlib/ScopeControls.lean:8:27: warning: unused variable `v`\nnote: this linter can be disabled with `set_option linter.unusedVariables false`\nTest/Mathlib/ScopeControls.lean:8:44: warning: unused variable `b`\nnote: this linter can be disabled with `set_option linter.unusedVariables false`\n",
+  "mathlib_source_verification": {
+    "reference_commit": "29dcec074de168ac2bf835a77ef68bbe069194c5",
+    "checked_files": 4737,
+    "missing_or_different": [],
+    "local_extra_lean_files": []
+  }
+}

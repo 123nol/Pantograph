@@ -123,3 +123,22 @@ elab "contract_diagnostic_heartbeat" : tactic => do
       values.modify (·.push index)
     return Dynamic.mk ("rendered" : MessageData)) (fun _ => false)
   logInfo data
+
+unsafe def ContractFixtures.unusedUnsafe : Nat := 0
+
+/-- Elaboration residue whose owner no longer contains a discarded local. -/
+elab "contract_inert_residue" : tactic => do
+  let scratch ← Meta.mkFreshExprSyntheticOpaqueMVar (mkSort .zero)
+  let discarded ← mkFreshFVarId
+  scratch.mvarId!.assign (.fvar discarded)
+  (← getMainGoal).assign (mkConst ``True.intro)
+  setGoals []
+
+/-- An integrity failure after a native command-visible environment mutation. -/
+elab "contract_invalid_mutation" : tactic => do
+  let name := `ContractFixtures.invalidMutation
+  addDecl (.defnDecl {
+    name, levelParams := [], type := mkConst ``True,
+    value := mkConst ``True.intro, hints := .opaque, safety := .safe })
+  (← getMainGoal).assign (.fvar (← mkFreshFVarId))
+  setGoals []

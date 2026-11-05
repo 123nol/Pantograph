@@ -1,0 +1,11 @@
+{
+  "source_base": "5cab95e132bcdd1d3cb715505d1694ac7bb0e0d6",
+  "lean_toolchain": "leanprover/lean4:v4.10.0-rc1",
+  "mathlib_root": "/home/nolawi/new-maths/maths_ai/sexpr_environment/sexpr_environment/mathlib4",
+  "mathlib_git_root": "/home/nolawi/new-maths",
+  "expected_mathlib_pin": "29dcec074de168ac2bf835a77ef68bbe069194c5",
+  "mathlib_pin_independently_verified": false,
+  "old_binary_path": "/tmp/pantograph-before-scope-validation",
+  "old_binary_sha256": "1c29397e4c0e9d3af499b6d18872cf9562c64fde3fc4c0bc59cec5494c772f30",
+  "mathlib_manifest_sha256": "b283d36205658ac130fcc9a5de33a134a79e23a5bb568f734c288d010d8bb5de"
+}

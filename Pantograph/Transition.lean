@@ -8,6 +8,7 @@ from metavariable identities, never from printed goals.
 -/
 import Pantograph.Goal
 import Pantograph.Serial
+import Pantograph.Validation
 
 namespace Pantograph
 open Lean
@@ -78,6 +79,7 @@ def inspectObligation (state : GoalState) (goal : MVarId) (options : Protocol.Op
     MetaM (Option Protocol.ObligationInspection) := do
   let mctx := state.mctx
   let some decl := mctx.findDecl? goal | return none
+  discard <| requireValidation (validateSnapshot state [goal])
   let holes (expr : Expr) : Array String :=
     (expr.collectMVars {}).result.map (·.name.toString)
   let name := goal.name.toString

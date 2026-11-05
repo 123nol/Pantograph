@@ -27,3 +27,9 @@ lean_exe test {
   -- Solves the native symbol not found problem
   supportInterpreter := true
 }
+
+/-- Runtime Mathlib diagnostic; Mathlib is supplied explicitly through LEAN_PATH. -/
+lean_exe scope_diagnostic {
+  root := `Test.ScopeDiagnostic
+  supportInterpreter := true
+}

@@ -286,7 +286,7 @@ structure ProtocolDescriptor where
   resourceErrorVersion: Nat := 1
   commandTransactionVersion: Nat := 1
   modelSexpVersion: Nat := 1
-  transitionValidationVersion: Nat := 1
+  transitionValidationVersion: Nat := 2
   transitionProvenanceVersion: Nat := 1
   inspectionVersion: Nat := 1
   certificationVersion: Nat := 1
@@ -296,8 +296,8 @@ structure ProtocolDescriptor where
   deriving Lean.ToJson
 
 structure TransitionValidation where
-  version: Nat := 1
-  scope: String := "transition-expressions"
+  version: Nat := 2
+  scope: String := "execution-closure-and-transition-audit"
   checked: Bool
   deriving Lean.ToJson
 

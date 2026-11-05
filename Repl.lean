@@ -62,6 +62,7 @@ private def dispatch (command: Protocol.Command): MainM Lean.Json := do
   errorCommand := errorI "command"
   errorIndex := errorI "index"
   newGoalState (goalState: GoalState) : MainM Nat := do
+    let goalState := (← requireValidation (validateSnapshot goalState)).state
     let state ← get
     let stateId := state.nextId
     set { state with
@@ -204,10 +205,7 @@ private def dispatch (command: Protocol.Command): MainM Lean.Json := do
           let .ok result := nextGoalState.resume (nextGoalState.goals ++ dormantGoals) | throwError "Resuming known goals"
           pure result
         | false, _ => pure nextGoalState
-      let validation ← withCommandPhase "validate" <| pure (validateTransition goalState nextGoalState goal)
-      let checked ← match validation with
-        | .ok checked => pure checked
-        | .error message => return .error (errorI "validation" message)
+      let checked ← requireValidation (validateTransition goalState nextGoalState goal)
       let nextGoalState := checked.state
       let goals ← withCommandPhase "observe" <| nextGoalState.serializeGoals (parent := .some goalState) (options := state.options) |>.run'
       let transition ← withCommandPhase "observe" <| pure (transitionProvenance state.options goalState nextGoalState goal produced)
@@ -247,11 +245,7 @@ private def dispatch (command: Protocol.Command): MainM Lean.Json := do
     match nextState? with
     | .error error => return .error <| errorI "structure" error
     | .ok nextGoalState =>
-      let nextStateId := state.nextId
-      set { state with
-        goalStates := state.goalStates.insert nextStateId nextGoalState,
-        nextId := state.nextId + 1
-      }
+      let nextStateId ← newGoalState nextGoalState
       let goals ← withCommandPhase "observe" <| goalSerialize nextGoalState (options := state.options)
       return .ok {
         nextStateId,
@@ -273,6 +267,9 @@ private def dispatch (command: Protocol.Command): MainM Lean.Json := do
       let some obligation ← withCommandPhase "observe" <| runMetaInMainM <| inspectObligation goalState ⟨name.toName⟩ state.options |
         return .error $ errorIndex s!"Unknown obligation {name}"
       obligations := obligations.push obligation
+    let published := { goalState with publishedObligations :=
+      (goalState.publishedObligations ++ args.goals.toList.map (fun name => (⟨name.toName⟩ : Lean.MVarId))).eraseDups }
+    set { state with goalStates := state.goalStates.insert args.stateId published }
     return .ok { obligations }
   goal_certify (args: Protocol.GoalCertify): MainM (CR Protocol.GoalCertifyResult) := do
     let state ← get
@@ -281,6 +278,7 @@ private def dispatch (command: Protocol.Command): MainM Lean.Json := do
     let maxHeartbeats := args.maxHeartbeats?.getD 200000
     if maxHeartbeats == 0 then
       return .error <| errorI "arguments" "maxHeartbeats must be positive"
+    discard <| requireValidation (validateSnapshot goalState)
     return .ok (← certifyRoot goalState maxHeartbeats)
   goal_print (args: Protocol.GoalPrint): MainM (CR Protocol.GoalPrintResult) := do
     let state ← get
@@ -382,7 +380,10 @@ def runTransaction (command : Protocol.Command) (action : MainM Lean.Json) : Mai
   | .error ex =>
     let result := match ex with
       | .internal id details =>
-        if id == commandResourceExceptionId && details.getNat `limit > 0 &&
+        if id == validationExceptionId then
+          let response := Lean.toJson ({ error := "validation", desc := details.getString `desc } : Protocol.InteractionError)
+          { response, bytes := response.compress, fatal := true }
+        else if id == commandResourceExceptionId && details.getNat `limit > 0 &&
             ["execute", "validate", "observe", "serialize"].contains (details.getString `phase) then
           if command.cmd == "goal.certify" then
             let response := Lean.toJson ({

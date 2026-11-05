@@ -95,8 +95,6 @@ private def protocolTests : MainM LSpec.TestSeq := do
   tests := tests ++ LSpec.test "hidden local value remains an obligation" (success localHole && (goals localHole).size == 1)
   let delayed ← tactic root "contract_delayed_hole"
   tests := tests ++ LSpec.test "delayed hole restored through the protocol" (success delayed && (goals delayed).size == 1)
-  let missing ← tactic root "contract_missing_assignment"
-  tests := tests ++ LSpec.test "missing assignment returns named validation error" ((missing.getObjValAs? String "error").toOption == some "validation" && !(missing.getObjVal? "nextStateId").isOk)
   let conjunction ← start "True ∧ True"
   let split ← tactic conjunction "constructor"
   let id := split.getObjValAs? Nat "nextStateId" |>.toOption |>.getD conjunction
@@ -106,6 +104,9 @@ private def protocolTests : MainM LSpec.TestSeq := do
   discard <| request "goal.delete" [("stateIds", toJson ids)]
   let count ← request "stat" []
   tests := tests ++ LSpec.test "all test allocations deleted" ((count.getObjValAs? Nat "nGoals").toOption == some 0)
+  let validationRoot ← start "True"
+  let missing ← tactic validationRoot "contract_missing_assignment"
+  tests := tests ++ LSpec.test "missing assignment returns named validation error" ((missing.getObjValAs? String "error").toOption == some "validation" && !(missing.getObjVal? "nextStateId").isOk)
   return tests
 
 private def boundaryTests : Elab.TermElabM LSpec.TestSeq := do
@@ -117,24 +118,24 @@ private def boundaryTests : Elab.TermElabM LSpec.TestSeq := do
       let value ← Meta.mkSorry (mkConst ``True) false
       sibling.mvarId!.assign value
       Elab.Tactic.setGoals [state.root]) | throwError "coupled tactic failed"
-  let checked := validateTransition state next state.root
+  let checked ← validateTransition state next state.root
   tests := tests ++ LSpec.test "changed coupled assignment scanned" (checked.toOption.any (·.hasSorry))
   let state ← GoalState.create (mkConst ``True)
   let .success next ← state.tryTacticM state.root (do
       let pending ← Meta.mkFreshExprSyntheticOpaqueMVar (mkConst ``True)
       assignDelayedMVar state.root #[] pending.mvarId!
       Elab.Tactic.setGoals []) | throwError "delayed tactic failed"
-  let checked := validateTransition state next state.root
+  let checked ← validateTransition state next state.root
   tests := tests ++ LSpec.test "delayed pending obligation retained" (checked.toOption.any fun result => result.state.goals.length == 1)
   let missing : MVarId := ⟨`ContractFixtures.missing⟩
   let corrupted := { state with savedState := { state.savedState with tactic := { goals := [missing] } } }
-  tests := tests ++ LSpec.test "missing evidence produces validation failure" (!(validateTransition state corrupted state.root).isOk)
+  tests := tests ++ LSpec.test "missing evidence produces validation failure" (!(← validateTransition state corrupted state.root).isOk)
   let cyclic := { state with savedState := { state.savedState with term := {
     state.savedState.term with meta := { state.savedState.term.meta with meta := {
       state.metaState with mctx := { state.mctx with eAssignment := state.mctx.eAssignment.insert state.root (.mvar state.root) }
     } }
   } } }
-  tests := tests ++ LSpec.test "cyclic assignments reject indeterminate evidence" (!(validateTransition state cyclic state.root).isOk)
+  tests := tests ++ LSpec.test "cyclic assignments reject indeterminate evidence" (!(← validateTransition state cyclic state.root).isOk)
   logInfo "outer log"
   let outer := (← getThe Core.State).messages
   let .failure _ _ ← state.tryTacticM state.root (do

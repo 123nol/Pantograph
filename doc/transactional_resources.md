@@ -1,9 +1,9 @@
 # Transactional resource errors: protocol revision 3
 
 `protocol.describe` reports `protocolVersion: 3`, `resourceErrorVersion: 1`, and
-`commandTransactionVersion: 1`. Model expressions, transition validation,
-transition provenance, inspection, messages, and certification keep their
-existing version-1 representations. Startup still emits `ready.`.
+`commandTransactionVersion: 1`. Model expressions, transition provenance,
+inspection, messages, and certification keep their version-1 representations.
+Transition validation now uses [version 2](scope_aware_validation.md). Startup still emits `ready.`.
 
 Every subsequent response is one compact JSON line. Diagnostic newlines are
 escaped inside strings. The `printJsonPretty` option has been removed from both
@@ -44,7 +44,9 @@ allocations and restarting IDs.
 
 A classified heartbeat failure returns `recovery: "command-rolled-back"` only
 when discarding the staged state establishes recovery. Ordinary failures may
-still return their established diagnostics. An unexpected exception makes the
+still return their established diagnostics. A validation integrity failure also
+discards staged state, emits the existing validation envelope, and ends the session.
+An unexpected exception makes the
 session unusable. Further native dispatch is refused, and the executable stops
 reading commands after writing the fatal response and exits nonzero.
 

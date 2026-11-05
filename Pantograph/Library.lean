@@ -3,6 +3,7 @@ import Pantograph.Environment
 import Pantograph.Goal
 import Pantograph.Protocol
 import Pantograph.Serial
+import Pantograph.Validation
 import Pantograph.Version
 import Lean
 
@@ -178,27 +179,27 @@ def goalPrint (state: GoalState) (options: @&Protocol.Options): CoreM Protocol.G
 
 @[export pantograph_goal_tactic_m]
 def goalTactic (state: GoalState) (goal:  MVarId) (tactic: String): CoreM TacticResult :=
-  runTermElabM <| state.tryTactic goal tactic
+  validateOperation state goal <| runTermElabM <| state.tryTactic goal tactic
 @[export pantograph_goal_assign_m]
 def goalAssign (state: GoalState) (goal: MVarId) (expr: String): CoreM TacticResult :=
-  runTermElabM <| state.tryAssign goal expr
+  validateOperation state goal <| runTermElabM <| state.tryAssign goal expr
 @[export pantograph_goal_have_m]
 protected def GoalState.tryHave (state: GoalState) (goal: MVarId) (binderName: String) (type: String): CoreM TacticResult :=
-  runTermElabM <| withInputContext type <| state.withOperation do
+  validateOperation state goal <| runTermElabM <| withInputContext type <| state.withOperation do
     let type ← match (← parseTermM type) with
       | .ok syn => pure syn
       | .error error => return .parseError error
     return .success (← state.step goal $ Tactic.evalHave binderName.toName type)
 @[export pantograph_goal_try_define_m]
 protected def GoalState.tryDefine (state: GoalState) (goal: MVarId) (binderName: String) (expr: String): CoreM TacticResult :=
-  runTermElabM <| withInputContext expr <| state.withOperation do
+  validateOperation state goal <| runTermElabM <| withInputContext expr <| state.withOperation do
     let expr ← match (← parseTermM expr) with
       | .ok syn => pure syn
       | .error error => return .parseError error
     return .success (← state.step goal $ Tactic.evalDefine binderName.toName expr)
 @[export pantograph_goal_try_motivated_apply_m]
 protected def GoalState.tryMotivatedApply (state: GoalState) (goal: MVarId) (recursor: String):
-      Elab.TermElabM TacticResult := withInputContext recursor <| state.withOperation do
+      Elab.TermElabM TacticResult := validateOperation state goal <| withInputContext recursor <| state.withOperation do
   let recursor ← match (← parseTermM recursor) with
     | .ok syn => pure syn
     | .error error => return .parseError error
@@ -206,7 +207,7 @@ protected def GoalState.tryMotivatedApply (state: GoalState) (goal: MVarId) (rec
 
 @[export pantograph_goal_try_no_confuse_m]
 protected def GoalState.tryNoConfuse (state: GoalState) (goal: MVarId) (eq: String):
-      Elab.TermElabM TacticResult := withInputContext eq <| state.withOperation do
+      Elab.TermElabM TacticResult := validateOperation state goal <| withInputContext eq <| state.withOperation do
   let eq ← match (← parseTermM eq) with
     | .ok syn => pure syn
     | .error error => return .parseError error
@@ -214,15 +215,15 @@ protected def GoalState.tryNoConfuse (state: GoalState) (goal: MVarId) (eq: Stri
 
 @[export pantograph_goal_let_m]
 def goalLet (state: GoalState) (goal: MVarId) (binderName: String) (type: String): CoreM TacticResult :=
-  runTermElabM <| state.tryLet goal binderName type
+  validateOperation state goal <| runTermElabM <| state.tryLet goal binderName type
 @[export pantograph_goal_conv_m]
 def goalConv (state: GoalState) (goal: MVarId): CoreM TacticResult :=
-  runTermElabM <| state.conv goal
+  validateOperation state goal <| runTermElabM <| state.conv goal
 @[export pantograph_goal_conv_exit_m]
 def goalConvExit (state: GoalState): CoreM TacticResult :=
-  runTermElabM <| state.convExit
+  validateOperation state (state.convMVar?.map (fun (_, goal, _) => goal) |>.getD state.root) <| runTermElabM <| state.convExit
 @[export pantograph_goal_calc_m]
 def goalCalc (state: GoalState) (goal: MVarId) (pred: String): CoreM TacticResult :=
-  runTermElabM <| state.tryCalc goal pred
+  validateOperation state goal <| runTermElabM <| state.tryCalc goal pred
 
 end Pantograph

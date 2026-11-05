@@ -8,7 +8,7 @@ environment, so no search state or REPL environment sees the temporary
 declaration. The kernel is always invoked directly, so `debug.skipKernelTC`
 cannot turn checking off.
 -/
-import Pantograph.Goal
+import Pantograph.Validation
 
 namespace Pantograph
 open Lean
@@ -131,6 +131,12 @@ def certifyRoot (state : GoalState) (maxHeartbeats : Nat) : CoreM Protocol.GoalC
     return result "rejected" "The root is not declared in this state"
   unless mctx.eAssignment.contains state.root || mctx.dAssignment.contains state.root do
     return result "incomplete" "The root is unassigned"
+  -- Local binding abstraction may erase unused let values; inspect retained hazards first.
+  match ← validateSnapshot state with
+  | .error message => return result "rejected" s!"Invalid retained execution state: {message}"
+  | .ok evidence =>
+    if evidence.hasSorry then return result "rejected" "Retained state contains an admission"
+    if evidence.hasUnsafe then return result "rejected" "Retained state contains an unsafe dependency"
   let (proof, _) := instantiateMVarsCore mctx (.mvar state.root)
   if proof.hasExprMVar then
     let holes := (proof.collectMVars {}).result.toList.map (·.name.toString)
@@ -140,8 +146,8 @@ def certifyRoot (state : GoalState) (maxHeartbeats : Nat) : CoreM Protocol.GoalC
   -- Ordinary locals become binders and local definitions keep their values.
   let fvars := rootDecl.lctx.foldl (init := #[]) fun acc decl =>
     if decl.isAuxDecl then acc else acc.push (Expr.fvar decl.fvarId)
-  let type := rootDecl.lctx.mkForall fvars state.rootType
-  let value := rootDecl.lctx.mkLambda fvars proof
+  let type := (instantiateMVarsCore mctx (rootDecl.lctx.mkForall fvars state.rootType)).1
+  let value := (instantiateMVarsCore mctx (rootDecl.lctx.mkLambda fvars proof)).1
   if type.hasMVar || type.hasFVar || type.hasLooseBVars then
     return result "rejected" "The root statement is not closed"
   if value.hasFVar then

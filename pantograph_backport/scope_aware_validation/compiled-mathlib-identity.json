@@ -1,0 +1,8 @@
+{
+  "root": "/home/nolawi/new-maths/maths_ai/sexpr_environment/sexpr_environment/mathlib4",
+  "file_pattern": "*.olean in Mathlib and dependency build/lib directories",
+  "file_count": 4760,
+  "total_bytes": 3407699608,
+  "manifest_encoding": "sorted relative path + NUL + hex SHA-256 + LF for each file",
+  "manifest_sha256": "3137fb29b72487b07c3ccac80453b0672e99ec948f2ad6f7874926ae4ff9467f"
+}

@@ -1,0 +1,10 @@
+Test/Mathlib/ScopeControls.lean:7:24: warning: unused variable `β`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+Test/Mathlib/ScopeControls.lean:7:39: warning: unused variable `γ`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+Test/Mathlib/ScopeControls.lean:8:25: warning: unused variable `u`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+Test/Mathlib/ScopeControls.lean:8:27: warning: unused variable `v`
+note: this linter can be disabled with `set_option linter.unusedVariables false`
+Test/Mathlib/ScopeControls.lean:8:44: warning: unused variable `b`
+note: this linter can be disabled with `set_option linter.unusedVariables false`

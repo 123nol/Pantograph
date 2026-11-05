@@ -1,89 +1,66 @@
-The current descriptor is revision 3. Complete command transactions, resource
-errors, and compact response framing are specified in
-[Transactional resource errors](transactional_resources.md). Earlier capture
-artifacts retain their original protocol revisions.
+# Repository-owned REPL contract
 
-# Repository-owned client companion contract
-
-Stage 4 extends merged PR #1 at
-`0dd5d2225e2d093f66a4b6231c1aa35004f2c8f3` on `client_centric_repo`.
-The Lean toolchain and Mathlib deployment pin remain unchanged.
-
-`protocol.describe {}` identifies `maths-ai-pantograph`, protocol version 2,
-model S-expression version 1, transition validation version 1, message version 1,
-`explicit-focused-v1` goal selection, and `string-array-v1` tactic errors.
-Version 2 adds transition provenance, `goal.inspect` and `goal.certify`; see
-[snapshot_protocol.md](snapshot_protocol.md).
-The planning document's contract revision 2 is not a runtime compatibility mode.
+`protocol.describe {}` identifies `maths-ai-pantograph`, protocol version 3,
+transition validation version 2, and the existing version-1 model expressions,
+transition provenance, inspection, certification, messages, resource errors, and
+command transactions. Goal selection is `explicit-focused-v1`; tactic errors use
+`string-array-v1`.
 
 Successful `goal.tactic` responses retain `nextStateId`, `goals`, `messages`,
-`hasSorry`, and `hasUnsafe`. They also carry
-`validation: {version: 1, scope: "transition-expressions", checked: true}`.
-The metadata states that the defined expression checks completed. A positive
-admission or unsafe flag remains a successful allocation for the client to delete
-before rejecting that candidate. Missing or cyclic evidence returns a command
-error with category `validation` and allocates no result state.
+`hasSorry`, and `hasUnsafe`. Validation metadata is exactly
+`{version: 2, scope: "execution-closure-and-transition-audit", checked: true}`.
+See [the scope-aware contract](scope_aware_validation.md) and
+[the ownership inventory](scope_aware_ownership.md).
 
-The shared operation transaction captures diagnostics and restores its caller's
-meta, elaborator, environment, message, trace, information, and declaration-cache
-state. Fresh-name counters remain monotonic. Logged errors reject execution even
-when tactics return normally. Thrown errors retain their diagnostics. Warnings
-and information survive success. Tagged messages retain their kind. Source
-strings use their real source maps; unavailable positions are exactly `(0, 0)`.
-Snapshot serialization and diagnostics also restore their caller.
+A positive admission or unsafe flag remains a successful allocation for the
+client to release before rejecting that candidate. Certification refuses retained
+admissions and unsafe dependencies, including unused local values that binding
+abstraction would otherwise erase. Kernel checking remains mandatory.
 
-The parser runs full tactic or conversion sequences with end-of-input checking.
-Deferred synthetic elaboration runs inside the transaction. Default synthesis
-resolves ordinary implicit arguments. Partial synthesis runs deferred tactics
-while permitting unresolved typeclass obligations. Reachable unresolved holes
-remain goals. This applies to goal initialization as well as subsequent operations.
+A genuine validation integrity failure returns `error: "validation"`, allocates
+no result, discards staged state, and ends the session. It is not an ordinary
+tactic rejection or a resource outcome. Ordinary argument and tactic errors retain
+their existing payloads. Unknown caller-supplied obligation names remain argument
+or index errors; known records must pass strict validation before inspection or
+resumption. There is no permissive validation-version fallback.
 
-Validation inspects the selected goal, input and returned goals, new or changed
-ordinary and delayed assignments, new local contexts, and pending synthetic
-expressions. It follows ordinary assignments and delayed pending assignments,
-local types and values, constant dependencies, and projection dependencies.
-Admission scanning uses elaborated terms rather than tactic strings. Unsafe
-scanning concerns resulting proof dependencies rather than the implementation
-of the tactic elaborator.
+[Transactional resource errors](transactional_resources.md) defines command
+budgets, rollback, bounded reporting, compact stdout lines, and fatal transport
+behavior. Snapshot operations restore their caller's meta, elaborator,
+environment, message, trace, information, and declaration-cache state. Failed
+staged IDs are never published; live allocation IDs remain distinct.
 
-Each state retains its original trust environment. Dependency traversal stops at
-that environment but still checks directly referenced constants for unsafe status.
-New reachable declarations have their types and values scanned recursively,
-including declarations retained from earlier transitions. Imported Mathlib
-remains the trust basis. This does not audit all imported axioms or kernel-certify
-an assembled theorem reconstructed from independent search nodes.
+The parser accepts full tactic/conversion sequences with end-of-input checking.
+Default and partial synthetic elaboration remain inside the command transaction.
+Warnings and information survive successful execution; logged errors reject the
+candidate. Tagged messages retain their kinds. Source strings use their actual
+source maps; unavailable positions are `(0, 0)`.
 
-Safety scanning covers changed assignments even when they are no longer visible.
-Obligation retention follows the selected, input and returned goals and their
-reachable expressions. Discarded elaboration variables are not all promoted to
-user goals. Existing dormant siblings retain manual-mode behavior. A retained
-conversion equation owns its evolving right-hand placeholders until conversion
-exit; unresolved holes after exit remain obligations. Cyclic expression
-assignments and missing declarations fail validation.
+Execution closure roots cover the original statement, active and historical
+published obligations, siblings, conversion/calculation metadata, pending and
+synthetic elaboration, let-rec work, and postponed constraints. Local declarations
+are checked in their own context prefixes. Delayed assignments use their pending
+owner's abstraction variables. The auxiliary audit preserves detectable admission
+and unsafe evidence without promoting inert scratch holes to proof goals.
 
-All existing structured operations use the shared transaction: assignment,
-have/let/define, calc, motivated application, no-confusion, and conversion
-entry/exit. The merged omitted-index default, nonzero selection, sibling resumption,
-mode metadata and automatic final-conversion exit remain supported. Repeated
-references to the same resumed goal are removed while preserving order.
+All REPL allocation paths validate snapshots before publication, including starts,
+tactics, continuations, and frontend-generated obligations. Native operation
+exports also invoke the shared transition validator. Lower-level goal-building
+helpers remain available for internal construction and native diagnostic tests;
+their raw intermediate results are not a publication boundary.
 
-The model serializer's expression normalization, fields, binder roles and local
-indices are unchanged. Its snapshot reads now restore their caller. Complete
-sequence parsing and synthetic elaboration can change fresh internal names;
-normalized expressions, graph fingerprints, node features and edges retain their
-canonical meaning.
+The original trust environment remains fixed for a lineage. New retained
+constants have closed declaration owners and are scanned recursively. Imported
+Mathlib is the transition trust basis. Final certification separately scans the
+proof's transitive dependencies and invokes the kernel on the complete original
+root statement.
 
-Verification: `lake build repl Test.ContractFixtures` and `lake test` pass.
-The suite contains 299 assertions, including 37 Stage 4 assertions. Existing
-Python codec, reconciliation, environment and model tests report 316 passes.
-The final diagnostic records 61 raw Mathlib exchanges against the existing codec,
-four unchanged canonical graph goldens, zero final allocations, and confirmed
-subprocess reaping. The sandboxed diagnostic's shutdown timeout is not counted
-as a pass; the recorded final capture ran outside that sandbox.
+Transition provenance, explicit/nonzero goal selection, manual sibling dormancy,
+conversion exit, model normalization, local identities, and serialization fields
+retain their existing representations. See [retained snapshots](snapshot_protocol.md).
 
-The tracked patch, source hashes, executable hash and live evidence are in
-`pantograph_backport/`. The build reused a copied archive dependency/build cache
-and rebuilt changed targets. Stage 7's fresh release reproduction remains pending.
-Stage 5 actual-client integration, Stage 6 production migration, and Stage 8
-RL/deployment validation remain pending. No fork publication, dependency migration
-or RL launch is part of Stage 4.
+Current native evidence and separate Mathlib controls are recorded in
+[the scope-aware handoff](../pantograph_backport/scope_aware_validation/README.md).
+Historical Stage 4 and transactional-resource captures retain their original
+validation versions and source/binary identities. Their old application codec
+and graph results are not current-client acceptance evidence.

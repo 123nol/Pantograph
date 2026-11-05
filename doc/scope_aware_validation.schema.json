@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pantograph transition validation version 2",
+  "$defs": {
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "scope",
+        "checked"
+      ],
+      "properties": {
+        "version": {
+          "const": 2
+        },
+        "scope": {
+          "const": "execution-closure-and-transition-audit"
+        },
+        "checked": {
+          "const": true
+        }
+      }
+    },
+    "integrityError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error",
+        "desc"
+      ],
+      "properties": {
+        "error": {
+          "const": "validation"
+        },
+        "desc": {
+          "type": "string",
+          "maxLength": 2048
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/validation"
+    },
+    {
+      "$ref": "#/$defs/integrityError"
+    }
+  ]
+}

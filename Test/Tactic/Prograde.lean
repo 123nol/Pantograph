@@ -79,19 +79,20 @@ def test_define_proof : TestT Elab.TermElabM Unit := do
     | other => do
       addTest $ assertUnreachable $ other.toString
       return ()
-  addTest $ LSpec.check s!"eval {evalBind} := {evalExpr}" ((← state2.serializeGoals).map (·.devolatilize) =
-    #[{
-      target := { pp? := .some  "(p ∨ q) ∨ p ∨ q"},
-      vars := #[
-        { userName := "p", type? := .some { pp? := .some "Prop" } },
-        { userName := "q", type? := .some { pp? := .some "Prop" } },
-        { userName := "h", type? := .some { pp? := .some "p" } },
-        { userName := "y",
-          type? := .some { pp? := .some "p ∨ ?m.25" },
-          value? := .some { pp? := .some "Or.inl h" },
-        }
-      ]
-  }])
+  let serialized ← state2.serializeGoals
+  let some main := serialized[0]? | throwError "missing main goal"
+  let some inferred := serialized[1]? | throwError "missing inferred proposition"
+  let some stored := main.vars[3]? | throwError "missing local value serialization"
+  let mainDecl := (state2.mctx.findDecl? (state2.get! 0)).get!
+  let some localValue := mainDecl.lctx.findFromUserName? `y | throwError "missing local value"
+  let typeHole := localValue.type.getAppArgs[1]!
+  addTest $ LSpec.check s!"eval {evalBind} := {evalExpr}"
+    (main.target.pp? == some "(p ∨ q) ∨ p ∨ q" &&
+      main.vars.map (·.userName) == #["p", "q", "h", "y"] &&
+      (stored.value?.bind (·.pp?)) == some "Or.inl h")
+  addTest $ LSpec.check "the inferred proposition remains a visible obligation"
+    (typeHole.isMVar && state2.goals.drop 1 == [typeHole.mvarId!] &&
+      inferred.target.pp? == some "Prop")
 
   let expr := "Or.inl y"
   let state3 ← match ← state2.tryAssign (state2.get! 0) (expr := expr) with

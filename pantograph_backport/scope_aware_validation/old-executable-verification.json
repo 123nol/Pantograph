@@ -1,0 +1,10 @@
+{
+  "sha256": "1c29397e4c0e9d3af499b6d18872cf9562c64fde3fc4c0bc59cec5494c772f30",
+  "matches_transactional_resource_provenance": true,
+  "preserved_path": ".lake/verification/repl-transition-validation-v1",
+  "startup_response": [
+    "ready.",
+    "{\"transitionValidationVersion\":1,\"transitionProvenanceVersion\":1,\"tacticErrorsFormat\":\"string-array-v1\",\"resourceErrorVersion\":1,\"protocolVersion\":3,\"protocol\":\"maths-ai-pantograph\",\"modelSexpVersion\":1,\"messageVersion\":1,\"inspectionVersion\":1,\"goalSelection\":\"explicit-focused-v1\",\"commandTransactionVersion\":1,\"certificationVersion\":1}"
+  ],
+  "exit_code": 0
+}

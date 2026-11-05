@@ -20,6 +20,8 @@ structure GoalState where
   trustedEnv : Environment
   savedState : Elab.Tactic.SavedState
   messages : Array Protocol.Message := #[]
+  /-- Obligation identities already exposed by this lineage. -/
+  publishedObligations : List MVarId := []
 
   -- The root hole which is the search target
   root: MVarId
@@ -38,6 +40,16 @@ structure GoalState where
   -- WARNING: If using `state with` outside of `calc`, this must be set to `.none`
   calcPrevRhs?: Option (MVarId × Expr) := .none
 
+/-- Capture universe ownership from the statement and all retained local types/values. -/
+private def rootLevelParams (mctx : MetavarContext) (lctx : LocalContext) (type : Expr) : List Name :=
+  let inst (value : Expr) := (instantiateMVarsCore mctx value).1
+  let found := lctx.foldl (init := ({} : CollectLevelParams.State)) fun found decl =>
+    let found := collectLevelParams found (inst decl.type)
+    match decl.value? with
+    | some value => collectLevelParams found (inst value)
+    | none => found
+  (collectLevelParams found (inst type)).params.toList
+
 @[export pantograph_goal_state_create_m]
 protected def GoalState.create (expr: Expr): Elab.TermElabM GoalState := do
   -- May be necessary to immediately synthesise all metavariables if we need to leave the elaboration context.
@@ -49,8 +61,10 @@ protected def GoalState.create (expr: Expr): Elab.TermElabM GoalState := do
   let savedStateMonad: Elab.Tactic.TacticM Elab.Tactic.SavedState := MonadBacktrack.saveState
   let savedState ← savedStateMonad { elaborator := .anonymous } |>.run' { goals := [root.mvarId!]}
   return {
+    publishedObligations := [root.mvarId!],
     root := root.mvarId!,
     rootType := expr,
+    rootLevels := rootLevelParams (← getMCtx) (← getLCtx) expr,
     savedState,
     trustedEnv := ← getEnv,
     parentMVar? := .none,
@@ -59,12 +73,16 @@ protected def GoalState.create (expr: Expr): Elab.TermElabM GoalState := do
 protected def GoalState.createFromMVars (goals: List MVarId) (root: MVarId): MetaM GoalState := do
   let savedStateMonad: Elab.Tactic.TacticM Elab.Tactic.SavedState := MonadBacktrack.saveState
   let savedState ← savedStateMonad { elaborator := .anonymous } |>.run' { goals } |>.run' {}
+  let rootType ← match (← getMCtx).findDecl? root with
+    | .some decl => instantiateMVars decl.type
+    | .none => pure (mkSort levelZero)
+  let lctx := ((← getMCtx).findDecl? root).map (·.lctx) |>.getD {}
   return {
     root,
-    -- Frontend states have an anonymous root, which cannot be certified.
-    rootType := ← match (← getMCtx).findDecl? root with
-      | .some decl => instantiateMVars decl.type
-      | .none => pure (mkSort levelZero),
+    publishedObligations := goals ++ (if root.name == .anonymous then [] else [root]),
+    -- Multiple frontend obligations use an anonymous root rather than one certifiable theorem.
+    rootType,
+    rootLevels := rootLevelParams (← getMCtx) lctx rootType,
     savedState,
     trustedEnv := ← getEnv,
     parentMVar? := .none,
@@ -156,6 +174,7 @@ protected def GoalState.resume (state: GoalState) (goals: List MVarId): Except S
       ¬(mctx.eAssignment.contains goal || mctx.dAssignment.contains goal))
     .ok {
       state with
+      publishedObligations := (state.publishedObligations ++ goals).eraseDups,
       savedState := {
         term := state.savedState.term,
         tactic := { goals := unassigned },
@@ -209,6 +228,7 @@ protected def GoalState.step (state: GoalState) (goal: MVarId) (tacticM: Elab.Ta
   let nextElabState ← MonadBacktrack.saveState
   return {
     state with
+    publishedObligations := (state.publishedObligations ++ state.goals ++ newGoals.goals).eraseDups,
     savedState := { term := nextElabState, tactic := newGoals },
     parentMVar? := .some goal,
     messages := #[],
@@ -330,6 +350,7 @@ protected def GoalState.conv (state: GoalState) (goal: MVarId):
   -- Other goals are now dormant
   let otherGoals := state.goals.filter $ λ g => g != goal
   return .success {
+    publishedObligations := state.publishedObligations,
     root := state.root,
     rootType := state.rootType,
     rootLevels := state.rootLevels,
@@ -367,6 +388,7 @@ protected def GoalState.convExit (state: GoalState):
     MonadBacktrack.saveState
   let nextSavedState ← tacticM { elaborator := .anonymous } |>.run' state.savedState.tactic
   return .success {
+    publishedObligations := state.publishedObligations,
     root := state.root,
     rootType := state.rootType,
     rootLevels := state.rootLevels,
@@ -442,6 +464,7 @@ protected def GoalState.tryCalc (state: GoalState) (goal: MVarId) (pred: String)
   let goals := [ mvarBranch ] ++ remainder?.toList
   let calcPrevRhs? := remainder?.map $ λ g => (g, rhs)
   return .success {
+    publishedObligations := state.publishedObligations,
     root := state.root,
     rootType := state.rootType,
     rootLevels := state.rootLevels,
