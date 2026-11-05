@@ -33,3 +33,9 @@ lean_exe scope_diagnostic {
   root := `Test.ScopeDiagnostic
   supportInterpreter := true
 }
+
+/-- Provenance of compiler-produced environment entries; diagnostic evidence only. -/
+lean_exe compiler_diagnostic {
+  root := `Test.CompilerDiagnostic
+  supportInterpreter := true
+}

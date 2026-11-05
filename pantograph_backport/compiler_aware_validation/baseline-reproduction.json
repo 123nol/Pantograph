@@ -1,0 +1,51 @@
+{
+  "description": "Baseline executable (REPL ba2c3dd8) rejecting compiler-producing tactics; core Init only",
+  "source_commit": "ba2c3dd8383f90b4b5327e31a645a53411f385e4",
+  "binary_sha256": "a7b420e0915c4e08efcf594cd5b7bd00ca16a70b2b6502aa51c70ad0fd3d95f4",
+  "toolchain": "leanprover/lean4:v4.10.0-rc1",
+  "imports": [
+    "Init"
+  ],
+  "fresh": {
+    "exchanges": [
+      {
+        "request_line": "goal.start {\"expr\":\"∀ m n : Nat, Nat.pow m n = Nat.pow m n\"}",
+        "response_line": "{\"stateId\":0,\"root\":\"_uniq.9\"}"
+      },
+      {
+        "request_line": "goal.tactic {\"stateId\":0,\"goalId\":0,\"tactic\":\"intro m n\"}",
+        "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.9\",\"introduced\":[[\"_uniq.10\",\"_uniq.13\"]],\"extra\":[],\"dormant\":[],\"direct\":[\"_uniq.14\"],\"closed\":[],\"changed\":[]},\"nextStateId\":1,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[{\"vars\":[{\"userName\":\"m\",\"type\":{\"pp\":\"Nat\"},\"name\":\"_uniq.10\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"n\",\"type\":{\"pp\":\"Nat\"},\"name\":\"_uniq.13\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"m.pow n = m.pow n\"},\"name\":\"_uniq.14\",\"isConversion\":false,\"fragment\":\"tactic\"}]}"
+      },
+      {
+        "request_line": "goal.tactic {\"stateId\":1,\"goalId\":0,\"tactic\":\"unfold Nat.pow\"}",
+        "response_line": "{\"error\":\"validation\",\"desc\":\"execution owner=declaration _private.0.Nat.pow.match_1.splitter._rarg._cstage2 path=environment audit/declaration-type/binder-type: Missing proof dependency _obj\"}"
+      }
+    ],
+    "exit_code": 1
+  },
+  "warmed": {
+    "exchanges": [
+      {
+        "request_line": "goal.start {\"expr\":\"True ∧ True\"}",
+        "response_line": "{\"stateId\":0,\"root\":\"_uniq.2\"}"
+      },
+      {
+        "request_line": "goal.tactic {\"stateId\":0,\"goalId\":0,\"tactic\":\"simp\"}",
+        "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.2\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":1,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}"
+      },
+      {
+        "request_line": "goal.start {\"expr\":\"∀ m n : Nat, Nat.pow m (n+1) = Nat.pow m n * m\"}",
+        "response_line": "{\"stateId\":2,\"root\":\"_uniq.106\"}"
+      },
+      {
+        "request_line": "goal.tactic {\"stateId\":2,\"goalId\":0,\"tactic\":\"intro m n\"}",
+        "response_line": "{\"validation\":{\"version\":2,\"scope\":\"execution-closure-and-transition-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.106\",\"introduced\":[[\"_uniq.107\",\"_uniq.110\"]],\"extra\":[],\"dormant\":[],\"direct\":[\"_uniq.111\"],\"closed\":[],\"changed\":[]},\"nextStateId\":3,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[{\"vars\":[{\"userName\":\"m\",\"type\":{\"pp\":\"Nat\"},\"name\":\"_uniq.107\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false},{\"userName\":\"n\",\"type\":{\"pp\":\"Nat\"},\"name\":\"_uniq.110\",\"isLet\":false,\"isInstance\":false,\"isInaccessible\":false}],\"target\":{\"pp\":\"m.pow (n + 1) = m.pow n * m\"},\"name\":\"_uniq.111\",\"isConversion\":false,\"fragment\":\"tactic\"}]}"
+      },
+      {
+        "request_line": "goal.tactic {\"stateId\":3,\"goalId\":0,\"tactic\":\"simp only [Nat.pow]\"}",
+        "response_line": "{\"error\":\"validation\",\"desc\":\"execution owner=declaration _private.0.Nat.pow.match_1.splitter._rarg._cstage2 path=environment audit/declaration-type/binder-type: Missing proof dependency _obj\"}"
+      }
+    ],
+    "exit_code": 1
+  }
+}

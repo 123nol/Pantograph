@@ -1,0 +1,220 @@
+[
+  {
+    "validator": "accepted",
+    "tactics": [
+      "intro m n: success",
+      "unfold Nat.pow: success"
+    ],
+    "goal": "∀ m n : Nat, Nat.pow m (n+1) = Nat.pow m n * m",
+    "extraWithIR": [
+      "_private.0.Nat.pow.match_1.splitter._rarg._boxed",
+      "_private.0.Nat.pow.match_1.splitter._rarg"
+    ],
+    "extraConstNames": [
+      "_private.0.Nat.pow.match_1.splitter._rarg._boxed",
+      "_private.0.Nat.pow.match_1.splitter._rarg"
+    ],
+    "additions": [
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "forall (m : Nat) (n : Nat), Eq.{1} Nat (Nat.pow m (Nat.succ n)) (Nat.mul (Nat.pow m n) m)",
+        "safety": "safe",
+        "prefixTrusted": true,
+        "prefixIsConstant": true,
+        "prefixHasIR": true,
+        "prefix": "Nat.pow",
+        "name": "Nat.pow.eq_2",
+        "levelParams": [],
+        "kind": "theorem",
+        "hasIR": false
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "forall (motive : ([mdata borrowed:1 Nat]) -> Sort.{u_1}) (x._@.Init.Prelude._hyg.3423.3434 : [mdata borrowed:1 Nat]), (motive (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0))) -> (forall (n : Nat), motive (Nat.succ n)) -> (motive x._@.Init.Prelude._hyg.3423.3434)",
+        "safety": "safe",
+        "prefixTrusted": false,
+        "prefixIsConstant": false,
+        "prefixHasIR": false,
+        "prefix": "_private.0.Nat.pow.match_1",
+        "name": "_private.0.Nat.pow.match_1.splitter",
+        "levelParams": [
+          "u_1"
+        ],
+        "kind": "definition",
+        "hasIR": true
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [
+          "_private.0.Nat.pow.match_1.splitter._rarg"
+        ],
+        "unresolved": [
+          "_neutral",
+          "_obj",
+          "_private.0.Nat.pow.match_1.splitter._rarg"
+        ],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "_neutral -> _obj",
+        "safety": "unsafe",
+        "prefixTrusted": false,
+        "prefixIsConstant": true,
+        "prefixHasIR": true,
+        "prefix": "_private.0.Nat.pow.match_1.splitter",
+        "name": "_private.0.Nat.pow.match_1.splitter._cstage2",
+        "levelParams": [],
+        "kind": "definition",
+        "hasIR": false
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "forall (m : [mdata borrowed:1 Nat]) (x._@.Init.Prelude._hyg.3423 : [mdata borrowed:1 Nat]), Eq.{1} Nat (Nat.pow m x._@.Init.Prelude._hyg.3423) (Nat.pow.match_1.{1} (fun (x._@.Init.Prelude._hyg.3423.3434 : [mdata borrowed:1 Nat]) => Nat) x._@.Init.Prelude._hyg.3423 (fun (_ : Unit) => OfNat.ofNat.{0} ",
+        "safety": "safe",
+        "prefixTrusted": true,
+        "prefixIsConstant": true,
+        "prefixHasIR": true,
+        "prefix": "Nat.pow",
+        "name": "Nat.pow.eq_def",
+        "levelParams": [],
+        "kind": "theorem",
+        "hasIR": false
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "forall (m : Nat), Eq.{1} Nat (Nat.pow m (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0))) (OfNat.ofNat.{0} Nat 1 (instOfNatNat 1))",
+        "safety": "safe",
+        "prefixTrusted": true,
+        "prefixIsConstant": true,
+        "prefixHasIR": true,
+        "prefix": "Nat.pow",
+        "name": "Nat.pow.eq_1",
+        "levelParams": [],
+        "kind": "theorem",
+        "hasIR": false
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "forall (motive : ([mdata borrowed:1 Nat]) -> Sort.{u_1}) (h_1 : Unit -> (motive (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0)))) (h_2 : forall (n : Nat), motive (Nat.succ n)), Eq.{u_1} (motive (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0))) (Nat.pow.match_1.{u_1} motive (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0)) ",
+        "safety": "safe",
+        "prefixTrusted": false,
+        "prefixIsConstant": false,
+        "prefixHasIR": false,
+        "prefix": "_private.0.Nat.pow.match_1",
+        "name": "_private.0.Nat.pow.match_1.eq_1",
+        "levelParams": [
+          "u_1"
+        ],
+        "kind": "theorem",
+        "hasIR": false
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "forall (motive : ([mdata borrowed:1 Nat]) -> Sort.{u_1}) (n : Nat) (h_1 : Unit -> (motive (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0)))) (h_2 : forall (n : Nat), motive (Nat.succ n)), Eq.{u_1} (motive (Nat.succ n)) (Nat.pow.match_1.{u_1} motive (Nat.succ n) h_1 h_2) (h_2 n)",
+        "safety": "safe",
+        "prefixTrusted": false,
+        "prefixIsConstant": false,
+        "prefixHasIR": false,
+        "prefix": "_private.0.Nat.pow.match_1",
+        "name": "_private.0.Nat.pow.match_1.eq_2",
+        "levelParams": [
+          "u_1"
+        ],
+        "kind": "theorem",
+        "hasIR": false
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "forall (motive : ([mdata borrowed:1 Nat]) -> Sort.{u_1}) (x._@.Init.Prelude._hyg.3423.3434 : [mdata borrowed:1 Nat]), (motive (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0))) -> (forall (n : Nat), motive (Nat.succ n)) -> (motive x._@.Init.Prelude._hyg.3423.3434)",
+        "safety": "unsafe",
+        "prefixTrusted": false,
+        "prefixIsConstant": true,
+        "prefixHasIR": true,
+        "prefix": "_private.0.Nat.pow.match_1.splitter",
+        "name": "_private.0.Nat.pow.match_1.splitter._cstage1",
+        "levelParams": [
+          "u_1"
+        ],
+        "kind": "definition",
+        "hasIR": false
+      },
+      {
+        "valueHasMVar": false,
+        "valueHasFVar": false,
+        "unresolvedWithIR": [],
+        "unresolved": [
+          "_obj"
+        ],
+        "typeHasMVar": false,
+        "typeHasFVar": false,
+        "type": "_obj -> _obj -> _obj -> _obj",
+        "safety": "unsafe",
+        "prefixTrusted": false,
+        "prefixIsConstant": false,
+        "prefixHasIR": true,
+        "prefix": "_private.0.Nat.pow.match_1.splitter._rarg",
+        "name": "_private.0.Nat.pow.match_1.splitter._rarg._cstage2",
+        "levelParams": [],
+        "kind": "definition",
+        "hasIR": false
+      }
+    ]
+  },
+  {
+    "validator": "accepted",
+    "tactics": [
+      "intro l: success",
+      "simp only [List.length]: success"
+    ],
+    "goal": "∀ l : List Nat, List.length (0 :: l) = l.length + 1",
+    "extraWithIR": [],
+    "extraConstNames": [],
+    "additions": []
+  },
+  {
+    "validator": "accepted",
+    "tactics": [
+      "intro n: success",
+      "unfold Nat.pred: success"
+    ],
+    "goal": "∀ n : Nat, Nat.pred (n+1) = n",
+    "extraWithIR": [],
+    "extraConstNames": [],
+    "additions": []
+  }
+]
