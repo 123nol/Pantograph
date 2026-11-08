@@ -1,6 +1,7 @@
 import LSpec
 import Test.CompilerValidation
 import Test.Environment
+import Test.FailureBoundary
 import Test.Frontend
 import Test.Integration
 import Test.Library
@@ -53,6 +54,7 @@ def main (args: List String) := do
     ("Validation", Validation.suite env_default),
     ("CompilerValidation", CompilerValidation.suite env_default),
     ("Environment", Environment.suite),
+    ("FailureBoundary", FailureBoundary.suite env_default),
     ("Frontend", Frontend.suite env_default),
     ("Integration", Integration.suite env_default),
     ("Library", Library.suite env_default),

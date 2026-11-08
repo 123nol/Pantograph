@@ -115,6 +115,11 @@ elab "contract_heartbeat" : tactic => do
 elab "contract_internal_failure" : tactic => do
   throw <| Exception.internal Pantograph.commandResourceExceptionId
 
+/-- An error whose message cannot be rendered: the tactic's own error handler fails. -/
+elab "contract_unrenderable_error" : tactic => do
+  throwError (MessageData.ofLazy (fun _ => throw (IO.userError "contract render failure"))
+    (fun _ => false))
+
 /-- Spend allocations while a lazy diagnostic is rendered, after tactic execution. -/
 elab "contract_diagnostic_heartbeat" : tactic => do
   let data := MessageData.ofLazy (fun _ => do
