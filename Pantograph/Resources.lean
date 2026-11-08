@@ -32,12 +32,18 @@ def failureText (ex : Exception) : CoreM String := do
   if errors.isEmpty then return "Lean aborted elaboration after reporting an error"
   return "\n".intercalate (← errors.mapM (·.data.toString))
 
+/-- The innermost phase an exception last left, cleared whenever a phase starts.
+    Read at the transaction boundary after unwinding; `none` means no phase saw it. -/
+builtin_initialize failedCommandPhase : IO.Ref (Option String) ← IO.mkRef none
+
 private def phaseCore (phase : String) (action : CoreM α) : CoreM α := do
+  failedCommandPhase.set none
   tryCatchRuntimeEx (do
     Core.checkMaxHeartbeats "pantograph"
     let result ← action
     Core.checkMaxHeartbeats "pantograph"
     return result) fun ex => do
+      if (← failedCommandPhase.get).isNone then failedCommandPhase.set (some phase)
       let ctx ← read
       let used := (← IO.getNumHeartbeats) - ctx.initHeartbeats
       if ex.isMaxHeartbeat && ctx.maxHeartbeats > 0 && used > ctx.maxHeartbeats then
