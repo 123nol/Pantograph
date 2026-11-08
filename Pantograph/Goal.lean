@@ -265,6 +265,13 @@ protected def GoalState.withOperation (state : GoalState) (action : Elab.TermEla
       | other => pure other
     catch exception => do
       rethrowInfrastructure exception
+      if isElaborationAbort exception then
+        -- The tactic logged its error before aborting; report that, not the abort.
+        let messages ← renderMessages (← getThe Core.State).messages
+        let errors := messages.filter (·.severity == "error") |>.map (·.data)
+        let text := "Lean aborted the tactic after reporting an error"
+        return TacticResult.failure (if errors.isEmpty then #[text] else errors)
+          (if messages.isEmpty then #[Protocol.Message.error text] else messages)
       let text ← withCommandPhase "observe" exception.toMessageData.toString
       Elab.logException exception
       let messages ← renderMessages (← getThe Core.State).messages

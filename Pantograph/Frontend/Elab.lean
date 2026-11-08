@@ -373,7 +373,7 @@ def collectTacticsFromCompilationStep (step : CompilationStep)
       }
     catch e =>
       rethrowInfrastructure e
-      let captureError ← withCommandPhase "observe" e.toMessageData.toString
+      let captureError ← withCommandPhase "observe" (failureText e)
       return {
         goalBefore,
         goalAfter,
