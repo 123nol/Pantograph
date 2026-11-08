@@ -393,6 +393,92 @@
         "detail_truncated": false,
         "detail": "contract render failure"
       }
+    },
+    {
+      "tactic": "contract_inner_phase_failure",
+      "responses": [
+        {
+          "transitionValidationVersion": 3,
+          "transitionProvenanceVersion": 1,
+          "tacticErrorsFormat": "string-array-v1",
+          "resourceErrorVersion": 1,
+          "protocolVersion": 3,
+          "protocol": "maths-ai-pantograph",
+          "modelSexpVersion": 1,
+          "messageVersion": 1,
+          "inspectionVersion": 1,
+          "goalSelection": "explicit-focused-v1",
+          "commandTransactionVersion": 1,
+          "certificationVersion": 1
+        },
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "recovery": "session-unusable",
+          "error": "internal",
+          "desc": "Unexpected REPL command failure"
+        }
+      ],
+      "stderr": "{\"version\":1,\"state_id\":0,\"repl_command_sequence\":3,\"render_status\":\"rendered\",\"phase\":\"observe\",\"operation\":\"goal.tactic\",\"kind\":\"pantograph-command-failure\",\"internal_exception_id\":\"pantographCommandResource\",\"goal_index\":0,\"exception_category\":\"internal\",\"detail_truncated\":false,\"detail\":\"internal exception #16\"}\nREPL command failed; session is unusable\n",
+      "record": {
+        "version": 1,
+        "state_id": 0,
+        "repl_command_sequence": 3,
+        "render_status": "rendered",
+        "phase": "observe",
+        "operation": "goal.tactic",
+        "kind": "pantograph-command-failure",
+        "internal_exception_id": "pantographCommandResource",
+        "goal_index": 0,
+        "exception_category": "internal",
+        "detail_truncated": false,
+        "detail": "internal exception #16"
+      }
+    },
+    {
+      "tactic": "contract_handled_then_internal",
+      "responses": [
+        {
+          "transitionValidationVersion": 3,
+          "transitionProvenanceVersion": 1,
+          "tacticErrorsFormat": "string-array-v1",
+          "resourceErrorVersion": 1,
+          "protocolVersion": 3,
+          "protocol": "maths-ai-pantograph",
+          "modelSexpVersion": 1,
+          "messageVersion": 1,
+          "inspectionVersion": 1,
+          "goalSelection": "explicit-focused-v1",
+          "commandTransactionVersion": 1,
+          "certificationVersion": 1
+        },
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "recovery": "session-unusable",
+          "error": "internal",
+          "desc": "Unexpected REPL command failure"
+        }
+      ],
+      "stderr": "{\"version\":1,\"state_id\":0,\"repl_command_sequence\":3,\"render_status\":\"rendered\",\"phase\":\"execute\",\"operation\":\"goal.tactic\",\"kind\":\"pantograph-command-failure\",\"internal_exception_id\":\"pantographCommandResource\",\"goal_index\":0,\"exception_category\":\"internal\",\"detail_truncated\":false,\"detail\":\"internal exception #16\"}\nREPL command failed; session is unusable\n",
+      "record": {
+        "version": 1,
+        "state_id": 0,
+        "repl_command_sequence": 3,
+        "render_status": "rendered",
+        "phase": "execute",
+        "operation": "goal.tactic",
+        "kind": "pantograph-command-failure",
+        "internal_exception_id": "pantographCommandResource",
+        "goal_index": 0,
+        "exception_category": "internal",
+        "detail_truncated": false,
+        "detail": "internal exception #16"
+      }
     }
   ],
   "ordinary": {
@@ -448,7 +534,7 @@
       }
     ]
   },
-  "source_commit": "4f96d8bf238de23d55582fbf34194d6b89ca627a",
-  "binary_sha256": "60bc921929d164b8eb2185cb40ea50805262e5da7c59df30a9fe88e84a9eafb8",
+  "source_commit": "9c657a48b1a20ba485ae159d3e8e542fc3f308b4",
+  "binary_sha256": "670c9b058bc2cdb7e85fb81befdf1ee81e6a19ad7744a2d2594cea1262935745",
   "toolchain": "leanprover/lean4:v4.10.0-rc1"
 }

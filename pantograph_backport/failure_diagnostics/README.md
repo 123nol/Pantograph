@@ -36,8 +36,9 @@ many of the 74 errors had this cause; the diagnostic below records the rest.
 - the four tactics return ordinary `tacticErrors` with Lean's message, the same
   state is then closed by `trivial` and certified, and `stat` returns to zero,
   both with `Init` and with the pinned Mathlib;
-- an injected internal failure and an unrenderable error each give one stdout
-  `internal` response, exit, and one stderr record with
+- an injected internal failure, an unrenderable error, an inner failure that
+  propagates unchanged and a handled failure followed by a different one each
+  give one stdout `internal` response, exit, and one stderr record with
   `repl_command_sequence: 3` and the right operation, state, goal, phase and
-  category;
+  category (the last two report `observe` and `execute`);
 - an ordinary rejection leaves the session usable and writes no record.
