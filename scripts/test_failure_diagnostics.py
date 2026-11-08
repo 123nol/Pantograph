@@ -106,7 +106,11 @@ def main():
     result = dict(
         aborts=[abort_control(["Init"], env)],
         fatal=[fatal_control("contract_internal_failure", "execute", "internal", env),
-               fatal_control("contract_unrenderable_error", "observe", "error", env)],
+               fatal_control("contract_unrenderable_error", "observe", "error", env),
+               # The same exception keeps its innermost phase.
+               fatal_control("contract_inner_phase_failure", "observe", "internal", env),
+               # A handled inner failure does not lend its phase to a later one.
+               fatal_control("contract_handled_then_internal", "execute", "internal", env)],
         ordinary=ordinary_control(env),
     )
     if args.mathlib:

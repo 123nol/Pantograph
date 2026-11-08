@@ -58,10 +58,11 @@ nothing else. Validation failures and resource rollbacks keep their own
 responses and write no record. The record carries no expressions, environment
 data or tactic text; the client's request record carries the command.
 
-The phase is the innermost phase the exception passed through since the last
-phase started. If an earlier failure inside a phase was caught and the later
-unexpected failure happens outside any phase, the phase can name the earlier
-one; treat it as evidence, not proof.
+The phase belongs to the exception that reaches the boundary. Each phase
+records the exception leaving it unless an inner phase already recorded that
+same exception object, so an exception keeps its innermost phase. An exception
+that was caught does not lend its phase to a later, different failure: that
+failure gets the phase it actually left, or `unknown` if it left none.
 
 `pantograph.traceCommands` remains a Lean launch option for full command
 traces. The failure record needs no option.

@@ -406,7 +406,7 @@ private def writeFailureDiagnostic (command : Protocol.Command) (sequence : Nat)
       | .error .. => pure (if ex.isRuntime then "runtime" else "error", none)
     let nat (key : String) := command.payload.getObjValAs? Nat key |>.toOption
     let evidence : FailureEvidence := {
-      sequence, operation := command.cmd, phase := (← failedCommandPhase.get).getD "unknown",
+      sequence, operation := command.cmd, phase := ← failurePhase ex,
       stateId := (nat "stateId").orElse fun _ => nat "target", goalIndex := nat "goalId",
       category, internalId, detail := ← renderException ex }
     let stderr ← IO.getStderr

@@ -32,18 +32,33 @@ def failureText (ex : Exception) : CoreM String := do
   if errors.isEmpty then return "Lean aborted elaboration after reporting an error"
   return "\n".intercalate (← errors.mapM (·.data.toString))
 
-/-- The innermost phase an exception last left, cleared whenever a phase starts.
-    Read at the transaction boundary after unwinding; `none` means no phase saw it. -/
-builtin_initialize failedCommandPhase : IO.Ref (Option String) ← IO.mkRef none
+/-- The innermost phase the propagating exception left, with that exception.
+    An outer phase keeps the record only for the same exception object, so a
+    handled exception cannot lend its phase to a later, different one. -/
+builtin_initialize failedCommandPhase : IO.Ref (Option (String × Exception)) ← IO.mkRef none
+
+private unsafe def sameExceptionImpl (a b : Exception) : Bool := ptrAddrUnsafe a == ptrAddrUnsafe b
+
+/-- Object identity: the record holds its exception, so the address cannot be reused. -/
+@[implemented_by sameExceptionImpl]
+private opaque sameException (a b : Exception) : Bool
+
+/-- The phase `ex` was recorded in, or `unknown` if no phase saw this exception. -/
+def failurePhase (ex : Exception) : IO String := do
+  match ← failedCommandPhase.get with
+  | some (phase, recorded) => return if sameException recorded ex then phase else "unknown"
+  | none => return "unknown"
 
 private def phaseCore (phase : String) (action : CoreM α) : CoreM α := do
-  failedCommandPhase.set none
   tryCatchRuntimeEx (do
     Core.checkMaxHeartbeats "pantograph"
     let result ← action
     Core.checkMaxHeartbeats "pantograph"
     return result) fun ex => do
-      if (← failedCommandPhase.get).isNone then failedCommandPhase.set (some phase)
+      let innermost := match ← failedCommandPhase.get with
+        | some (_, recorded) => !sameException recorded ex
+        | none => true
+      if innermost then failedCommandPhase.set (some (phase, ex))
       let ctx ← read
       let used := (← IO.getNumHeartbeats) - ctx.initHeartbeats
       if ex.isMaxHeartbeat && ctx.maxHeartbeats > 0 && used > ctx.maxHeartbeats then
