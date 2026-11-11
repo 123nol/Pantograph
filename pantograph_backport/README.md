@@ -1,3 +1,6 @@
+Elaboration aborts and the fatal stderr failure diagnostic are documented in
+[the failure-diagnostics handoff](failure_diagnostics/README.md).
+
 Current representation-aware validation (version 3) and its native evidence are
 documented in [the compiler-aware handoff](compiler_aware_validation/README.md).
 The version-2 scope-aware work and its separate native Mathlib gate are

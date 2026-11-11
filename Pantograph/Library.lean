@@ -124,7 +124,7 @@ def exprEcho (expr: String) (expectedType?: Option String := .none) (levels: Arr
       }
     catch exception => do
       rethrowInfrastructure exception
-      return .error $ errorI "typing" (← withCommandPhase "observe" exception.toMessageData.toString)
+      return .error $ errorI "typing" (← withCommandPhase "observe" (failureText exception))
 
 @[export pantograph_goal_start_expr_m]
 def goalStartExpr (expr: String) (levels: Array String): CoreM (Protocol.CR GoalState) :=
@@ -150,7 +150,7 @@ def goalStartExpr (expr: String) (levels: Array String): CoreM (Protocol.CR Goal
         rootLevels := levels.toList.map (·.toName) }
     catch exception => do
       rethrowInfrastructure exception
-      return .error (errorI "elab" (← withCommandPhase "observe" exception.toMessageData.toString))
+      return .error (errorI "elab" (← withCommandPhase "observe" (failureText exception)))
     finally
       outer.restore (restoreInfo := true)
       modifyThe Meta.State fun _ => outer.meta.meta

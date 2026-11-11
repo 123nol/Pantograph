@@ -1,0 +1,71 @@
+{
+  "description": "Merged REPL fc740c2 before this change: a placeholder Lean cannot synthesize ends the session",
+  "source_commit": "fc740c26a1e832ecb571859af24a5c632a351bd9",
+  "binary_sha256": "6cba4f74fdf2bc8ba7060603e7bc11feffb7229dd8c288ec7c3c0ba2e9c2ef29",
+  "toolchain": "leanprover/lean4:v4.10.0-rc1",
+  "imports": [
+    "Init"
+  ],
+  "runs": [
+    {
+      "tactic": "exact (fun (x : Nat) => True.intro) _",
+      "request_lines": [
+        "goal.start {\"expr\":\"True\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"exact (fun (x : Nat) => True.intro) _\"}",
+        "stat {}"
+      ],
+      "stdout": [
+        "ready.",
+        "{\"stateId\":0,\"root\":\"_uniq.2\"}",
+        "{\"recovery\":\"session-unusable\",\"error\":\"internal\",\"desc\":\"Unexpected REPL command failure\"}"
+      ],
+      "stderr": "REPL command failed; session is unusable\n",
+      "exit_code": 1
+    },
+    {
+      "tactic": "refine (fun (x : Nat) => True.intro) _",
+      "request_lines": [
+        "goal.start {\"expr\":\"True\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"refine (fun (x : Nat) => True.intro) _\"}",
+        "stat {}"
+      ],
+      "stdout": [
+        "ready.",
+        "{\"stateId\":0,\"root\":\"_uniq.2\"}",
+        "{\"recovery\":\"session-unusable\",\"error\":\"internal\",\"desc\":\"Unexpected REPL command failure\"}"
+      ],
+      "stderr": "REPL command failed; session is unusable\n",
+      "exit_code": 1
+    },
+    {
+      "tactic": "have h := (fun (x : Nat) => x) _",
+      "request_lines": [
+        "goal.start {\"expr\":\"True\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"have h := (fun (x : Nat) => x) _\"}",
+        "stat {}"
+      ],
+      "stdout": [
+        "ready.",
+        "{\"stateId\":0,\"root\":\"_uniq.2\"}",
+        "{\"recovery\":\"session-unusable\",\"error\":\"internal\",\"desc\":\"Unexpected REPL command failure\"}"
+      ],
+      "stderr": "REPL command failed; session is unusable\n",
+      "exit_code": 1
+    },
+    {
+      "tactic": "exact (_ : True)",
+      "request_lines": [
+        "goal.start {\"expr\":\"True\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"exact (_ : True)\"}",
+        "stat {}"
+      ],
+      "stdout": [
+        "ready.",
+        "{\"stateId\":0,\"root\":\"_uniq.2\"}",
+        "{\"recovery\":\"session-unusable\",\"error\":\"internal\",\"desc\":\"Unexpected REPL command failure\"}"
+      ],
+      "stderr": "REPL command failed; session is unusable\n",
+      "exit_code": 1
+    }
+  ]
+}

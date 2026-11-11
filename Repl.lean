@@ -12,6 +12,8 @@ structure Context where
 /-- Stores state of the REPL -/
 structure State where
   usable : Bool := true
+  /-- Commands this process has dispatched; numbers its failure diagnostics. -/
+  commandSequence : Nat := 0
   options: Protocol.Options := {}
   nextId: Nat := 0
   goalStates: Lean.HashMap Nat GoalState := Lean.HashMap.empty
@@ -341,9 +343,82 @@ structure CommandResult where
   bytes : String
   fatal : Bool := false
 
+/-- Byte bounds of the fatal stderr diagnostic. -/
+def diagnosticDetailBytes : Nat := 2048
+def diagnosticLineBytes : Nat := 4096
+
+private def takeBytesAux (limit : Nat) : List Char → Nat → List Char
+  | [], _ => []
+  | c :: cs, used =>
+    let size := (String.singleton c).utf8ByteSize
+    if used + size > limit then [] else c :: takeBytesAux limit cs (used + size)
+
+/-- The longest prefix of `text` that fits in `limit` UTF-8 bytes. -/
+def takeBytes (text : String) (limit : Nat) : String :=
+  String.mk (takeBytesAux limit text.toList 0)
+
+/-- Render an exception's message. Rendering can itself fail; that is reported, not raised.
+    Lean's pretty-printer applies its own default heartbeat limit inside the message. -/
+private def renderException (ex : Lean.Exception) : IO (Option String) := do
+  try
+    return some (← ex.toMessageData.toString)
+  catch _ => return none
+
+/-- What the transaction boundary knows about an unexpected fatal failure. -/
+structure FailureEvidence where
+  sequence : Nat
+  operation : String
+  stateId : Option Nat := none
+  goalIndex : Option Nat := none
+  phase : String := "unknown"
+  category : String
+  internalId : Option String := none
+  /-- The rendered exception message, or `none` when rendering failed. -/
+  detail : Option String := none
+
+/-- The version-1 diagnostic line: kind `pantograph-command-failure`, at most
+    `diagnosticLineBytes` bytes including JSON escaping. The detail is cut first. -/
+def FailureEvidence.line (e : FailureEvidence) : String := Id.run do
+  let full := e.detail.getD ""
+  let record (detail? : Option String) : Lean.Json := Lean.Json.mkObj [
+    ("kind", "pantograph-command-failure"), ("version", (1 : Nat)),
+    ("repl_command_sequence", e.sequence), ("operation", takeBytes e.operation 64),
+    ("state_id", Lean.toJson e.stateId), ("goal_index", Lean.toJson e.goalIndex),
+    ("phase", takeBytes e.phase 32), ("exception_category", e.category),
+    ("internal_exception_id", Lean.toJson (e.internalId.map (takeBytes · 256))),
+    ("detail", Lean.toJson detail?),
+    ("detail_truncated", Lean.toJson (e.detail.isSome && (detail?.getD "").utf8ByteSize < full.utf8ByteSize)),
+    ("render_status", if e.detail.isSome then "rendered" else "failed")]
+  let mut limit := diagnosticDetailBytes
+  let mut line := (record (e.detail.map fun _ => takeBytes full limit)).compress
+  while line.utf8ByteSize > diagnosticLineBytes && limit > 0 do
+    limit := limit / 2
+    line := (record (if limit == 0 then none else e.detail.map fun _ => takeBytes full limit)).compress
+  return line
+
+/-- One bounded JSON line on stderr for an unexpected fatal command failure.
+    Stdout, recovery and session fatality are unchanged; a failed write is ignored. -/
+private def writeFailureDiagnostic (command : Protocol.Command) (sequence : Nat)
+    (ex : Lean.Exception) : IO Unit := do
+  try
+    let (category, internalId) ← match ex with
+      | .internal id _ => pure ("internal", some (← id.getName).toString)
+      | .error .. => pure (if ex.isRuntime then "runtime" else "error", none)
+    let nat (key : String) := command.payload.getObjValAs? Nat key |>.toOption
+    let evidence : FailureEvidence := {
+      sequence, operation := command.cmd, phase := ← failurePhase ex,
+      stateId := (nat "stateId").orElse fun _ => nat "target", goalIndex := nat "goalId",
+      category, internalId, detail := ← renderException ex }
+    let stderr ← IO.getStderr
+    stderr.putStrLn evidence.line
+    stderr.flush
+  catch _ => pure ()
+
 /-- A separate Core state reference owns all changes until encoding completes.
     Failure discards that reference; restoration requires no Lean computation. -/
 def runTransaction (command : Protocol.Command) (action : MainM Lean.Json) : MainM CommandResult := do
+  modify fun s => { s with commandSequence := s.commandSequence + 1 }
+  failedCommandPhase.set none
   let entry ← get
   let coreEntry ← getThe Lean.Core.State
   let ctx ← read
@@ -397,6 +472,8 @@ def runTransaction (command : Protocol.Command) (action : MainM Lean.Json) : Mai
               (some { phase := details.getString `phase, limit := details.getNat `limit })
         else fail "internal" "Unexpected REPL command failure" "session-unusable"
       | _ => fail "internal" "Unexpected REPL command failure" "session-unusable"
+    if (Lean.Json.getObjValAs? result.response String "error").toOption == some "internal" then
+      writeFailureDiagnostic command entry.commandSequence ex
     set { entry with usable := !result.fatal }
     return result
 

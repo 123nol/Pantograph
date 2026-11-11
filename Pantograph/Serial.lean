@@ -40,14 +40,14 @@ def elabType (syn: Syntax): Elab.TermElabM (Except String Expr) := do
     return .ok expr
   catch ex =>
     rethrowInfrastructure ex
-    return .error (← withCommandPhase "observe" ex.toMessageData.toString)
+    return .error (← withCommandPhase "observe" (failureText ex))
 def elabTerm (syn: Syntax) (expectedType? : Option Expr := .none): Elab.TermElabM (Except String Expr) := do
   try
     let expr ← Elab.Term.elabTerm (stx := syn) expectedType?
     return .ok expr
   catch ex =>
     rethrowInfrastructure ex
-    return .error (← withCommandPhase "observe" ex.toMessageData.toString)
+    return .error (← withCommandPhase "observe" (failureText ex))
 
 
 --- Output Functions ---

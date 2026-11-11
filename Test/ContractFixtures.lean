@@ -115,6 +115,24 @@ elab "contract_heartbeat" : tactic => do
 elab "contract_internal_failure" : tactic => do
   throw <| Exception.internal Pantograph.commandResourceExceptionId
 
+/-- An internal failure inside an inner observation phase, propagating unchanged. -/
+elab "contract_inner_phase_failure" : tactic => do
+  Pantograph.withCommandPhase "observe" do
+    throw <| Exception.internal Pantograph.commandResourceExceptionId
+
+/-- A handled inner failure followed by a different fatal failure during execution. -/
+elab "contract_handled_then_internal" : tactic => do
+  try
+    Pantograph.withCommandPhase "observe" do
+      throwError "handled observation failure"
+  catch _ => pure ()
+  throw <| Exception.internal Pantograph.commandResourceExceptionId
+
+/-- An error whose message cannot be rendered: the tactic's own error handler fails. -/
+elab "contract_unrenderable_error" : tactic => do
+  throwError (MessageData.ofLazy (fun _ => throw (IO.userError "contract render failure"))
+    (fun _ => false))
+
 /-- Spend allocations while a lazy diagnostic is rendered, after tactic execution. -/
 elab "contract_diagnostic_heartbeat" : tactic => do
   let data := MessageData.ofLazy (fun _ => do

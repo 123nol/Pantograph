@@ -141,7 +141,7 @@ def addDecl (args: Protocol.EnvAdd): CoreM (Protocol.CR Protocol.EnvAddResult) :
           pure $ expr
         catch ex =>
           rethrowInfrastructure ex
-          return .error (← withCommandPhase "observe" ex.toMessageData.toString)
+          return .error (← withCommandPhase "observe" (failureText ex))
       | .error e => return .error e
     pure $ .ok (type, value)
   let (type, value) ← match ← tvM.run' (ctx := {}) |>.run' with

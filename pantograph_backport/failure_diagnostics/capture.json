@@ -1,0 +1,540 @@
+{
+  "aborts": [
+    {
+      "imports": [
+        "Init"
+      ],
+      "lines": [
+        "goal.start {\"expr\": \"True\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"exact (fun (x : Nat) => True.intro) _\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"refine (fun (x : Nat) => True.intro) _\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"have h := (fun (x : Nat) => x) _\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"exact (_ : True)\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"trivial\"}",
+        "goal.certify {\"stateId\":1}",
+        "goal.delete {\"stateIds\":[0,1]}",
+        "stat {}"
+      ],
+      "responses": [
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ Nat"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 36
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 37
+              },
+              "data": "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ Nat"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ Nat"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 37
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 38
+              },
+              "data": "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ Nat"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ Nat"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 31
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 32
+              },
+              "data": "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ Nat"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder\ncontext:\n⊢ True"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 7
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 8
+              },
+              "data": "don't know how to synthesize placeholder\ncontext:\n⊢ True"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "validation": {
+            "version": 3,
+            "scope": "execution-closure-and-representation-aware-audit",
+            "checked": true
+          },
+          "transition": {
+            "version": 1,
+            "siblings": [],
+            "selected": "_uniq.2",
+            "introduced": [],
+            "extra": [],
+            "dormant": [],
+            "direct": [],
+            "closed": [],
+            "changed": []
+          },
+          "nextStateId": 1,
+          "messages": [],
+          "hasUnsafe": false,
+          "hasSorry": false,
+          "goals": []
+        },
+        {
+          "version": 1,
+          "status": "certified",
+          "receipt": {
+            "version": 1,
+            "rootType": "50ed216148291d73",
+            "root": "_uniq.2",
+            "proof": "8bf67748f3048ada",
+            "levels": [],
+            "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+            "identity": "lean-expr-digest-v1",
+            "environment": "57504168f0416b83",
+            "axioms": [],
+            "auxiliary": []
+          }
+        },
+        {},
+        {
+          "nGoals": 0
+        }
+      ]
+    },
+    {
+      "imports": [
+        "Mathlib"
+      ],
+      "lines": [
+        "goal.start {\"expr\": \"True\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"exact (fun (x : Nat) => True.intro) _\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"refine (fun (x : Nat) => True.intro) _\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"have h := (fun (x : Nat) => x) _\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"exact (_ : True)\"}",
+        "goal.tactic {\"stateId\": 0, \"goalId\": 0, \"tactic\": \"trivial\"}",
+        "goal.certify {\"stateId\":1}",
+        "goal.delete {\"stateIds\":[0,1]}",
+        "stat {}"
+      ],
+      "responses": [
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ ℕ"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 36
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 37
+              },
+              "data": "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ ℕ"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ ℕ"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 37
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 38
+              },
+              "data": "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ ℕ"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ ℕ"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 31
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 32
+              },
+              "data": "don't know how to synthesize placeholder for argument 'x'\ncontext:\n⊢ ℕ"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "tacticErrors": [
+            "don't know how to synthesize placeholder\ncontext:\n⊢ True"
+          ],
+          "messages": [
+            {
+              "severity": "error",
+              "pos": {
+                "line": 1,
+                "column": 7
+              },
+              "kind": "Elab.synthPlaceholder",
+              "endPos": {
+                "line": 1,
+                "column": 8
+              },
+              "data": "don't know how to synthesize placeholder\ncontext:\n⊢ True"
+            }
+          ],
+          "hasUnsafe": false,
+          "hasSorry": false
+        },
+        {
+          "validation": {
+            "version": 3,
+            "scope": "execution-closure-and-representation-aware-audit",
+            "checked": true
+          },
+          "transition": {
+            "version": 1,
+            "siblings": [],
+            "selected": "_uniq.2",
+            "introduced": [],
+            "extra": [],
+            "dormant": [],
+            "direct": [],
+            "closed": [],
+            "changed": []
+          },
+          "nextStateId": 1,
+          "messages": [],
+          "hasUnsafe": false,
+          "hasSorry": false,
+          "goals": []
+        },
+        {
+          "version": 1,
+          "status": "certified",
+          "receipt": {
+            "version": 1,
+            "rootType": "50ed216148291d73",
+            "root": "_uniq.2",
+            "proof": "8bf67748f3048ada",
+            "levels": [],
+            "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+            "identity": "lean-expr-digest-v1",
+            "environment": "1f25fae908fae89b",
+            "axioms": [],
+            "auxiliary": []
+          }
+        },
+        {},
+        {
+          "nGoals": 0
+        }
+      ]
+    }
+  ],
+  "fatal": [
+    {
+      "tactic": "contract_internal_failure",
+      "responses": [
+        {
+          "transitionValidationVersion": 3,
+          "transitionProvenanceVersion": 1,
+          "tacticErrorsFormat": "string-array-v1",
+          "resourceErrorVersion": 1,
+          "protocolVersion": 3,
+          "protocol": "maths-ai-pantograph",
+          "modelSexpVersion": 1,
+          "messageVersion": 1,
+          "inspectionVersion": 1,
+          "goalSelection": "explicit-focused-v1",
+          "commandTransactionVersion": 1,
+          "certificationVersion": 1
+        },
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "recovery": "session-unusable",
+          "error": "internal",
+          "desc": "Unexpected REPL command failure"
+        }
+      ],
+      "stderr": "{\"version\":1,\"state_id\":0,\"repl_command_sequence\":3,\"render_status\":\"rendered\",\"phase\":\"execute\",\"operation\":\"goal.tactic\",\"kind\":\"pantograph-command-failure\",\"internal_exception_id\":\"pantographCommandResource\",\"goal_index\":0,\"exception_category\":\"internal\",\"detail_truncated\":false,\"detail\":\"internal exception #16\"}\nREPL command failed; session is unusable\n",
+      "record": {
+        "version": 1,
+        "state_id": 0,
+        "repl_command_sequence": 3,
+        "render_status": "rendered",
+        "phase": "execute",
+        "operation": "goal.tactic",
+        "kind": "pantograph-command-failure",
+        "internal_exception_id": "pantographCommandResource",
+        "goal_index": 0,
+        "exception_category": "internal",
+        "detail_truncated": false,
+        "detail": "internal exception #16"
+      }
+    },
+    {
+      "tactic": "contract_unrenderable_error",
+      "responses": [
+        {
+          "transitionValidationVersion": 3,
+          "transitionProvenanceVersion": 1,
+          "tacticErrorsFormat": "string-array-v1",
+          "resourceErrorVersion": 1,
+          "protocolVersion": 3,
+          "protocol": "maths-ai-pantograph",
+          "modelSexpVersion": 1,
+          "messageVersion": 1,
+          "inspectionVersion": 1,
+          "goalSelection": "explicit-focused-v1",
+          "commandTransactionVersion": 1,
+          "certificationVersion": 1
+        },
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "recovery": "session-unusable",
+          "error": "internal",
+          "desc": "Unexpected REPL command failure"
+        }
+      ],
+      "stderr": "{\"version\":1,\"state_id\":0,\"repl_command_sequence\":3,\"render_status\":\"rendered\",\"phase\":\"observe\",\"operation\":\"goal.tactic\",\"kind\":\"pantograph-command-failure\",\"internal_exception_id\":null,\"goal_index\":0,\"exception_category\":\"error\",\"detail_truncated\":false,\"detail\":\"contract render failure\"}\nREPL command failed; session is unusable\n",
+      "record": {
+        "version": 1,
+        "state_id": 0,
+        "repl_command_sequence": 3,
+        "render_status": "rendered",
+        "phase": "observe",
+        "operation": "goal.tactic",
+        "kind": "pantograph-command-failure",
+        "internal_exception_id": null,
+        "goal_index": 0,
+        "exception_category": "error",
+        "detail_truncated": false,
+        "detail": "contract render failure"
+      }
+    },
+    {
+      "tactic": "contract_inner_phase_failure",
+      "responses": [
+        {
+          "transitionValidationVersion": 3,
+          "transitionProvenanceVersion": 1,
+          "tacticErrorsFormat": "string-array-v1",
+          "resourceErrorVersion": 1,
+          "protocolVersion": 3,
+          "protocol": "maths-ai-pantograph",
+          "modelSexpVersion": 1,
+          "messageVersion": 1,
+          "inspectionVersion": 1,
+          "goalSelection": "explicit-focused-v1",
+          "commandTransactionVersion": 1,
+          "certificationVersion": 1
+        },
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "recovery": "session-unusable",
+          "error": "internal",
+          "desc": "Unexpected REPL command failure"
+        }
+      ],
+      "stderr": "{\"version\":1,\"state_id\":0,\"repl_command_sequence\":3,\"render_status\":\"rendered\",\"phase\":\"observe\",\"operation\":\"goal.tactic\",\"kind\":\"pantograph-command-failure\",\"internal_exception_id\":\"pantographCommandResource\",\"goal_index\":0,\"exception_category\":\"internal\",\"detail_truncated\":false,\"detail\":\"internal exception #16\"}\nREPL command failed; session is unusable\n",
+      "record": {
+        "version": 1,
+        "state_id": 0,
+        "repl_command_sequence": 3,
+        "render_status": "rendered",
+        "phase": "observe",
+        "operation": "goal.tactic",
+        "kind": "pantograph-command-failure",
+        "internal_exception_id": "pantographCommandResource",
+        "goal_index": 0,
+        "exception_category": "internal",
+        "detail_truncated": false,
+        "detail": "internal exception #16"
+      }
+    },
+    {
+      "tactic": "contract_handled_then_internal",
+      "responses": [
+        {
+          "transitionValidationVersion": 3,
+          "transitionProvenanceVersion": 1,
+          "tacticErrorsFormat": "string-array-v1",
+          "resourceErrorVersion": 1,
+          "protocolVersion": 3,
+          "protocol": "maths-ai-pantograph",
+          "modelSexpVersion": 1,
+          "messageVersion": 1,
+          "inspectionVersion": 1,
+          "goalSelection": "explicit-focused-v1",
+          "commandTransactionVersion": 1,
+          "certificationVersion": 1
+        },
+        {
+          "stateId": 0,
+          "root": "_uniq.2"
+        },
+        {
+          "recovery": "session-unusable",
+          "error": "internal",
+          "desc": "Unexpected REPL command failure"
+        }
+      ],
+      "stderr": "{\"version\":1,\"state_id\":0,\"repl_command_sequence\":3,\"render_status\":\"rendered\",\"phase\":\"execute\",\"operation\":\"goal.tactic\",\"kind\":\"pantograph-command-failure\",\"internal_exception_id\":\"pantographCommandResource\",\"goal_index\":0,\"exception_category\":\"internal\",\"detail_truncated\":false,\"detail\":\"internal exception #16\"}\nREPL command failed; session is unusable\n",
+      "record": {
+        "version": 1,
+        "state_id": 0,
+        "repl_command_sequence": 3,
+        "render_status": "rendered",
+        "phase": "execute",
+        "operation": "goal.tactic",
+        "kind": "pantograph-command-failure",
+        "internal_exception_id": "pantographCommandResource",
+        "goal_index": 0,
+        "exception_category": "internal",
+        "detail_truncated": false,
+        "detail": "internal exception #16"
+      }
+    }
+  ],
+  "ordinary": {
+    "responses": [
+      {
+        "stateId": 0,
+        "root": "_uniq.2"
+      },
+      {
+        "tacticErrors": [
+          "type mismatch\n  Nat.zero\nhas type\n  Nat : Type\nbut is expected to have type\n  True : Prop"
+        ],
+        "messages": [
+          {
+            "severity": "error",
+            "pos": {
+              "line": 1,
+              "column": 0
+            },
+            "kind": "[anonymous]",
+            "endPos": {
+              "line": 1,
+              "column": 14
+            },
+            "data": "type mismatch\n  Nat.zero\nhas type\n  Nat : Type\nbut is expected to have type\n  True : Prop"
+          }
+        ],
+        "hasUnsafe": false,
+        "hasSorry": false
+      },
+      {
+        "validation": {
+          "version": 3,
+          "scope": "execution-closure-and-representation-aware-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.2",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 1,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      }
+    ]
+  },
+  "source_commit": "9c657a48b1a20ba485ae159d3e8e542fc3f308b4",
+  "binary_sha256": "670c9b058bc2cdb7e85fb81befdf1ee81e6a19ad7744a2d2594cea1262935745",
+  "toolchain": "leanprover/lean4:v4.10.0-rc1"
+}
