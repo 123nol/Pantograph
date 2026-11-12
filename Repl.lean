@@ -419,6 +419,7 @@ private def writeFailureDiagnostic (command : Protocol.Command) (sequence : Nat)
 def runTransaction (command : Protocol.Command) (action : MainM Lean.Json) : MainM CommandResult := do
   modify fun s => { s with commandSequence := s.commandSequence + 1 }
   failedCommandPhase.set none
+  scopedRecursionLimit.set none
   let entry ← get
   let coreEntry ← getThe Lean.Core.State
   let ctx ← read

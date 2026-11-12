@@ -91,6 +91,14 @@ def run():
                              recovery="command-rolled-back", resource=dict(
                                  version=2, kind="recursion-depth", phase="execute", limit=200)), error
         assert recursion.call("stat", {}) == {"nGoals": 1}
+    # Scoped limits are reported as the scope applied them, not as the outer launch limit.
+    for scoped in (30, 100):
+        error = recursion.call("goal.tactic", {"stateId": root["stateId"],
+                               "tactic": f"set_option maxRecDepth {scoped} in contract_recursion"})
+        assert error == dict(error="resource", desc="Lean maximum recursion depth reached",
+                             recovery="command-rolled-back", resource=dict(
+                                 version=2, kind="recursion-depth", phase="execute", limit=scoped)), error
+        assert recursion.call("stat", {}) == {"nGoals": 1}
     counted = recursion.call("goal.start", {"expr": "(List.replicate 2000 0).length = 2000"})
     real = recursion.call("goal.tactic", {"stateId": counted["stateId"], "tactic": "decide"})
     assert real["error"] == "resource" and real["resource"]["kind"] == "recursion-depth", real

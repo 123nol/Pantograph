@@ -137,6 +137,35 @@ private def tests : MainM LSpec.TestSeq := do
         (result.response.getObjVal? "nextStateId").toOption.isNone
   tests := tests ++ LSpec.test "repeated recursion exhaustion leaks no allocations"
     (repeated && (← get).goalStates.size == entryStates && (← get).nextId == entryNext)
+  -- A scoped limit is reported as the innermost `set_option maxRecDepth` scope applied it.
+  let scopedCases : List (String × Nat) := [
+    ("set_option maxRecDepth 30 in contract_recursion", 30),
+    ("set_option maxRecDepth 100 in contract_recursion", 100),
+    ("set_option maxRecDepth 1000 in contract_recursion", 1000),
+    ("set_option maxRecDepth 30 in (set_option maxRecDepth 100 in contract_recursion)", 100),
+    ("set_option pp.all true in contract_recursion", 200),
+    ("exact (set_option maxRecDepth 50 in contract_recursion_term)", 50),
+    -- A `by` block is elaborated after the term scope has exited, under the outer limit.
+    ("exact (set_option maxRecDepth 50 in (by contract_recursion))", 200)]
+  for (tactic, expected) in scopedCases do
+    let statesBefore := (← get).goalStates.size
+    let nextBefore := (← get).nextId
+    let result ← executeCommand (command "goal.tactic" [("stateId", toJson input), ("tactic", .str tactic)])
+    let resource := result.response.getObjVal? "resource" |>.toOption |>.getD Json.null
+    tests := tests ++ LSpec.test s!"{tactic} reports limit {expected} and rolls back"
+      (!result.fatal && field resource "kind" == "recursion-depth" &&
+        (resource.getObjValAs? Nat "limit").toOption == some expected &&
+        field result.response "recovery" == "command-rolled-back" &&
+        (← get).goalStates.size == statesBefore && (← get).nextId == nextBefore)
+  let deep ← execute (command "goal.tactic"
+    [("stateId", toJson input), ("tactic", .str "exact (set_option maxRecDepth 50 in (by contract_recursion_depth 120))")])
+  tests := tests ++ LSpec.test "a postponed by block runs under the outer limit"
+    ((deep.getObjValAs? Nat "nextStateId").toOption.isSome)
+  let ordinary ← execute (command "goal.tactic"
+    [("stateId", toJson input), ("tactic", .str "set_option maxRecDepth 30 in fail \"ordinary\"")])
+  let ordinaryErrors := ordinary.getObjValAs? (Array String) "tacticErrors" |>.toOption |>.getD #[]
+  tests := tests ++ LSpec.test "an ordinary failure inside a scope is one ordinary rejection"
+    (ordinaryErrors.size == 1 && (ordinaryErrors.getD 0 "").startsWith "ordinary")
   let proof ← execute (command "goal.tactic" [("stateId", toJson input), ("tactic", .str "exact True.intro")])
   let proven := proof.getObjValAs? Nat "nextStateId" |>.toOption |>.getD 99999
   let receipt ← execute (command "goal.certify" [("stateId", toJson proven)])
