@@ -8,7 +8,8 @@ register_option pantograph.traceCommands : Bool := {
   descr := "write bounded REPL request and outcome traces to stderr"
 }
 
-/-- The phase is attached before unwinding restored goal contexts. -/
+/-- A command exhausted a Lean resource limit (heartbeats or recursion depth).
+    The kind, phase and limit are attached before unwinding restores goal contexts. -/
 builtin_initialize commandResourceExceptionId : InternalExceptionId ←
   registerInternalExceptionId `pantographCommandResource
 
@@ -60,10 +61,16 @@ private def phaseCore (phase : String) (action : CoreM α) : CoreM α := do
         | none => true
       if innermost then failedCommandPhase.set (some (phase, ex))
       let ctx ← read
+      let resource (kind : String) (limit : Nat) : Exception :=
+        .internal commandResourceExceptionId <|
+          ({} : KVMap).setString `kind kind |>.setString `phase phase |>.setNat `limit limit
       let used := (← IO.getNumHeartbeats) - ctx.initHeartbeats
       if ex.isMaxHeartbeat && ctx.maxHeartbeats > 0 && used > ctx.maxHeartbeats then
-        throw <| .internal commandResourceExceptionId <|
-          ({} : KVMap).setString `phase phase |>.setNat `limit (ctx.maxHeartbeats / 1000)
+        throw <| resource "heartbeats" (ctx.maxHeartbeats / 1000)
+      -- Lean's own predicate for `throwMaxRecDepthAt`; the limit is this command's
+      -- configured `maxRecDepth`, in nesting levels.
+      if ex.isMaxRecDepth && ctx.maxRecDepth > 0 then
+        throw <| resource "recursion-depth" ctx.maxRecDepth
       throw ex
 
 /-- Account for work before and after each protected phase without resetting its budget. -/

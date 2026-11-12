@@ -111,6 +111,23 @@ elab "contract_heartbeat" : tactic => do
     expr := mkApp (mkConst ``Nat.succ) expr
     discard <| Meta.whnf expr
 
+/-- Exhaust the configured recursion depth through Lean's own guard. -/
+elab "contract_recursion" : tactic => do
+  let rec go : Nat → Elab.Tactic.TacticM Unit
+    | 0 => pure ()
+    | n + 1 => withIncRecDepth (go n)
+  go 100000
+
+/-- Change the goal state, then exhaust the recursion depth. -/
+elab "contract_recursion_after_change" : tactic => do
+  let goal ← getMainGoal
+  goal.assign (mkConst ``True.intro)
+  setGoals []
+  let rec go : Nat → Elab.Tactic.TacticM Unit
+    | 0 => pure ()
+    | n + 1 => withIncRecDepth (go n)
+  go 100000
+
 /-- Exercise a fatal exception at the executable transaction boundary. -/
 elab "contract_internal_failure" : tactic => do
   throw <| Exception.internal Pantograph.commandResourceExceptionId

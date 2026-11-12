@@ -459,17 +459,20 @@ def runTransaction (command : Protocol.Command) (action : MainM Lean.Json) : Mai
           let response := Lean.toJson ({ error := "validation", desc := details.getString `desc } : Protocol.InteractionError)
           { response, bytes := response.compress, fatal := true }
         else if id == commandResourceExceptionId && details.getNat `limit > 0 &&
-            ["execute", "validate", "observe", "serialize"].contains (details.getString `phase) then
+            ["execute", "validate", "observe", "serialize"].contains (details.getString `phase) &&
+            ["heartbeats", "recursion-depth"].contains (details.getString `kind) then
+          let kind := details.getString `kind
+          let desc := if kind == "heartbeats" then "Lean command heartbeat budget exhausted"
+            else "Lean maximum recursion depth reached"
           if command.cmd == "goal.certify" then
             let response := Lean.toJson ({
-              status := "inconclusive",
-              reason? := some "Lean command heartbeat budget exhausted" } : Protocol.GoalCertifyResult)
+              status := "inconclusive", reason? := some desc } : Protocol.GoalCertifyResult)
             { response, bytes := response.compress }
           else
             -- Frontend imports and output files may have effects outside retained Lean state.
-            fail "resource" "Lean command heartbeat budget exhausted"
+            fail "resource" desc
               (if command.cmd == "frontend.process" then "session-unusable" else "command-rolled-back")
-              (some { phase := details.getString `phase, limit := details.getNat `limit })
+              (some { kind, phase := details.getString `phase, limit := details.getNat `limit })
         else fail "internal" "Unexpected REPL command failure" "session-unusable"
       | _ => fail "internal" "Unexpected REPL command failure" "session-unusable"
     if (Lean.Json.getObjValAs? result.response String "error").toOption == some "internal" then

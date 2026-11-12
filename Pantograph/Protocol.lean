@@ -96,10 +96,12 @@ structure InteractionError where
   desc: String
   deriving Lean.ToJson
 
-/-- Resource limits use Lean option units, which count thousands of heartbeats. -/
+/-- A command that exhausted a Lean resource limit. `limit` is in the kind's own
+    units: `heartbeats` in Lean option units (thousands of heartbeats),
+    `recursion-depth` in recursive nesting levels (`maxRecDepth`). -/
 structure ResourceDetails where
-  version : Nat := 1
-  kind : String := "heartbeats"
+  version : Nat := 2
+  kind : String
   phase : String
   limit : Nat
   deriving Lean.ToJson
@@ -283,7 +285,7 @@ structure ProtocolDescribe where
 structure ProtocolDescriptor where
   protocol: String := "maths-ai-pantograph"
   protocolVersion: Nat := 3
-  resourceErrorVersion: Nat := 1
+  resourceErrorVersion: Nat := 2
   commandTransactionVersion: Nat := 1
   modelSexpVersion: Nat := 1
   transitionValidationVersion: Nat := 3
