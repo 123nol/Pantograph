@@ -3,7 +3,7 @@
     "error": "resource",
     "desc": "Lean command heartbeat budget exhausted",
     "resource": {
-      "version": 1,
+      "version": 2,
       "kind": "heartbeats",
       "phase": "execute",
       "limit": 200000
@@ -14,7 +14,7 @@
     "error": "resource",
     "desc": "Lean command heartbeat budget exhausted",
     "resource": {
-      "version": 1,
+      "version": 2,
       "kind": "heartbeats",
       "phase": "validate",
       "limit": 200000
@@ -25,7 +25,7 @@
     "error": "resource",
     "desc": "Lean command heartbeat budget exhausted",
     "resource": {
-      "version": 1,
+      "version": 2,
       "kind": "heartbeats",
       "phase": "observe",
       "limit": 200000
@@ -36,7 +36,7 @@
     "error": "resource",
     "desc": "Lean command heartbeat budget exhausted",
     "resource": {
-      "version": 1,
+      "version": 2,
       "kind": "heartbeats",
       "phase": "serialize",
       "limit": 200000
@@ -45,9 +45,20 @@
   },
   {
     "error": "resource",
+    "desc": "Lean maximum recursion depth reached",
+    "resource": {
+      "version": 2,
+      "kind": "recursion-depth",
+      "phase": "execute",
+      "limit": 512
+    },
+    "recovery": "command-rolled-back"
+  },
+  {
+    "error": "resource",
     "desc": "Lean command heartbeat budget exhausted",
     "resource": {
-      "version": 1,
+      "version": 2,
       "kind": "heartbeats",
       "phase": "execute",
       "limit": 200000

@@ -56,7 +56,7 @@ def run():
     session = Session(entries, "--maxHeartbeats=100", "--pantograph.traceCommands=true")
     descriptor = session.call("protocol.describe", {})
     assert descriptor["protocolVersion"] == 3
-    assert descriptor["resourceErrorVersion"] == descriptor["commandTransactionVersion"] == 1
+    assert descriptor["resourceErrorVersion"] == 2 and descriptor["commandTransactionVersion"] == 1
     root = session.call("goal.start", {"expr": "True"})
     for _ in range(3000):
         assert session.call("stat", {}, record=False) == {"nGoals": 1}
@@ -65,7 +65,7 @@ def run():
         error = session.call("goal.tactic", {"stateId": root["stateId"], "tactic": tactic})
         assert error == dict(error="resource", desc="Lean command heartbeat budget exhausted",
                              recovery="command-rolled-back", resource=dict(
-                                 version=1, kind="heartbeats", phase=phase, limit=100))
+                                 version=2, kind="heartbeats", phase=phase, limit=100))
         assert session.call("stat", {}) == {"nGoals": 1}
     failed = session.call("goal.start", {"expr": "by contract_heartbeat"})
     assert failed["error"] == "resource" and failed["recovery"] == "command-rolled-back"
@@ -82,6 +82,42 @@ def run():
     traces = [json.loads(line) for line in session.close().splitlines()]
     assert any(trace["phase"] == "observe" for trace in traces)
     assert all(len(trace["tactic"]) <= 512 and trace["heartbeats"] > 0 for trace in traces)
+
+    recursion = Session(entries, "--maxHeartbeats=100", "--maxRecDepth=200")
+    root = recursion.call("goal.start", {"expr": "True"})
+    for tactic in ["contract_recursion", "contract_recursion_after_change"]:
+        error = recursion.call("goal.tactic", {"stateId": root["stateId"], "tactic": tactic})
+        assert error == dict(error="resource", desc="Lean maximum recursion depth reached",
+                             recovery="command-rolled-back", resource=dict(
+                                 version=2, kind="recursion-depth", phase="execute", limit=200)), error
+        assert recursion.call("stat", {}) == {"nGoals": 1}
+    # Scoped limits are reported as the scope applied them, not as the outer launch limit.
+    for scoped in (30, 100):
+        error = recursion.call("goal.tactic", {"stateId": root["stateId"],
+                               "tactic": f"set_option maxRecDepth {scoped} in contract_recursion"})
+        assert error == dict(error="resource", desc="Lean maximum recursion depth reached",
+                             recovery="command-rolled-back", resource=dict(
+                                 version=2, kind="recursion-depth", phase="execute", limit=scoped)), error
+        assert recursion.call("stat", {}) == {"nGoals": 1}
+    counted = recursion.call("goal.start", {"expr": "(List.replicate 2000 0).length = 2000"})
+    real = recursion.call("goal.tactic", {"stateId": counted["stateId"], "tactic": "decide"})
+    assert real["error"] == "resource" and real["resource"]["kind"] == "recursion-depth", real
+    assert real["recovery"] == "command-rolled-back" and "nextStateId" not in real
+    assert recursion.call("stat", {}) == {"nGoals": 2}
+    other = recursion.call("goal.tactic", {"stateId": counted["stateId"],
+                                           "tactic": "exact List.length_replicate 2000 0"})
+    assert recursion.call("goal.certify", {"stateId": other["nextStateId"]})["status"] == "certified"
+    done = recursion.call("goal.tactic", {"stateId": root["stateId"], "tactic": "exact True.intro"})
+    assert recursion.call("goal.certify", {"stateId": done["nextStateId"]})["status"] == "certified"
+    recursion.close()
+
+    # Lean's command elaborator reports recursion exhaustion in a file as that
+    # command's error, as when compiling it; the session is unaffected.
+    frontend = Session(entries, "--maxHeartbeats=100", "--maxRecDepth=200")
+    response = frontend.call("frontend.process", {"file": "example : True := by contract_recursion", "invocations": False, "sorrys": False})
+    assert "maximum recursion depth" in response["units"][0]["messages"][0], response
+    assert frontend.call("stat", {}) == {"nGoals": 0}
+    frontend.close()
 
     fatal = Session(entries, "--maxHeartbeats=100")
     root = fatal.call("goal.start", {"expr": "True"})
@@ -145,7 +181,7 @@ def main():
             imports=["Init", "Test.ContractFixtures"], mathlib=None, exchanges=entries)
         args.capture.parent.mkdir(parents=True, exist_ok=True)
         args.capture.write_text(json.dumps(result, indent=2) + "\n")
-    print(f"PASS: native recovery, certification, framing, fatal shutdown, tracing, and broken output ({len(entries)} captured exchanges)")
+    print(f"PASS: native recovery for heartbeats and recursion depth, certification, framing, fatal shutdown, tracing, and broken output ({len(entries)} captured exchanges)")
 
 
 if __name__ == "__main__":

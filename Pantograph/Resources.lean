@@ -8,7 +8,8 @@ register_option pantograph.traceCommands : Bool := {
   descr := "write bounded REPL request and outcome traces to stderr"
 }
 
-/-- The phase is attached before unwinding restored goal contexts. -/
+/-- A command exhausted a Lean resource limit (heartbeats or recursion depth).
+    The kind, phase and limit are attached before unwinding restores goal contexts. -/
 builtin_initialize commandResourceExceptionId : InternalExceptionId ←
   registerInternalExceptionId `pantographCommandResource
 
@@ -49,6 +50,44 @@ def failurePhase (ex : Exception) : IO String := do
   | some (phase, recorded) => return if sameException recorded ex then phase else "unknown"
   | none => return "unknown"
 
+/-- The limit of the innermost `set_option … in` scope that a recursion-depth
+    exception left, with that exception. The scope's context has unwound by the
+    time the phase boundary sees the exception, so the scope records its own. -/
+builtin_initialize scopedRecursionLimit : IO.Ref (Option (Nat × Exception)) ← IO.mkRef none
+
+/-- The limit a `set_option maxRecDepth N in` scope applies; `none` for other options,
+    which leave the recursion limit unchanged. Lean requires a numeric literal here. -/
+private def scopeLimit (stx : Syntax) : Option Nat :=
+  if stx[1].getId.eraseMacroScopes == `maxRecDepth then stx[3].isNatLit? else none
+
+/-- Run a `set_option … in` scope; if a recursion-depth exception leaves a scope
+    that sets `maxRecDepth` and no inner scope recorded it, record this limit. -/
+private def recordingScopedLimit [Monad m] [MonadControlT CoreM m]
+    (stx : Syntax) (scope : m α) : m α :=
+  match scopeLimit stx with
+  | none => scope
+  | some limit => controlAt CoreM fun run => tryCatchRuntimeEx (run scope) fun ex => do
+    if ex.isMaxRecDepth then
+      let recorded := match ← scopedRecursionLimit.get with
+        | some (_, previous) => sameException previous ex
+        | none => false
+      unless recorded do scopedRecursionLimit.set (some (limit, ex))
+    throw ex
+
+/-- Wrap Lean's tactic and term `set_option … in` elaborators in place, so each
+    still has exactly one elaborator and ordinary failures are unchanged. -/
+builtin_initialize do
+  Elab.Tactic.tacticElabAttribute.tableRef.modify fun table =>
+    match table.find? ``Lean.Parser.Tactic.set_option with
+    | some entries => table.insert ``Lean.Parser.Tactic.set_option <| entries.map fun entry =>
+        { entry with value := fun stx => recordingScopedLimit stx (entry.value stx) }
+    | none => table
+  Elab.Term.termElabAttribute.tableRef.modify fun table =>
+    match table.find? ``Lean.Parser.Term.set_option with
+    | some entries => table.insert ``Lean.Parser.Term.set_option <| entries.map fun entry =>
+        { entry with value := fun stx expected? => recordingScopedLimit stx (entry.value stx expected?) }
+    | none => table
+
 private def phaseCore (phase : String) (action : CoreM α) : CoreM α := do
   tryCatchRuntimeEx (do
     Core.checkMaxHeartbeats "pantograph"
@@ -60,10 +99,21 @@ private def phaseCore (phase : String) (action : CoreM α) : CoreM α := do
         | none => true
       if innermost then failedCommandPhase.set (some (phase, ex))
       let ctx ← read
+      let resource (kind : String) (limit : Nat) : Exception :=
+        .internal commandResourceExceptionId <|
+          ({} : KVMap).setString `kind kind |>.setString `phase phase |>.setNat `limit limit
       let used := (← IO.getNumHeartbeats) - ctx.initHeartbeats
       if ex.isMaxHeartbeat && ctx.maxHeartbeats > 0 && used > ctx.maxHeartbeats then
-        throw <| .internal commandResourceExceptionId <|
-          ({} : KVMap).setString `phase phase |>.setNat `limit (ctx.maxHeartbeats / 1000)
+        throw <| resource "heartbeats" (ctx.maxHeartbeats / 1000)
+      -- Lean's own predicate for `throwMaxRecDepthAt`. The limit is the innermost
+      -- `set_option … in` scope's, recorded for this exception, or else this
+      -- command's configured `maxRecDepth`, in nesting levels.
+      if ex.isMaxRecDepth then
+        let limit := match ← scopedRecursionLimit.get with
+          | some (inner, recorded) => if sameException recorded ex then inner else ctx.maxRecDepth
+          | none => ctx.maxRecDepth
+        if limit > 0 then
+          throw <| resource "recursion-depth" limit
       throw ex
 
 /-- Account for work before and after each protected phase without resetting its budget. -/

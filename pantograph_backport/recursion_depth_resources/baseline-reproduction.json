@@ -1,0 +1,32 @@
+{
+  "source_commit": "661df4e32bb487f52e4bf229a34b155f9e69c76b",
+  "binary_sha256": "670c9b058bc2cdb7e85fb81befdf1ee81e6a19ad7744a2d2594cea1262935745",
+  "command_line": [
+    "repl",
+    "Init",
+    "--maxRecDepth=200"
+  ],
+  "exchanges": [
+    {
+      "request_line": "protocol.describe {}",
+      "response_line": "{\"transitionValidationVersion\":3,\"transitionProvenanceVersion\":1,\"tacticErrorsFormat\":\"string-array-v1\",\"resourceErrorVersion\":1,\"protocolVersion\":3,\"protocol\":\"maths-ai-pantograph\",\"modelSexpVersion\":1,\"messageVersion\":1,\"inspectionVersion\":1,\"goalSelection\":\"explicit-focused-v1\",\"commandTransactionVersion\":1,\"certificationVersion\":1}"
+    },
+    {
+      "request_line": "goal.start {\"expr\":\"(List.replicate 2000 0).length = 2000\"}",
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.54\"}"
+    },
+    {
+      "request_line": "goal.tactic {\"stateId\":0,\"goalId\":0,\"tactic\":\"decide\"}",
+      "response_line": "{\"recovery\":\"session-unusable\",\"error\":\"internal\",\"desc\":\"Unexpected REPL command failure\"}"
+    },
+    {
+      "request_line": "stat {}",
+      "response_line": ""
+    }
+  ],
+  "exit_code": 1,
+  "stderr_lines": [
+    "{\"version\":1,\"state_id\":0,\"repl_command_sequence\":3,\"render_status\":\"rendered\",\"phase\":\"execute\",\"operation\":\"goal.tactic\",\"kind\":\"pantograph-command-failure\",\"internal_exception_id\":null,\"goal_index\":0,\"exception_category\":\"runtime\",\"detail_truncated\":false,\"detail\":\"maximum recursion depth has been reached\\nuse `set_option maxRecDepth <num>` to increase limit\\nuse `set_option diagnostics true` to get diagnostic information\"}",
+    "REPL command failed; session is unusable"
+  ]
+}

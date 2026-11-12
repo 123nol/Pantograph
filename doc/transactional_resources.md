@@ -1,6 +1,6 @@
 # Transactional resource errors: protocol revision 3
 
-`protocol.describe` reports `protocolVersion: 3`, `resourceErrorVersion: 1`, and
+`protocol.describe` reports `protocolVersion: 3`, `resourceErrorVersion: 2`, and
 `commandTransactionVersion: 1`. Model expressions, transition provenance,
 inspection, messages, and certification keep their version-1 representations.
 Transition validation now uses [version 3](compiler_aware_validation.md). Startup still emits `ready.`.
@@ -17,10 +17,26 @@ validation results, or certification receipts. Existing ordinary argument and
 tactic errors retain their representations. Human descriptions are bounded;
 clients classify errors through fields rather than descriptions.
 
-A resource error includes `resource.version: 1`, `resource.kind: "heartbeats"`,
-a phase (`execute`, `validate`, `observe`, or `serialize`), and a positive
-`resource.limit`. The limit uses Lean's `maxHeartbeats` option units: each unit
-counts one thousand underlying heartbeats. It does not measure elapsed seconds.
+A resource error includes `resource.version: 2`, a `resource.kind`, a phase
+(`execute`, `validate`, `observe`, or `serialize`), and a positive
+`resource.limit` in that kind's units:
+
+- `heartbeats`: the limit uses Lean's `maxHeartbeats` option units; each unit
+  counts one thousand underlying heartbeats. It does not measure elapsed seconds.
+- `recursion-depth`: Lean's `maxRecDepth` was reached (`throwMaxRecDepthAt`,
+  recognized with Lean's `Exception.isMaxRecDepth`). The limit is in recursive
+  nesting levels: the bound of the innermost `set_option maxRecDepth N in` scope
+  (tactic or term) that the exception left, or else the command's configured
+  `maxRecDepth`. Each scope records its bound before its context unwinds, so
+  nested scopes report the inner one, and a raised bound is reported as raised.
+  A `by` block inside a term scope is elaborated after that scope exits, so the
+  outer bound is the one that applied to it. Limits changed programmatically by
+  tactic code (`withAtLeastMaxRecDepth`, Mathlib's `sudo set_option`) are not
+  captured.
+
+Version 2 replaces version 1; there is no version-1 negotiation. A known
+resource cause does not by itself make the session reusable: recovery follows
+the rules below for both kinds.
 Unexpected exceptions produce `error: "internal"` with
 `recovery: "session-unusable"`.
 
@@ -42,7 +58,7 @@ when their staged allocation was never published; they never collide with a
 live allocation. Reset retains its established semantics of clearing all
 allocations and restarting IDs.
 
-A classified heartbeat failure returns `recovery: "command-rolled-back"` only
+A classified resource failure returns `recovery: "command-rolled-back"` only
 when discarding the staged state establishes recovery. Ordinary failures may
 still return their established diagnostics. A validation integrity failure also
 discards staged state, emits the existing validation envelope, and ends the session.
@@ -52,7 +68,9 @@ reading commands after writing the fatal response and exits nonzero.
 
 `frontend.process` can execute module initializers and write an output file.
 Its resource failures therefore use `session-unusable`, and unexpected frontend
-IO failures are fatal. Successful frontend operations retain their existing
+IO failures are fatal. Lean's command elaborator reports a recursion-depth
+failure inside a processed file as that command's error message, as when
+compiling the file, so such a file returns its messages normally. Successful frontend operations retain their existing
 results. Rollback never promises to reverse arbitrary external IO performed
 by tactics. This protocol does not sandbox tactics.
 

@@ -36,10 +36,13 @@
           ],
           "properties": {
             "version": {
-              "const": 1
+              "const": 2
             },
             "kind": {
-              "const": "heartbeats"
+              "enum": [
+                "heartbeats",
+                "recursion-depth"
+              ]
             },
             "phase": {
               "enum": [
