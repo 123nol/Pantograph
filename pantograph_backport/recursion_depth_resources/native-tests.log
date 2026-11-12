@@ -1,0 +1,513 @@
+{"version":1,"state_id":null,"repl_command_sequence":3076,"render_status":"rendered","phase":"execute","operation":"stat","kind":"pantograph-command-failure","internal_exception_id":null,"goal_index":null,"exception_category":"error","detail_truncated":false,"detail":"unexpected failure"}
+Transaction/Command rollback and native budgets:
+  ✓ goal printing preserves subsequent environment additions
+  ✓ heartbeats in execute has a single recoverable resource envelope
+  ✓ heartbeats in execute discards all staged mutations
+  ✓ heartbeats in validate has a single recoverable resource envelope
+  ✓ heartbeats in validate discards all staged mutations
+  ✓ heartbeats in observe has a single recoverable resource envelope
+  ✓ heartbeats in observe discards all staged mutations
+  ✓ heartbeats in serialize has a single recoverable resource envelope
+  ✓ heartbeats in serialize discards all staged mutations
+  ✓ recursion-depth in execute has a single recoverable resource envelope
+  ✓ recursion-depth in execute discards all staged mutations
+  ✓ recursion-depth in validate has a single recoverable resource envelope
+  ✓ recursion-depth in validate discards all staged mutations
+  ✓ recursion-depth in observe has a single recoverable resource envelope
+  ✓ recursion-depth in observe discards all staged mutations
+  ✓ recursion-depth in serialize has a single recoverable resource envelope
+  ✓ recursion-depth in serialize discards all staged mutations
+  ✓ reported limits use each kind's units
+  ✓ deletion remains staged until complete response encoding
+  ✓ lazy diagnostic exhaustion is observed without replaying messages
+  ✓ combined cheap work exceeds one request budget
+  ✓ native tactic timeout reaches the shared classifier
+  ✓ the original retained state supports a certified proof after timeout
+  ✓ outer certification heartbeats exhaustion is inconclusive without a receipt
+  ✓ outer certification recursion-depth exhaustion is inconclusive without a receipt
+  ✓ a real tactic exhausting the recursion depth is a rolled-back resource
+  ✓ another tactic on the retained input certifies in the same session
+  ✓ repeated recursion exhaustion leaks no allocations
+  ✓ a state changed before exhaustion is restored and still certifies
+  ✓ unexpected failure ends the session and rejects later dispatch
+Validation/Transition boundary:
+  ✓ changed coupled assignment scanned
+  ✓ delayed pending obligation retained
+  ✓ missing evidence produces validation failure
+  ✓ cyclic assignments reject indeterminate evidence
+  ✓ outer message log restored
+  ✓ failed assignment restored
+Validation/Protocol diagnostics and checks:
+  ✓ exact descriptor
+  ✓ logged start errors reject state allocation
+  ✓ failed start allocated no state
+  ✓ valid completed transition
+  ✓ skip preserves the open goal
+  ✓ complete multiline tactic sequence
+  ✓ trailing input rejected
+  ✓ ordinary type failure
+  ✓ logged error rejects completed tactic
+  ✓ real error has source position
+  ✓ failed mutation rejected
+  ✓ failed environment mutation rolled back
+  ✓ failed declaration cache rolled back
+  ✓ original state reusable after failures
+  ✓ warning/information survive success
+  ✓ messages do not leak to following request
+  ✓ admission detected: sorry
+  ✓ admission detected: exact (by sorry)
+  ✓ admission detected: have h : True := by sorry
+exact h
+  ✓ admission detected: contract_dependency_sorry
+  ✓ positive unsafe scanner evidence
+  ✓ introduced declarations retain original trust boundary
+  ✓ serialization does not leak successful environment mutations
+  ✓ message kind preserved
+  ✓ hidden reachable hole becomes a goal
+  ✓ restored hidden hole can be solved
+  ✓ hidden local value remains an obligation
+  ✓ delayed hole restored through the protocol
+  ✓ nonzero selection preserves sibling
+  ✓ all test allocations deleted
+  ✓ missing assignment returns named validation error
+CompilerValidation/Compiler-producing transitions:
+  ✓ the unfold leaves fresh compiler stage entries in the environment
+  ✓ a compiler-producing transition is accepted without hazards
+  ✓ the splitter itself is a kernel declaration
+  ✓ inspection of the retained output validates
+  ✓ a later tactic continues the compiler-producing state
+  ✓ the original root certifies with kernel auxiliaries only
+  ✓ the root proof cannot reference a compiler entry
+  ✓ certification rejects a compiler entry in the proof
+  ✓ a kernel declaration cannot reach compiler data after it was audited
+  ✓ a stage-named entry without compiler IR keeps the kernel audit
+  ✓ a well-formed kernel declaration named like a stage is checked, not exempted
+  ✓ a compiler sentinel in an ordinary kernel expression rejects
+  ✓ registered compiler data with an unresolved reference is an integrity failure
+  ✓ registered compiler data must be closed
+  ✓ stage-1 representations cannot use stage-2 sentinels
+  ✓ an admission in a compiler-producing proof is still reported
+CompilerValidation/Warmed session history:
+  ✓ a rewrite with generated equations is accepted after earlier history
+Environment/Catalog:
+  ✓ No num symbols
+Environment/Symbol Visibility:
+  ✓ Nat.add_comm
+  ✓ Lean.Name
+  ✓ Init.Data.Nat.Basic._auxLemma.4
+Environment/Inspect:
+  ✓ Or
+  ✓ Except.ok
+  ✓ Eq.rec
+  ✓ ForM.rec
+FailureBoundary/Elaboration aborts:
+  ✓ exact (fun (x : Nat) => True.intro) _ is an ordinary failure with Lean's own message
+  ✓ refine (fun (x : Nat) => True.intro) _ is an ordinary failure with Lean's own message
+  ✓ have h := (fun (x : Nat) => x) _ is an ordinary failure with Lean's own message
+  ✓ exact (_ : True) is an ordinary failure with Lean's own message
+  ✓ the input state still proves the goal after the failures
+FailureBoundary/Diagnostic bounds:
+  ✓ a huge escaped detail is cut so the whole line stays within the byte limit
+  ✓ the record says the detail was truncated
+  ✓ a failed rendering is reported, not invented
+Frontend/structured_tactic_terms:
+  ✓ application source
+  ✓ application structure
+  ✓ constructor source
+  ✓ constructor structure
+  ✓ nested application structure
+  ✓ rewrite local reference
+  ✓ application compact syntax source
+  ✓ application compact syntax semantic locals
+  ✓ nested tactic remains compact source syntax
+  ✓ nested tactic preserves semantic local
+  ✓ intro fresh name
+  ✓ intros fresh names
+  ✓ rintro pattern fresh names
+  ✓ ext fresh name
+Frontend/multiple_sorrys_in_proof:
+  ✓ goals
+Frontend/sorry_in_middle:
+  ✓ goals
+Frontend/sorry_in_induction:
+  ✓ goals
+Frontend/sorry_in_coupled:
+  ✓ goals
+Integration/expr.echo:
+  ✓ expr.echo {"levels":["u"],"expr":"λ {α : Sort (u + 1)} => List α"}
+Integration/options.set options.print:
+  ✓ env.inspect {"name":"Nat.add_one"}
+  ✓ options.set {"printExprAST":true}
+  ✓ env.inspect {"name":"Nat.add_one"}
+  ✓ options.print {}
+Integration/Malformed command:
+  ✓ Invalid Command
+  ✓ JSON Deserialization
+Integration/Tactic:
+  ✓ goal.start {"expr":"∀ (p q: Prop), p ∨ q → q ∨ p"}
+  ✓ goal.tactic {"tactic":"intro x","stateId":0,"goalId":0}
+  ✓ goal.print {"stateId":1}
+  ✓ goal.tactic {"tactic":"intro y","stateId":1,"goalId":0}
+Integration/Manual Mode:
+  ✓ options.set {"automaticMode":false}
+  ✓ goal.start {"expr":"∀ (p q: Prop), p ∨ q → q ∨ p"}
+  ✓ goal.tactic {"tactic":"intro p q h","stateId":0,"goalId":0}
+  ✓ goal.tactic {"tactic":"cases h","stateId":1,"goalId":0}
+  ✓ goal.tactic {"tactic":"apply Or.inr","stateId":2,"goalId":0}
+Integration/Automatic Mode:
+  ✓ options.set {"automaticMode":true}
+  ✓ goal.start {"expr":"∀ (p q: Prop), p ∨ q → q ∨ p"}
+  ✓ goal.tactic {"tactic":"intro p q h","stateId":0,"goalId":0}
+  ✓ goal.tactic {"tactic":"cases h","stateId":1,"goalId":0}
+  ✓ goal.tactic {"tactic":"apply Or.inr","stateId":2,"goalId":0}
+Integration/Protocol Compatibility:
+  ✓ goal.start {"expr":"∀ (p: Prop), p → p"}
+  ✓ goal.tactic {"tactic":"intro p h","stateId":0}
+  ✓ goal.tactic {"tactic":"rfl","stateId":1}
+  ✓ goal.tactic {"tactic":"sorry","stateId":1}
+  ✓ goal.start {"expr":"1 + 2 = 3"}
+  ✓ goal.tactic {"stateId":3,"mode":"conv"}
+  ✓ goal.tactic {"stateId":4,"mode":"tactic"}
+  ✓ goal.tactic {"tactic":"rfl","stateId":4}
+Integration/Conv Protocol:
+  ✓ goal.start state (1 + 2) + 3 = 6
+  ✓ goal.tactic fragments {"stateId":0,"mode":"conv"}
+  ✓ goal.tactic fragments {"tactic":"lhs","stateId":1}
+  ✓ goal.tactic fragments {"tactic":"congr","stateId":2}
+  ✓ goal.tactic fragments {"tactic":"rfl","stateId":3,"goalId":0}
+  ✓ goal.tactic fragments {"tactic":"rfl","stateId":4,"goalId":0}
+  ✓ goal.start state True
+  ✓ goal.tactic fragments {"stateId":6,"mode":"conv"}
+  ✓ goal.tactic fragments {"stateId":7,"have":"True","binderName":"h"}
+  ✓ goal.tactic fragments {"tactic":"trivial","stateId":8,"goalId":0}
+Integration/env.add env.inspect:
+  ✓ env.add {"value":"λ (a b: Prop) => Or a b","type":"Prop → Prop → Prop","name":"Pantograph.mystery","isTheorem":false}
+  ✓ env.inspect {"name":"Pantograph.mystery"}
+  ✓ env.add {"value":"λ (a: Nat) => a + 1","type":"Nat → Int","name":"Pantograph.mystery2","isTheorem":false}
+  ✓ env.inspect {"name":"Pantograph.mystery2"}
+Integration/frontend.process sorry:
+  ✓ frontend.process {"sorrys":true,"invocations":false,"file":"example : 1 + 2 = 3 := rfl\nexample (p: Prop): p → p := sorry"}
+Library/expr_echo:
+  ✓ fail
+  ✓ fail
+Metavar/Instantiate:
+  ✓ typing
+Metavar/2 < 5:
+  ✓ Parsing (2: Nat) ≤ 5
+  ✓ Elaborating
+  ✓ apply Nat.le_trans
+  ✓ (1 root)
+  ✓ (1b root)
+  ✓ exact 3
+  ✓ (2 root)
+Metavar/2 < 5:
+  ✓ Parsing (2: Nat) ≤ 5
+  ✓ Elaborating
+  ✓ apply Nat.le_trans
+  ✓ (metavariables)
+  ✓ (1b root)
+  ✓ exact 2
+  ✓ (2 root)
+  ✓ (5 root)
+  ✓ (5 root)
+Metavar/Proposition Generation:
+  ✓ Parsing Σ' p:Prop, p
+  ✓ Elaborating
+  ✓ apply PSigma.mk
+  ✓ (1 reference)
+  ✓ (1 root)
+  ✓ := λ (x: Nat), _
+  ✓ (2 root)
+  ✓ := Eq.refl x
+  ✓ (3 root)
+Metavar/Partial Continuation:
+  ✓ Parsing (2: Nat) ≤ 5
+  ✓ Elaborating
+  ✓ apply Nat.le_trans
+  ✓ apply Nat.succ
+  ✓ (continue)
+  ✓ (2 root)
+  ✓ (continue)
+  ✓ (2 root)
+  ✓ (continuation failure message)
+  ✓ (continuation failure message)
+Proofs/identity:
+  ✓ Parsing ∀ (p: Prop), p → p
+  ✓ Elaborating
+  ✓ intro p h
+  ✓ (1 parent)
+Proofs/Nat.add_comm:
+  ✓ Symbol exists Nat.add_comm
+  ✓ Start goal
+  ✓ intro n m
+  ✓ assumption
+  ✓ rw [Nat.add_comm]
+Proofs/Nat.add_comm manual:
+  ✓ Parsing ∀ (a b: Nat), a + b = b + a
+  ✓ Elaborating
+  ✓ Start goal
+  ✓ intro n m
+  ✓ assumption
+  ✓ rw [Nat.add_comm]
+Proofs/Nat.add_comm delta:
+  ✓ Parsing ∀ (a b: Nat), a + b = b + a
+  ✓ Elaborating
+  ✓ Start goal
+  ✓ intro n
+  ✓ intro m
+Proofs/arithmetic:
+  ✓ Parsing ∀ (w x y z : Nat) (p : Nat → Prop) (h : p (x * y + z * w * x)), p (x * w * z + y * x)
+  ✓ Elaborating
+  ✓ intros
+  ✓ (1 root)
+  ✓ simp ...
+  ✓ (2 root)
+  ✓ assumption
+  ✓ (3 root)
+Proofs/Or.comm:
+  ✓ Parsing ∀ (p q: Prop), p ∨ q → q ∨ p
+  ✓ Elaborating
+  ✓ (0 parent)
+  ✓ (0 root)
+  ✓ intro p q h
+  ✓ (1 parent)
+  ✓ (1 root)
+  ✓ (1 parent)
+  ✓ cases h
+  ✓ cases h
+  ✓ (2 parent exists)
+  ✓ (2 root)
+  ✓ (2 parent)
+  ✓ (3_1 parent)
+  ✓ · apply Or.inr
+  ✓   assumption
+  ✓ (4_1 parent)
+  ✓ (4_1 root)
+  ✓ · apply Or.inl
+  ✓   assumption
+  ✓ (4_2 root)
+  ✓ (resume)
+  ✓ · apply Or.inr
+  ✓   assumption
+  ✓ (4_1 root)
+Proofs/conv:
+  ✓ Parsing ∀ (a b c1 c2: Nat), (b + a) + c1 = (b + a) + c2 → (a + b) + c1 = (b + a) + c2
+  ✓ Elaborating
+  ✓ intro a b c1 c2 h
+  ✓ conv => ...
+  ✓   rhs (discard)
+  ✓   lhs
+  ✓   congr
+  ✓   · rw [Nat.add_comm]
+  ✓     rfl
+  ✓   · rfl
+  ✓ exact h
+Proofs/calc:
+  ✓ Parsing ∀ (a b c d: Nat), a + b = b + c → b + c = c + d → a + b = c + d
+  ✓ Elaborating
+  ✓ intro a b c d h1 h2
+  ✓ calc a + b = b + c := _
+  ✓ (2.0 prev rhs)
+  ✓ (2.1 prev rhs)
+  ✓ calc _ = c + d := _
+  ✓ (4.0 prev rhs)
+  ✓ (4m root)
+Proofs/Nat.zero_add:
+  ✓ Parsing ∀ (n: Nat), n + 0 = n
+  ✓ Elaborating
+  ✓ intro n
+  ✓ mapply @Nat.brecOn
+  ✓ exact n
+  ✓ exact (λ x => x + 0 = x)
+  ✓ intro t h
+  ✓ rfl
+  ✓ (F root)
+Proofs/Nat.zero_add alt:
+  ✓ Parsing ∀ (n: Nat), n + 0 = n
+  ✓ Elaborating
+  ✓ intro n
+  ✓ mapply @Nat.brecOn
+  ✓ intro x
+  ✓ apply Eq
+  ✓ resume
+Serial/serializeName:
+  ✓ a.b.1
+  ✓ seg.«a.b»
+  ✓ «̈\"»
+Serial/Expression binder:
+  ✓ Nat.add_comm
+  ✓ Nat.le_of_succ_le
+Serial/Sexp from symbol:
+  ✓ Nat.add
+  ✓ Nat.add_one
+  ✓ Nat.le_of_succ_le
+  ✓ Or
+  ✓ List
+Serial/Sexp from elaborated expr:
+  ✓ λ x: Nat × Bool => x.1
+  ✓ λ x: Array Nat => x.data
+  ✓ λ {α: Sort (u + 1)} => List α
+  ✓ λ {α} => List α
+  ✓ (2: Nat) <= (5: Nat)
+Serial/Model Sexp from elaborated expr:
+  ✓ @Eq Nat 1 1
+  ✓ @Eq.mp True True (Eq.refl True) True.intro
+Serial/Model Sexp canonical fvars:
+  ✓ canonical fvars
+Serial/Model Sexp dependent binders:
+  ✓ dependent binder application uses De Bruijn scope
+Serial/Sexp from expr:
+  ✓ (:lambda p
+Serial/Instance:
+ScopeValidation/Ownership and auxiliary audit:
+  ✓ inert orphan syntax is retained and reported without new proof goals
+  ✓ the original completed root has a kernel receipt
+  ✓ previously inert data is checked strictly when the root reaches it
+  ✓ an unpublished record is checked strictly when inspection requests it
+  ✓ missing auxiliary ownership does not skip an independent admission branch
+  ✓ missing auxiliary ownership does not skip an independent unsafe branch
+  ✓ an unassigned scratch record is not advertised as a proof obligation
+  ✓ a reachable hidden hole survives assignment of its parent
+  ✓ an incomplete root never certifies
+  ✓ a root assignment cannot use a dangling free variable
+  ✓ unused live local values still require valid ownership
+  ✓ loose bound variables reject
+  ✓ bound variables under their lambda are accepted
+  ✓ missing executable metavariable declarations reject
+  ✓ missing delayed targets reject
+  ✓ delayed assignment cycles reject
+  ✓ pending work cannot be classified as inert residue
+  ✓ synthetic coercion expressions keep their owner
+  ✓ postponed constraints keep strict expression owners
+  ✓ derived cache references are removed without deleting metavariable records
+  ✓ visited locals cannot suppress a membership check in another owner
+  ✓ unresolved universe obligations never yield a certificate
+  ✓ cyclic universe assignments reject before instantiation
+  ✓ the original root statement cannot be replaced
+  ✓ saved calculation expressions require their recorded owner
+  ✓ conversion RHS and dormant identities are strict roots
+  ✓ let-rec work cannot hide an invalid saved expression
+  ✓ unused retained local admissions remain visible to validation
+  ✓ certification cannot erase an unused local admission through abstraction
+  ✓ delayed abstraction uses the pending owner's context
+  ✓ the delayed substitution produces a certified root
+  ✓ delayed substitution cannot borrow an unabstracted local
+  ✓ an assigned wrapper cannot conceal an escaping unresolved scope
+  ✓ shared root constructors retain universes that occur only in local types
+  ✓ native and frontend roots certify with their retained universe owners
+ScopeValidation/Validation transaction and resource budgets:
+  ✓ resource exhaustion in execution closure preserves transaction framing
+  ✓ resource exhaustion in auxiliary audit preserves transaction framing
+  ✓ validation abort discards allocations, options, declarations and messages
+  ✓ validation integrity failure refuses further commands
+ScopeValidation/Inspection publication:
+  ✓ goal.inspect validates a newly requested inert record before publication
+ScopeValidation/Continuation publication:
+  ✓ goal.continue validates a newly requested inert record before publication
+Snapshot/Kernel boundary:
+  ✓ ill-typed assignment rejected with skipKernelTC
+  ✓ proof of the started statement certifies
+  ✓ a replaced root statement is rejected
+  ✓ certification leaves the environment unchanged
+Snapshot/Transition provenance and inspection:
+  ✓ constructor produces two direct goals
+  ✓ nonzero selection leaves its sibling, not a child
+  ✓ either side can be solved first
+  ✓ a goal left open is its own direct goal
+  ✓ input snapshot survives alternatives
+  ✓ identical targets stay distinct occurrences
+  ✓ introduced locals reported per direct goal
+  ✓ descendants are direct and the survivor is a sibling
+  ✓ a shared assignment closes and changes siblings
+  ✓ assigning the witness changes both equalities
+  ✓ alternatives keep separate assignments
+  ✓ solved goals absent from the list are inspectable
+  ✓ restored delayed obligation is extra, not direct
+  ✓ unknown obligation is an index error
+  ✓ duplicate inspection request rejected
+  ✓ state usable after failed inspection
+Snapshot/Root certification:
+  ✓ remaining goals are incomplete
+  ✓ complete root certifies
+  ✓ repeated certification is read-only
+  ✓ input of a certified state still usable
+  ✓ conflicting witness cannot complete
+  ✓ universe-polymorphic term certifies
+  ✓ universe-polymorphic proposition certifies
+  ✓ baseline axioms are reported
+  ✓ a new axiom is rejected
+  ✓ a new checked lemma is rechecked and reported
+  ✓ a new admitted dependency is rejected
+  ✓ an admission in the trusted basis passes transition checks
+  ✓ a transitive admission is rejected
+  ✓ identities ignore bound variable names
+  ✓ unknown state is an index error
+Tactic/Congruence/congrArg List.reverse:
+  ✓ goals
+  ✓ apply
+  ✓ h
+  ✓ conduit
+Tactic/Congruence/congrArg:
+  ✓ goals
+Tactic/Congruence/congrFun:
+  ✓ goals
+Tactic/Congruence/congr:
+  ✓ goals
+Tactic/Motivated Apply/type_extract:
+  ✓ recursorType
+  ✓ iMotive
+  ✓ motiveType
+Tactic/Motivated Apply/Nat.brecOn:
+  ✓ goals
+Tactic/Motivated Apply/List.brecOn:
+  ✓ goals
+Tactic/Motivated Apply/Nat.brecOn partial motive instantiation:
+  ✓ goals
+  ✓ goal name
+  ✓ conduit
+Tactic/No Confuse/Nat:
+  ✓ goals
+Tactic/No Confuse/Nat fail:
+  ✓ Tactic should fail
+Tactic/No Confuse/List:
+  ✓ goals
+Tactic/Prograde/define:
+  ✓ goals before
+  ✓ goals after
+  ✓ assign
+Tactic/Prograde/define proof:
+  ✓ intro p q h
+  ✓ := Or.inl (Or.inl h)
+  ✓ eval y := Or.inl h
+  ✓ the inferred proposition remains a visible obligation
+  ✓ := Or.inl y
+  ✓ (3 root)
+Tactic/Prograde/define root expr:
+  ✓ root
+Tactic/Prograde/have proof:
+  ✓ intro p q h
+  ✓ := Or.inl (Or.inl h)
+  ✓ have y: p ∨ q
+  ✓ := Or.inl h
+  ✓ := Or.inl y
+  ✓ root
+Tactic/Prograde/let via assign:
+  ✓ intro a p h
+  ✓ let b: Nat := _; _
+  ✓ exact 1
+  ✓ (continue)
+  ✓ exact h
+  ✓ (4 root)
+Tactic/Prograde/let via tryLet:
+  ✓ intro a p h
+  ✓ let b: Nat := _; _
+  ✓ exact 1
+  ✓ (continue)
+  ✓ exact h
+  ✓ (4 root)
+== scripts/test_transactional_resources.py
+PASS: native recovery for heartbeats and recursion depth, certification, framing, fatal shutdown, tracing, and broken output (36 captured exchanges)
+== scripts/test_failure_diagnostics.py
+PASS: 1 abort sessions, 4 fatal diagnostics, ordinary rejection unchanged
+== scripts/test_scope_aware_validation.py
+PASS: 44 core and 0 Mathlib exchanges; validation version 3, compiler-producing transitions, kernel receipts, lifecycle, and fatal integrity failures

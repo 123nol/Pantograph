@@ -1,0 +1,661 @@
+{
+  "protocol_version": 3,
+  "source_base": "c53879de5c3013fd8fdae36fb30f716bfdf10838",
+  "source_dirty": false,
+  "binary_sha256": "997e5f20d2364d4394c2a2355a790cdb79cd7e6a03e6eaf7ce31f3cd9594d56b",
+  "toolchain": "leanprover/lean4:v4.10.0-rc1",
+  "imports": [
+    "Init",
+    "Test.ContractFixtures"
+  ],
+  "mathlib": null,
+  "exchanges": [
+    {
+      "command": "protocol.describe",
+      "request": {},
+      "request_line": "protocol.describe {}",
+      "response_line": "{\"transitionValidationVersion\":3,\"transitionProvenanceVersion\":1,\"tacticErrorsFormat\":\"string-array-v1\",\"resourceErrorVersion\":2,\"protocolVersion\":3,\"protocol\":\"maths-ai-pantograph\",\"modelSexpVersion\":1,\"messageVersion\":1,\"inspectionVersion\":1,\"goalSelection\":\"explicit-focused-v1\",\"commandTransactionVersion\":1,\"certificationVersion\":1}",
+      "response": {
+        "transitionValidationVersion": 3,
+        "transitionProvenanceVersion": 1,
+        "tacticErrorsFormat": "string-array-v1",
+        "resourceErrorVersion": 2,
+        "protocolVersion": 3,
+        "protocol": "maths-ai-pantograph",
+        "modelSexpVersion": 1,
+        "messageVersion": 1,
+        "inspectionVersion": 1,
+        "goalSelection": "explicit-focused-v1",
+        "commandTransactionVersion": 1,
+        "certificationVersion": 1
+      }
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "True"
+      },
+      "request_line": "goal.start {\"expr\":\"True\"}",
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.2\"}",
+      "response": {
+        "stateId": 0,
+        "root": "_uniq.2"
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "contract_heartbeat"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"contract_heartbeat\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":100,\"kind\":\"heartbeats\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean command heartbeat budget exhausted\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 100,
+          "kind": "heartbeats"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean command heartbeat budget exhausted"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":1}",
+      "response": {
+        "nGoals": 1
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "contract_diagnostic_heartbeat"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"contract_diagnostic_heartbeat\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"observe\",\"limit\":100,\"kind\":\"heartbeats\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean command heartbeat budget exhausted\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "observe",
+          "limit": 100,
+          "kind": "heartbeats"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean command heartbeat budget exhausted"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":1}",
+      "response": {
+        "nGoals": 1
+      }
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "by contract_heartbeat"
+      },
+      "request_line": "goal.start {\"expr\":\"by contract_heartbeat\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":100,\"kind\":\"heartbeats\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean command heartbeat budget exhausted\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 100,
+          "kind": "heartbeats"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean command heartbeat budget exhausted"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":1}",
+      "response": {
+        "nGoals": 1
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "fail \"first line\\nsecond line\""
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"fail \\\"first line\\\\nsecond line\\\"\"}",
+      "response_line": "{\"tacticErrors\":[\"first line\\nsecond line\\n\u22a2 True\"],\"messages\":[{\"severity\":\"error\",\"pos\":{\"line\":1,\"column\":0},\"kind\":\"[anonymous]\",\"endPos\":{\"line\":1,\"column\":30},\"data\":\"first line\\nsecond line\\n\u22a2 True\"}],\"hasUnsafe\":false,\"hasSorry\":false}",
+      "response": {
+        "tacticErrors": [
+          "first line\nsecond line\n\u22a2 True"
+        ],
+        "messages": [
+          {
+            "severity": "error",
+            "pos": {
+              "line": 1,
+              "column": 0
+            },
+            "kind": "[anonymous]",
+            "endPos": {
+              "line": 1,
+              "column": 30
+            },
+            "data": "first line\nsecond line\n\u22a2 True"
+          }
+        ],
+        "hasUnsafe": false,
+        "hasSorry": false
+      }
+    },
+    {
+      "command": "goal.continue",
+      "request": {
+        "target": 0,
+        "goals": [
+          "_uniq.2"
+        ]
+      },
+      "request_line": "goal.continue {\"target\":0,\"goals\":[\"_uniq.2\"]}",
+      "response_line": "{\"nextStateId\":1,\"goals\":[{\"vars\":[],\"target\":{\"pp\":\"True\"},\"name\":\"_uniq.2\",\"isConversion\":false,\"fragment\":\"tactic\"}]}",
+      "response": {
+        "nextStateId": 1,
+        "goals": [
+          {
+            "vars": [],
+            "target": {
+              "pp": "True"
+            },
+            "name": "_uniq.2",
+            "isConversion": false,
+            "fragment": "tactic"
+          }
+        ]
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "exact True.intro"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"exact True.intro\"}",
+      "response_line": "{\"validation\":{\"version\":3,\"scope\":\"execution-closure-and-representation-aware-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.2\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":2,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}",
+      "response": {
+        "validation": {
+          "version": 3,
+          "scope": "execution-closure-and-representation-aware-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.2",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 2,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      }
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 2
+      },
+      "request_line": "goal.certify {\"stateId\":2}",
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"50ed216148291d73\",\"root\":\"_uniq.2\",\"proof\":\"8bf67748f3048ada\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"d369580a291d477d\",\"axioms\":[],\"auxiliary\":[]}}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "50ed216148291d73",
+          "root": "_uniq.2",
+          "proof": "8bf67748f3048ada",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "d369580a291d477d",
+          "axioms": [],
+          "auxiliary": []
+        }
+      }
+    },
+    {
+      "command": "goal.delete",
+      "request": {
+        "stateIds": [
+          0,
+          1,
+          2
+        ]
+      },
+      "request_line": "goal.delete {\"stateIds\":[0,1,2]}",
+      "response_line": "{}",
+      "response": {}
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":0}",
+      "response": {
+        "nGoals": 0
+      }
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "True"
+      },
+      "request_line": "goal.start {\"expr\":\"True\"}",
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.2\"}",
+      "response": {
+        "stateId": 0,
+        "root": "_uniq.2"
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "contract_recursion"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"contract_recursion\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":200,\"kind\":\"recursion-depth\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean maximum recursion depth reached\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 200,
+          "kind": "recursion-depth"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean maximum recursion depth reached"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":1}",
+      "response": {
+        "nGoals": 1
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "contract_recursion_after_change"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"contract_recursion_after_change\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":200,\"kind\":\"recursion-depth\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean maximum recursion depth reached\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 200,
+          "kind": "recursion-depth"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean maximum recursion depth reached"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":1}",
+      "response": {
+        "nGoals": 1
+      }
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "(List.replicate 2000 0).length = 2000"
+      },
+      "request_line": "goal.start {\"expr\":\"(List.replicate 2000 0).length = 2000\"}",
+      "response_line": "{\"stateId\":1,\"root\":\"_uniq.56\"}",
+      "response": {
+        "stateId": 1,
+        "root": "_uniq.56"
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 1,
+        "tactic": "decide"
+      },
+      "request_line": "goal.tactic {\"stateId\":1,\"tactic\":\"decide\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":200,\"kind\":\"recursion-depth\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean maximum recursion depth reached\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 200,
+          "kind": "recursion-depth"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean maximum recursion depth reached"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":2}",
+      "response": {
+        "nGoals": 2
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 1,
+        "tactic": "exact List.length_replicate 2000 0"
+      },
+      "request_line": "goal.tactic {\"stateId\":1,\"tactic\":\"exact List.length_replicate 2000 0\"}",
+      "response_line": "{\"validation\":{\"version\":3,\"scope\":\"execution-closure-and-representation-aware-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.56\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":2,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}",
+      "response": {
+        "validation": {
+          "version": 3,
+          "scope": "execution-closure-and-representation-aware-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.56",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 2,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      }
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 2
+      },
+      "request_line": "goal.certify {\"stateId\":2}",
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"818a9974b7131b55\",\"root\":\"_uniq.56\",\"proof\":\"c5f996e221fbe417\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"d369580a291d477d\",\"axioms\":[\"propext\"],\"auxiliary\":[]}}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "818a9974b7131b55",
+          "root": "_uniq.56",
+          "proof": "c5f996e221fbe417",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "d369580a291d477d",
+          "axioms": [
+            "propext"
+          ],
+          "auxiliary": []
+        }
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "exact True.intro"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"exact True.intro\"}",
+      "response_line": "{\"validation\":{\"version\":3,\"scope\":\"execution-closure-and-representation-aware-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.2\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":3,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}",
+      "response": {
+        "validation": {
+          "version": 3,
+          "scope": "execution-closure-and-representation-aware-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.2",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 3,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      }
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 3
+      },
+      "request_line": "goal.certify {\"stateId\":3}",
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"50ed216148291d73\",\"root\":\"_uniq.2\",\"proof\":\"8bf67748f3048ada\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"d369580a291d477d\",\"axioms\":[],\"auxiliary\":[]}}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "50ed216148291d73",
+          "root": "_uniq.2",
+          "proof": "8bf67748f3048ada",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "d369580a291d477d",
+          "axioms": [],
+          "auxiliary": []
+        }
+      }
+    },
+    {
+      "command": "frontend.process",
+      "request": {
+        "file": "example : True := by contract_recursion",
+        "invocations": false,
+        "sorrys": false
+      },
+      "request_line": "frontend.process {\"file\":\"example : True := by contract_recursion\",\"invocations\":false,\"sorrys\":false}",
+      "response_line": "{\"units\":[{\"messages\":[\"<anonymous>:1:21: error: maximum recursion depth has been reached\\nuse `set_option maxRecDepth <num>` to increase limit\\nuse `set_option diagnostics true` to get diagnostic information\\n\"],\"goals\":[],\"boundary\":[0,39]}]}",
+      "response": {
+        "units": [
+          {
+            "messages": [
+              "<anonymous>:1:21: error: maximum recursion depth has been reached\nuse `set_option maxRecDepth <num>` to increase limit\nuse `set_option diagnostics true` to get diagnostic information\n"
+            ],
+            "goals": [],
+            "boundary": [
+              0,
+              39
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":0}",
+      "response": {
+        "nGoals": 0
+      }
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "True"
+      },
+      "request_line": "goal.start {\"expr\":\"True\"}",
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.2\"}",
+      "response": {
+        "stateId": 0,
+        "root": "_uniq.2"
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "contract_internal_failure"
+      },
+      "response_line": "{\"recovery\":\"session-unusable\",\"error\":\"internal\",\"desc\":\"Unexpected REPL command failure\"}",
+      "response": {
+        "recovery": "session-unusable",
+        "error": "internal",
+        "desc": "Unexpected REPL command failure"
+      }
+    },
+    {
+      "command": "goal.start",
+      "request": {
+        "expr": "((((((((((0 = (0 : Nat)) \u2227 (1 = (1 : Nat))) \u2227 ((2 = (2 : Nat)) \u2227 (3 = (3 : Nat)))) \u2227 (((4 = (4 : Nat)) \u2227 (5 = (5 : Nat))) \u2227 ((6 = (6 : Nat)) \u2227 (7 = (7 : Nat))))) \u2227 ((((8 = (8 : Nat)) \u2227 (9 = (9 : Nat))) \u2227 ((10 = (10 : Nat)) \u2227 (11 = (11 : Nat)))) \u2227 (((12 = (12 : Nat)) \u2227 (13 = (13 : Nat))) \u2227 ((14 = (14 : Nat)) \u2227 (15 = (15 : Nat)))))) \u2227 (((((16 = (16 : Nat)) \u2227 (17 = (17 : Nat))) \u2227 ((18 = (18 : Nat)) \u2227 (19 = (19 : Nat)))) \u2227 (((20 = (20 : Nat)) \u2227 (21 = (21 : Nat))) \u2227 ((22 = (22 : Nat)) \u2227 (23 = (23 : Nat))))) \u2227 ((((24 = (24 : Nat)) \u2227 (25 = (25 : Nat))) \u2227 ((26 = (26 : Nat)) \u2227 (27 = (27 : Nat)))) \u2227 (((28 = (28 : Nat)) \u2227 (29 = (29 : Nat))) \u2227 ((30 = (30 : Nat)) \u2227 (31 = (31 : Nat))))))) \u2227 ((((((32 = (32 : Nat)) \u2227 (33 = (33 : Nat))) \u2227 ((34 = (34 : Nat)) \u2227 (35 = (35 : Nat)))) \u2227 (((36 = (36 : Nat)) \u2227 (37 = (37 : Nat))) \u2227 ((38 = (38 : Nat)) \u2227 (39 = (39 : Nat))))) \u2227 ((((40 = (40 : Nat)) \u2227 (41 = (41 : Nat))) \u2227 ((42 = (42 : Nat)) \u2227 (43 = (43 : Nat)))) \u2227 (((44 = (44 : Nat)) \u2227 (45 = (45 : Nat))) \u2227 ((46 = (46 : Nat)) \u2227 (47 = (47 : Nat)))))) \u2227 (((((48 = (48 : Nat)) \u2227 (49 = (49 : Nat))) \u2227 ((50 = (50 : Nat)) \u2227 (51 = (51 : Nat)))) \u2227 (((52 = (52 : Nat)) \u2227 (53 = (53 : Nat))) \u2227 ((54 = (54 : Nat)) \u2227 (55 = (55 : Nat))))) \u2227 ((((56 = (56 : Nat)) \u2227 (57 = (57 : Nat))) \u2227 ((58 = (58 : Nat)) \u2227 (59 = (59 : Nat)))) \u2227 (((60 = (60 : Nat)) \u2227 (61 = (61 : Nat))) \u2227 ((62 = (62 : Nat)) \u2227 (63 = (63 : Nat)))))))) \u2227 (((((((64 = (64 : Nat)) \u2227 (65 = (65 : Nat))) \u2227 ((66 = (66 : Nat)) \u2227 (67 = (67 : Nat)))) \u2227 (((68 = (68 : Nat)) \u2227 (69 = (69 : Nat))) \u2227 ((70 = (70 : Nat)) \u2227 (71 = (71 : Nat))))) \u2227 ((((72 = (72 : Nat)) \u2227 (73 = (73 : Nat))) \u2227 ((74 = (74 : Nat)) \u2227 (75 = (75 : Nat)))) \u2227 (((76 = (76 : Nat)) \u2227 (77 = (77 : Nat))) \u2227 ((78 = (78 : Nat)) \u2227 (79 = (79 : Nat)))))) \u2227 (((((80 = (80 : Nat)) \u2227 (81 = (81 : Nat))) \u2227 ((82 = (82 : Nat)) \u2227 (83 = (83 : Nat)))) \u2227 (((84 = (84 : Nat)) \u2227 (85 = (85 : Nat))) \u2227 ((86 = (86 : Nat)) \u2227 (87 = (87 : Nat))))) \u2227 ((((88 = (88 : Nat)) \u2227 (89 = (89 : Nat))) \u2227 ((90 = (90 : Nat)) \u2227 (91 = (91 : Nat)))) \u2227 (((92 = (92 : Nat)) \u2227 (93 = (93 : Nat))) \u2227 ((94 = (94 : Nat)) \u2227 (95 = (95 : Nat))))))) \u2227 ((((((96 = (96 : Nat)) \u2227 (97 = (97 : Nat))) \u2227 ((98 = (98 : Nat)) \u2227 (99 = (99 : Nat)))) \u2227 (((100 = (100 : Nat)) \u2227 (101 = (101 : Nat))) \u2227 ((102 = (102 : Nat)) \u2227 (103 = (103 : Nat))))) \u2227 ((((104 = (104 : Nat)) \u2227 (105 = (105 : Nat))) \u2227 ((106 = (106 : Nat)) \u2227 (107 = (107 : Nat)))) \u2227 (((108 = (108 : Nat)) \u2227 (109 = (109 : Nat))) \u2227 ((110 = (110 : Nat)) \u2227 (111 = (111 : Nat)))))) \u2227 (((((112 = (112 : Nat)) \u2227 (113 = (113 : Nat))) \u2227 ((114 = (114 : Nat)) \u2227 (115 = (115 : Nat)))) \u2227 (((116 = (116 : Nat)) \u2227 (117 = (117 : Nat))) \u2227 ((118 = (118 : Nat)) \u2227 (119 = (119 : Nat))))) \u2227 ((((120 = (120 : Nat)) \u2227 (121 = (121 : Nat))) \u2227 ((122 = (122 : Nat)) \u2227 (123 = (123 : Nat)))) \u2227 (((124 = (124 : Nat)) \u2227 (125 = (125 : Nat))) \u2227 ((126 = (126 : Nat)) \u2227 (127 = (127 : Nat))))))))) \u2227 ((((((((128 = (128 : Nat)) \u2227 (129 = (129 : Nat))) \u2227 ((130 = (130 : Nat)) \u2227 (131 = (131 : Nat)))) \u2227 (((132 = (132 : Nat)) \u2227 (133 = (133 : Nat))) \u2227 ((134 = (134 : Nat)) \u2227 (135 = (135 : Nat))))) \u2227 ((((136 = (136 : Nat)) \u2227 (137 = (137 : Nat))) \u2227 ((138 = (138 : Nat)) \u2227 (139 = (139 : Nat)))) \u2227 (((140 = (140 : Nat)) \u2227 (141 = (141 : Nat))) \u2227 ((142 = (142 : Nat)) \u2227 (143 = (143 : Nat)))))) \u2227 (((((144 = (144 : Nat)) \u2227 (145 = (145 : Nat))) \u2227 ((146 = (146 : Nat)) \u2227 (147 = (147 : Nat)))) \u2227 (((148 = (148 : Nat)) \u2227 (149 = (149 : Nat))) \u2227 ((150 = (150 : Nat)) \u2227 (151 = (151 : Nat))))) \u2227 ((((152 = (152 : Nat)) \u2227 (153 = (153 : Nat))) \u2227 ((154 = (154 : Nat)) \u2227 (155 = (155 : Nat)))) \u2227 (((156 = (156 : Nat)) \u2227 (157 = (157 : Nat))) \u2227 ((158 = (158 : Nat)) \u2227 (159 = (159 : Nat))))))) \u2227 ((((((160 = (160 : Nat)) \u2227 (161 = (161 : Nat))) \u2227 ((162 = (162 : Nat)) \u2227 (163 = (163 : Nat)))) \u2227 (((164 = (164 : Nat)) \u2227 (165 = (165 : Nat))) \u2227 ((166 = (166 : Nat)) \u2227 (167 = (167 : Nat))))) \u2227 ((((168 = (168 : Nat)) \u2227 (169 = (169 : Nat))) \u2227 ((170 = (170 : Nat)) \u2227 (171 = (171 : Nat)))) \u2227 (((172 = (172 : Nat)) \u2227 (173 = (173 : Nat))) \u2227 ((174 = (174 : Nat)) \u2227 (175 = (175 : Nat)))))) \u2227 (((((176 = (176 : Nat)) \u2227 (177 = (177 : Nat))) \u2227 ((178 = (178 : Nat)) \u2227 (179 = (179 : Nat)))) \u2227 (((180 = (180 : Nat)) \u2227 (181 = (181 : Nat))) \u2227 ((182 = (182 : Nat)) \u2227 (183 = (183 : Nat))))) \u2227 ((((184 = (184 : Nat)) \u2227 (185 = (185 : Nat))) \u2227 ((186 = (186 : Nat)) \u2227 (187 = (187 : Nat)))) \u2227 (((188 = (188 : Nat)) \u2227 (189 = (189 : Nat))) \u2227 ((190 = (190 : Nat)) \u2227 (191 = (191 : Nat)))))))) \u2227 (((((((192 = (192 : Nat)) \u2227 (193 = (193 : Nat))) \u2227 ((194 = (194 : Nat)) \u2227 (195 = (195 : Nat)))) \u2227 (((196 = (196 : Nat)) \u2227 (197 = (197 : Nat))) \u2227 ((198 = (198 : Nat)) \u2227 (199 = (199 : Nat))))) \u2227 ((((200 = (200 : Nat)) \u2227 (201 = (201 : Nat))) \u2227 ((202 = (202 : Nat)) \u2227 (203 = (203 : Nat)))) \u2227 (((204 = (204 : Nat)) \u2227 (205 = (205 : Nat))) \u2227 ((206 = (206 : Nat)) \u2227 (207 = (207 : Nat)))))) \u2227 (((((208 = (208 : Nat)) \u2227 (209 = (209 : Nat))) \u2227 ((210 = (210 : Nat)) \u2227 (211 = (211 : Nat)))) \u2227 (((212 = (212 : Nat)) \u2227 (213 = (213 : Nat))) \u2227 ((214 = (214 : Nat)) \u2227 (215 = (215 : Nat))))) \u2227 ((((216 = (216 : Nat)) \u2227 (217 = (217 : Nat))) \u2227 ((218 = (218 : Nat)) \u2227 (219 = (219 : Nat)))) \u2227 (((220 = (220 : Nat)) \u2227 (221 = (221 : Nat))) \u2227 ((222 = (222 : Nat)) \u2227 (223 = (223 : Nat))))))) \u2227 ((((((224 = (224 : Nat)) \u2227 (225 = (225 : Nat))) \u2227 ((226 = (226 : Nat)) \u2227 (227 = (227 : Nat)))) \u2227 (((228 = (228 : Nat)) \u2227 (229 = (229 : Nat))) \u2227 ((230 = (230 : Nat)) \u2227 (231 = (231 : Nat))))) \u2227 ((((232 = (232 : Nat)) \u2227 (233 = (233 : Nat))) \u2227 ((234 = (234 : Nat)) \u2227 (235 = (235 : Nat)))) \u2227 (((236 = (236 : Nat)) \u2227 (237 = (237 : Nat))) \u2227 ((238 = (238 : Nat)) \u2227 (239 = (239 : Nat)))))) \u2227 (((((240 = (240 : Nat)) \u2227 (241 = (241 : Nat))) \u2227 ((242 = (242 : Nat)) \u2227 (243 = (243 : Nat)))) \u2227 (((244 = (244 : Nat)) \u2227 (245 = (245 : Nat))) \u2227 ((246 = (246 : Nat)) \u2227 (247 = (247 : Nat))))) \u2227 ((((248 = (248 : Nat)) \u2227 (249 = (249 : Nat))) \u2227 ((250 = (250 : Nat)) \u2227 (251 = (251 : Nat)))) \u2227 (((252 = (252 : Nat)) \u2227 (253 = (253 : Nat))) \u2227 ((254 = (254 : Nat)) \u2227 (255 = (255 : Nat)))))))))) \u2227 (((((((((256 = (256 : Nat)) \u2227 (257 = (257 : Nat))) \u2227 ((258 = (258 : Nat)) \u2227 (259 = (259 : Nat)))) \u2227 (((260 = (260 : Nat)) \u2227 (261 = (261 : Nat))) \u2227 ((262 = (262 : Nat)) \u2227 (263 = (263 : Nat))))) \u2227 ((((264 = (264 : Nat)) \u2227 (265 = (265 : Nat))) \u2227 ((266 = (266 : Nat)) \u2227 (267 = (267 : Nat)))) \u2227 (((268 = (268 : Nat)) \u2227 (269 = (269 : Nat))) \u2227 ((270 = (270 : Nat)) \u2227 (271 = (271 : Nat)))))) \u2227 (((((272 = (272 : Nat)) \u2227 (273 = (273 : Nat))) \u2227 ((274 = (274 : Nat)) \u2227 (275 = (275 : Nat)))) \u2227 (((276 = (276 : Nat)) \u2227 (277 = (277 : Nat))) \u2227 ((278 = (278 : Nat)) \u2227 (279 = (279 : Nat))))) \u2227 ((((280 = (280 : Nat)) \u2227 (281 = (281 : Nat))) \u2227 ((282 = (282 : Nat)) \u2227 (283 = (283 : Nat)))) \u2227 (((284 = (284 : Nat)) \u2227 (285 = (285 : Nat))) \u2227 ((286 = (286 : Nat)) \u2227 (287 = (287 : Nat))))))) \u2227 ((((((288 = (288 : Nat)) \u2227 (289 = (289 : Nat))) \u2227 ((290 = (290 : Nat)) \u2227 (291 = (291 : Nat)))) \u2227 (((292 = (292 : Nat)) \u2227 (293 = (293 : Nat))) \u2227 ((294 = (294 : Nat)) \u2227 (295 = (295 : Nat))))) \u2227 ((((296 = (296 : Nat)) \u2227 (297 = (297 : Nat))) \u2227 ((298 = (298 : Nat)) \u2227 (299 = (299 : Nat)))) \u2227 (((300 = (300 : Nat)) \u2227 (301 = (301 : Nat))) \u2227 ((302 = (302 : Nat)) \u2227 (303 = (303 : Nat)))))) \u2227 (((((304 = (304 : Nat)) \u2227 (305 = (305 : Nat))) \u2227 ((306 = (306 : Nat)) \u2227 (307 = (307 : Nat)))) \u2227 (((308 = (308 : Nat)) \u2227 (309 = (309 : Nat))) \u2227 ((310 = (310 : Nat)) \u2227 (311 = (311 : Nat))))) \u2227 ((((312 = (312 : Nat)) \u2227 (313 = (313 : Nat))) \u2227 ((314 = (314 : Nat)) \u2227 (315 = (315 : Nat)))) \u2227 (((316 = (316 : Nat)) \u2227 (317 = (317 : Nat))) \u2227 ((318 = (318 : Nat)) \u2227 (319 = (319 : Nat)))))))) \u2227 (((((((320 = (320 : Nat)) \u2227 (321 = (321 : Nat))) \u2227 ((322 = (322 : Nat)) \u2227 (323 = (323 : Nat)))) \u2227 (((324 = (324 : Nat)) \u2227 (325 = (325 : Nat))) \u2227 ((326 = (326 : Nat)) \u2227 (327 = (327 : Nat))))) \u2227 ((((328 = (328 : Nat)) \u2227 (329 = (329 : Nat))) \u2227 ((330 = (330 : Nat)) \u2227 (331 = (331 : Nat)))) \u2227 (((332 = (332 : Nat)) \u2227 (333 = (333 : Nat))) \u2227 ((334 = (334 : Nat)) \u2227 (335 = (335 : Nat)))))) \u2227 (((((336 = (336 : Nat)) \u2227 (337 = (337 : Nat))) \u2227 ((338 = (338 : Nat)) \u2227 (339 = (339 : Nat)))) \u2227 (((340 = (340 : Nat)) \u2227 (341 = (341 : Nat))) \u2227 ((342 = (342 : Nat)) \u2227 (343 = (343 : Nat))))) \u2227 ((((344 = (344 : Nat)) \u2227 (345 = (345 : Nat))) \u2227 ((346 = (346 : Nat)) \u2227 (347 = (347 : Nat)))) \u2227 (((348 = (348 : Nat)) \u2227 (349 = (349 : Nat))) \u2227 ((350 = (350 : Nat)) \u2227 (351 = (351 : Nat))))))) \u2227 ((((((352 = (352 : Nat)) \u2227 (353 = (353 : Nat))) \u2227 ((354 = (354 : Nat)) \u2227 (355 = (355 : Nat)))) \u2227 (((356 = (356 : Nat)) \u2227 (357 = (357 : Nat))) \u2227 ((358 = (358 : Nat)) \u2227 (359 = (359 : Nat))))) \u2227 ((((360 = (360 : Nat)) \u2227 (361 = (361 : Nat))) \u2227 ((362 = (362 : Nat)) \u2227 (363 = (363 : Nat)))) \u2227 (((364 = (364 : Nat)) \u2227 (365 = (365 : Nat))) \u2227 ((366 = (366 : Nat)) \u2227 (367 = (367 : Nat)))))) \u2227 (((((368 = (368 : Nat)) \u2227 (369 = (369 : Nat))) \u2227 ((370 = (370 : Nat)) \u2227 (371 = (371 : Nat)))) \u2227 (((372 = (372 : Nat)) \u2227 (373 = (373 : Nat))) \u2227 ((374 = (374 : Nat)) \u2227 (375 = (375 : Nat))))) \u2227 ((((376 = (376 : Nat)) \u2227 (377 = (377 : Nat))) \u2227 ((378 = (378 : Nat)) \u2227 (379 = (379 : Nat)))) \u2227 (((380 = (380 : Nat)) \u2227 (381 = (381 : Nat))) \u2227 ((382 = (382 : Nat)) \u2227 (383 = (383 : Nat))))))))) \u2227 ((((((((384 = (384 : Nat)) \u2227 (385 = (385 : Nat))) \u2227 ((386 = (386 : Nat)) \u2227 (387 = (387 : Nat)))) \u2227 (((388 = (388 : Nat)) \u2227 (389 = (389 : Nat))) \u2227 ((390 = (390 : Nat)) \u2227 (391 = (391 : Nat))))) \u2227 ((((392 = (392 : Nat)) \u2227 (393 = (393 : Nat))) \u2227 ((394 = (394 : Nat)) \u2227 (395 = (395 : Nat)))) \u2227 (((396 = (396 : Nat)) \u2227 (397 = (397 : Nat))) \u2227 ((398 = (398 : Nat)) \u2227 (399 = (399 : Nat)))))) \u2227 (((((400 = (400 : Nat)) \u2227 (401 = (401 : Nat))) \u2227 ((402 = (402 : Nat)) \u2227 (403 = (403 : Nat)))) \u2227 (((404 = (404 : Nat)) \u2227 (405 = (405 : Nat))) \u2227 ((406 = (406 : Nat)) \u2227 (407 = (407 : Nat))))) \u2227 ((((408 = (408 : Nat)) \u2227 (409 = (409 : Nat))) \u2227 ((410 = (410 : Nat)) \u2227 (411 = (411 : Nat)))) \u2227 (((412 = (412 : Nat)) \u2227 (413 = (413 : Nat))) \u2227 ((414 = (414 : Nat)) \u2227 (415 = (415 : Nat))))))) \u2227 ((((((416 = (416 : Nat)) \u2227 (417 = (417 : Nat))) \u2227 ((418 = (418 : Nat)) \u2227 (419 = (419 : Nat)))) \u2227 (((420 = (420 : Nat)) \u2227 (421 = (421 : Nat))) \u2227 ((422 = (422 : Nat)) \u2227 (423 = (423 : Nat))))) \u2227 ((((424 = (424 : Nat)) \u2227 (425 = (425 : Nat))) \u2227 ((426 = (426 : Nat)) \u2227 (427 = (427 : Nat)))) \u2227 (((428 = (428 : Nat)) \u2227 (429 = (429 : Nat))) \u2227 ((430 = (430 : Nat)) \u2227 (431 = (431 : Nat)))))) \u2227 (((((432 = (432 : Nat)) \u2227 (433 = (433 : Nat))) \u2227 ((434 = (434 : Nat)) \u2227 (435 = (435 : Nat)))) \u2227 (((436 = (436 : Nat)) \u2227 (437 = (437 : Nat))) \u2227 ((438 = (438 : Nat)) \u2227 (439 = (439 : Nat))))) \u2227 ((((440 = (440 : Nat)) \u2227 (441 = (441 : Nat))) \u2227 ((442 = (442 : Nat)) \u2227 (443 = (443 : Nat)))) \u2227 (((444 = (444 : Nat)) \u2227 (445 = (445 : Nat))) \u2227 ((446 = (446 : Nat)) \u2227 (447 = (447 : Nat)))))))) \u2227 (((((((448 = (448 : Nat)) \u2227 (449 = (449 : Nat))) \u2227 ((450 = (450 : Nat)) \u2227 (451 = (451 : Nat)))) \u2227 (((452 = (452 : Nat)) \u2227 (453 = (453 : Nat))) \u2227 ((454 = (454 : Nat)) \u2227 (455 = (455 : Nat))))) \u2227 ((((456 = (456 : Nat)) \u2227 (457 = (457 : Nat))) \u2227 ((458 = (458 : Nat)) \u2227 (459 = (459 : Nat)))) \u2227 (((460 = (460 : Nat)) \u2227 (461 = (461 : Nat))) \u2227 ((462 = (462 : Nat)) \u2227 (463 = (463 : Nat)))))) \u2227 (((((464 = (464 : Nat)) \u2227 (465 = (465 : Nat))) \u2227 ((466 = (466 : Nat)) \u2227 (467 = (467 : Nat)))) \u2227 (((468 = (468 : Nat)) \u2227 (469 = (469 : Nat))) \u2227 ((470 = (470 : Nat)) \u2227 (471 = (471 : Nat))))) \u2227 ((((472 = (472 : Nat)) \u2227 (473 = (473 : Nat))) \u2227 ((474 = (474 : Nat)) \u2227 (475 = (475 : Nat)))) \u2227 (((476 = (476 : Nat)) \u2227 (477 = (477 : Nat))) \u2227 ((478 = (478 : Nat)) \u2227 (479 = (479 : Nat))))))) \u2227 ((((((480 = (480 : Nat)) \u2227 (481 = (481 : Nat))) \u2227 ((482 = (482 : Nat)) \u2227 (483 = (483 : Nat)))) \u2227 (((484 = (484 : Nat)) \u2227 (485 = (485 : Nat))) \u2227 ((486 = (486 : Nat)) \u2227 (487 = (487 : Nat))))) \u2227 ((((488 = (488 : Nat)) \u2227 (489 = (489 : Nat))) \u2227 ((490 = (490 : Nat)) \u2227 (491 = (491 : Nat)))) \u2227 (((492 = (492 : Nat)) \u2227 (493 = (493 : Nat))) \u2227 ((494 = (494 : Nat)) \u2227 (495 = (495 : Nat)))))) \u2227 (((((496 = (496 : Nat)) \u2227 (497 = (497 : Nat))) \u2227 ((498 = (498 : Nat)) \u2227 (499 = (499 : Nat)))) \u2227 (((500 = (500 : Nat)) \u2227 (501 = (501 : Nat))) \u2227 ((502 = (502 : Nat)) \u2227 (503 = (503 : Nat))))) \u2227 ((((504 = (504 : Nat)) \u2227 (505 = (505 : Nat))) \u2227 ((506 = (506 : Nat)) \u2227 (507 = (507 : Nat)))) \u2227 (((508 = (508 : Nat)) \u2227 (509 = (509 : Nat))) \u2227 ((510 = (510 : Nat)) \u2227 (511 = (511 : Nat)))))))))))"
+      },
+      "request_line": "goal.start {\"expr\":\"((((((((((0 = (0 : Nat)) \\u2227 (1 = (1 : Nat))) \\u2227 ((2 = (2 : Nat)) \\u2227 (3 = (3 : Nat)))) \\u2227 (((4 = (4 : Nat)) \\u2227 (5 = (5 : Nat))) \\u2227 ((6 = (6 : Nat)) \\u2227 (7 = (7 : Nat))))) \\u2227 ((((8 = (8 : Nat)) \\u2227 (9 = (9 : Nat))) \\u2227 ((10 = (10 : Nat)) \\u2227 (11 = (11 : Nat)))) \\u2227 (((12 = (12 : Nat)) \\u2227 (13 = (13 : Nat))) \\u2227 ((14 = (14 : Nat)) \\u2227 (15 = (15 : Nat)))))) \\u2227 (((((16 = (16 : Nat)) \\u2227 (17 = (17 : Nat))) \\u2227 ((18 = (18 : Nat)) \\u2227 (19 = (19 : Nat)))) \\u2227 (((20 = (20 : Nat)) \\u2227 (21 = (21 : Nat))) \\u2227 ((22 = (22 : Nat)) \\u2227 (23 = (23 : Nat))))) \\u2227 ((((24 = (24 : Nat)) \\u2227 (25 = (25 : Nat))) \\u2227 ((26 = (26 : Nat)) \\u2227 (27 = (27 : Nat)))) \\u2227 (((28 = (28 : Nat)) \\u2227 (29 = (29 : Nat))) \\u2227 ((30 = (30 : Nat)) \\u2227 (31 = (31 : Nat))))))) \\u2227 ((((((32 = (32 : Nat)) \\u2227 (33 = (33 : Nat))) \\u2227 ((34 = (34 : Nat)) \\u2227 (35 = (35 : Nat)))) \\u2227 (((36 = (36 : Nat)) \\u2227 (37 = (37 : Nat))) \\u2227 ((38 = (38 : Nat)) \\u2227 (39 = (39 : Nat))))) \\u2227 ((((40 = (40 : Nat)) \\u2227 (41 = (41 : Nat))) \\u2227 ((42 = (42 : Nat)) \\u2227 (43 = (43 : Nat)))) \\u2227 (((44 = (44 : Nat)) \\u2227 (45 = (45 : Nat))) \\u2227 ((46 = (46 : Nat)) \\u2227 (47 = (47 : Nat)))))) \\u2227 (((((48 = (48 : Nat)) \\u2227 (49 = (49 : Nat))) \\u2227 ((50 = (50 : Nat)) \\u2227 (51 = (51 : Nat)))) \\u2227 (((52 = (52 : Nat)) \\u2227 (53 = (53 : Nat))) \\u2227 ((54 = (54 : Nat)) \\u2227 (55 = (55 : Nat))))) \\u2227 ((((56 = (56 : Nat)) \\u2227 (57 = (57 : Nat))) \\u2227 ((58 = (58 : Nat)) \\u2227 (59 = (59 : Nat)))) \\u2227 (((60 = (60 : Nat)) \\u2227 (61 = (61 : Nat))) \\u2227 ((62 = (62 : Nat)) \\u2227 (63 = (63 : Nat)))))))) \\u2227 (((((((64 = (64 : Nat)) \\u2227 (65 = (65 : Nat))) \\u2227 ((66 = (66 : Nat)) \\u2227 (67 = (67 : Nat)))) \\u2227 (((68 = (68 : Nat)) \\u2227 (69 = (69 : Nat))) \\u2227 ((70 = (70 : Nat)) \\u2227 (71 = (71 : Nat))))) \\u2227 ((((72 = (72 : Nat)) \\u2227 (73 = (73 : Nat))) \\u2227 ((74 = (74 : Nat)) \\u2227 (75 = (75 : Nat)))) \\u2227 (((76 = (76 : Nat)) \\u2227 (77 = (77 : Nat))) \\u2227 ((78 = (78 : Nat)) \\u2227 (79 = (79 : Nat)))))) \\u2227 (((((80 = (80 : Nat)) \\u2227 (81 = (81 : Nat))) \\u2227 ((82 = (82 : Nat)) \\u2227 (83 = (83 : Nat)))) \\u2227 (((84 = (84 : Nat)) \\u2227 (85 = (85 : Nat))) \\u2227 ((86 = (86 : Nat)) \\u2227 (87 = (87 : Nat))))) \\u2227 ((((88 = (88 : Nat)) \\u2227 (89 = (89 : Nat))) \\u2227 ((90 = (90 : Nat)) \\u2227 (91 = (91 : Nat)))) \\u2227 (((92 = (92 : Nat)) \\u2227 (93 = (93 : Nat))) \\u2227 ((94 = (94 : Nat)) \\u2227 (95 = (95 : Nat))))))) \\u2227 ((((((96 = (96 : Nat)) \\u2227 (97 = (97 : Nat))) \\u2227 ((98 = (98 : Nat)) \\u2227 (99 = (99 : Nat)))) \\u2227 (((100 = (100 : Nat)) \\u2227 (101 = (101 : Nat))) \\u2227 ((102 = (102 : Nat)) \\u2227 (103 = (103 : Nat))))) \\u2227 ((((104 = (104 : Nat)) \\u2227 (105 = (105 : Nat))) \\u2227 ((106 = (106 : Nat)) \\u2227 (107 = (107 : Nat)))) \\u2227 (((108 = (108 : Nat)) \\u2227 (109 = (109 : Nat))) \\u2227 ((110 = (110 : Nat)) \\u2227 (111 = (111 : Nat)))))) \\u2227 (((((112 = (112 : Nat)) \\u2227 (113 = (113 : Nat))) \\u2227 ((114 = (114 : Nat)) \\u2227 (115 = (115 : Nat)))) \\u2227 (((116 = (116 : Nat)) \\u2227 (117 = (117 : Nat))) \\u2227 ((118 = (118 : Nat)) \\u2227 (119 = (119 : Nat))))) \\u2227 ((((120 = (120 : Nat)) \\u2227 (121 = (121 : Nat))) \\u2227 ((122 = (122 : Nat)) \\u2227 (123 = (123 : Nat)))) \\u2227 (((124 = (124 : Nat)) \\u2227 (125 = (125 : Nat))) \\u2227 ((126 = (126 : Nat)) \\u2227 (127 = (127 : Nat))))))))) \\u2227 ((((((((128 = (128 : Nat)) \\u2227 (129 = (129 : Nat))) \\u2227 ((130 = (130 : Nat)) \\u2227 (131 = (131 : Nat)))) \\u2227 (((132 = (132 : Nat)) \\u2227 (133 = (133 : Nat))) \\u2227 ((134 = (134 : Nat)) \\u2227 (135 = (135 : Nat))))) \\u2227 ((((136 = (136 : Nat)) \\u2227 (137 = (137 : Nat))) \\u2227 ((138 = (138 : Nat)) \\u2227 (139 = (139 : Nat)))) \\u2227 (((140 = (140 : Nat)) \\u2227 (141 = (141 : Nat))) \\u2227 ((142 = (142 : Nat)) \\u2227 (143 = (143 : Nat)))))) \\u2227 (((((144 = (144 : Nat)) \\u2227 (145 = (145 : Nat))) \\u2227 ((146 = (146 : Nat)) \\u2227 (147 = (147 : Nat)))) \\u2227 (((148 = (148 : Nat)) \\u2227 (149 = (149 : Nat))) \\u2227 ((150 = (150 : Nat)) \\u2227 (151 = (151 : Nat))))) \\u2227 ((((152 = (152 : Nat)) \\u2227 (153 = (153 : Nat))) \\u2227 ((154 = (154 : Nat)) \\u2227 (155 = (155 : Nat)))) \\u2227 (((156 = (156 : Nat)) \\u2227 (157 = (157 : Nat))) \\u2227 ((158 = (158 : Nat)) \\u2227 (159 = (159 : Nat))))))) \\u2227 ((((((160 = (160 : Nat)) \\u2227 (161 = (161 : Nat))) \\u2227 ((162 = (162 : Nat)) \\u2227 (163 = (163 : Nat)))) \\u2227 (((164 = (164 : Nat)) \\u2227 (165 = (165 : Nat))) \\u2227 ((166 = (166 : Nat)) \\u2227 (167 = (167 : Nat))))) \\u2227 ((((168 = (168 : Nat)) \\u2227 (169 = (169 : Nat))) \\u2227 ((170 = (170 : Nat)) \\u2227 (171 = (171 : Nat)))) \\u2227 (((172 = (172 : Nat)) \\u2227 (173 = (173 : Nat))) \\u2227 ((174 = (174 : Nat)) \\u2227 (175 = (175 : Nat)))))) \\u2227 (((((176 = (176 : Nat)) \\u2227 (177 = (177 : Nat))) \\u2227 ((178 = (178 : Nat)) \\u2227 (179 = (179 : Nat)))) \\u2227 (((180 = (180 : Nat)) \\u2227 (181 = (181 : Nat))) \\u2227 ((182 = (182 : Nat)) \\u2227 (183 = (183 : Nat))))) \\u2227 ((((184 = (184 : Nat)) \\u2227 (185 = (185 : Nat))) \\u2227 ((186 = (186 : Nat)) \\u2227 (187 = (187 : Nat)))) \\u2227 (((188 = (188 : Nat)) \\u2227 (189 = (189 : Nat))) \\u2227 ((190 = (190 : Nat)) \\u2227 (191 = (191 : Nat)))))))) \\u2227 (((((((192 = (192 : Nat)) \\u2227 (193 = (193 : Nat))) \\u2227 ((194 = (194 : Nat)) \\u2227 (195 = (195 : Nat)))) \\u2227 (((196 = (196 : Nat)) \\u2227 (197 = (197 : Nat))) \\u2227 ((198 = (198 : Nat)) \\u2227 (199 = (199 : Nat))))) \\u2227 ((((200 = (200 : Nat)) \\u2227 (201 = (201 : Nat))) \\u2227 ((202 = (202 : Nat)) \\u2227 (203 = (203 : Nat)))) \\u2227 (((204 = (204 : Nat)) \\u2227 (205 = (205 : Nat))) \\u2227 ((206 = (206 : Nat)) \\u2227 (207 = (207 : Nat)))))) \\u2227 (((((208 = (208 : Nat)) \\u2227 (209 = (209 : Nat))) \\u2227 ((210 = (210 : Nat)) \\u2227 (211 = (211 : Nat)))) \\u2227 (((212 = (212 : Nat)) \\u2227 (213 = (213 : Nat))) \\u2227 ((214 = (214 : Nat)) \\u2227 (215 = (215 : Nat))))) \\u2227 ((((216 = (216 : Nat)) \\u2227 (217 = (217 : Nat))) \\u2227 ((218 = (218 : Nat)) \\u2227 (219 = (219 : Nat)))) \\u2227 (((220 = (220 : Nat)) \\u2227 (221 = (221 : Nat))) \\u2227 ((222 = (222 : Nat)) \\u2227 (223 = (223 : Nat))))))) \\u2227 ((((((224 = (224 : Nat)) \\u2227 (225 = (225 : Nat))) \\u2227 ((226 = (226 : Nat)) \\u2227 (227 = (227 : Nat)))) \\u2227 (((228 = (228 : Nat)) \\u2227 (229 = (229 : Nat))) \\u2227 ((230 = (230 : Nat)) \\u2227 (231 = (231 : Nat))))) \\u2227 ((((232 = (232 : Nat)) \\u2227 (233 = (233 : Nat))) \\u2227 ((234 = (234 : Nat)) \\u2227 (235 = (235 : Nat)))) \\u2227 (((236 = (236 : Nat)) \\u2227 (237 = (237 : Nat))) \\u2227 ((238 = (238 : Nat)) \\u2227 (239 = (239 : Nat)))))) \\u2227 (((((240 = (240 : Nat)) \\u2227 (241 = (241 : Nat))) \\u2227 ((242 = (242 : Nat)) \\u2227 (243 = (243 : Nat)))) \\u2227 (((244 = (244 : Nat)) \\u2227 (245 = (245 : Nat))) \\u2227 ((246 = (246 : Nat)) \\u2227 (247 = (247 : Nat))))) \\u2227 ((((248 = (248 : Nat)) \\u2227 (249 = (249 : Nat))) \\u2227 ((250 = (250 : Nat)) \\u2227 (251 = (251 : Nat)))) \\u2227 (((252 = (252 : Nat)) \\u2227 (253 = (253 : Nat))) \\u2227 ((254 = (254 : Nat)) \\u2227 (255 = (255 : Nat)))))))))) \\u2227 (((((((((256 = (256 : Nat)) \\u2227 (257 = (257 : Nat))) \\u2227 ((258 = (258 : Nat)) \\u2227 (259 = (259 : Nat)))) \\u2227 (((260 = (260 : Nat)) \\u2227 (261 = (261 : Nat))) \\u2227 ((262 = (262 : Nat)) \\u2227 (263 = (263 : Nat))))) \\u2227 ((((264 = (264 : Nat)) \\u2227 (265 = (265 : Nat))) \\u2227 ((266 = (266 : Nat)) \\u2227 (267 = (267 : Nat)))) \\u2227 (((268 = (268 : Nat)) \\u2227 (269 = (269 : Nat))) \\u2227 ((270 = (270 : Nat)) \\u2227 (271 = (271 : Nat)))))) \\u2227 (((((272 = (272 : Nat)) \\u2227 (273 = (273 : Nat))) \\u2227 ((274 = (274 : Nat)) \\u2227 (275 = (275 : Nat)))) \\u2227 (((276 = (276 : Nat)) \\u2227 (277 = (277 : Nat))) \\u2227 ((278 = (278 : Nat)) \\u2227 (279 = (279 : Nat))))) \\u2227 ((((280 = (280 : Nat)) \\u2227 (281 = (281 : Nat))) \\u2227 ((282 = (282 : Nat)) \\u2227 (283 = (283 : Nat)))) \\u2227 (((284 = (284 : Nat)) \\u2227 (285 = (285 : Nat))) \\u2227 ((286 = (286 : Nat)) \\u2227 (287 = (287 : Nat))))))) \\u2227 ((((((288 = (288 : Nat)) \\u2227 (289 = (289 : Nat))) \\u2227 ((290 = (290 : Nat)) \\u2227 (291 = (291 : Nat)))) \\u2227 (((292 = (292 : Nat)) \\u2227 (293 = (293 : Nat))) \\u2227 ((294 = (294 : Nat)) \\u2227 (295 = (295 : Nat))))) \\u2227 ((((296 = (296 : Nat)) \\u2227 (297 = (297 : Nat))) \\u2227 ((298 = (298 : Nat)) \\u2227 (299 = (299 : Nat)))) \\u2227 (((300 = (300 : Nat)) \\u2227 (301 = (301 : Nat))) \\u2227 ((302 = (302 : Nat)) \\u2227 (303 = (303 : Nat)))))) \\u2227 (((((304 = (304 : Nat)) \\u2227 (305 = (305 : Nat))) \\u2227 ((306 = (306 : Nat)) \\u2227 (307 = (307 : Nat)))) \\u2227 (((308 = (308 : Nat)) \\u2227 (309 = (309 : Nat))) \\u2227 ((310 = (310 : Nat)) \\u2227 (311 = (311 : Nat))))) \\u2227 ((((312 = (312 : Nat)) \\u2227 (313 = (313 : Nat))) \\u2227 ((314 = (314 : Nat)) \\u2227 (315 = (315 : Nat)))) \\u2227 (((316 = (316 : Nat)) \\u2227 (317 = (317 : Nat))) \\u2227 ((318 = (318 : Nat)) \\u2227 (319 = (319 : Nat)))))))) \\u2227 (((((((320 = (320 : Nat)) \\u2227 (321 = (321 : Nat))) \\u2227 ((322 = (322 : Nat)) \\u2227 (323 = (323 : Nat)))) \\u2227 (((324 = (324 : Nat)) \\u2227 (325 = (325 : Nat))) \\u2227 ((326 = (326 : Nat)) \\u2227 (327 = (327 : Nat))))) \\u2227 ((((328 = (328 : Nat)) \\u2227 (329 = (329 : Nat))) \\u2227 ((330 = (330 : Nat)) \\u2227 (331 = (331 : Nat)))) \\u2227 (((332 = (332 : Nat)) \\u2227 (333 = (333 : Nat))) \\u2227 ((334 = (334 : Nat)) \\u2227 (335 = (335 : Nat)))))) \\u2227 (((((336 = (336 : Nat)) \\u2227 (337 = (337 : Nat))) \\u2227 ((338 = (338 : Nat)) \\u2227 (339 = (339 : Nat)))) \\u2227 (((340 = (340 : Nat)) \\u2227 (341 = (341 : Nat))) \\u2227 ((342 = (342 : Nat)) \\u2227 (343 = (343 : Nat))))) \\u2227 ((((344 = (344 : Nat)) \\u2227 (345 = (345 : Nat))) \\u2227 ((346 = (346 : Nat)) \\u2227 (347 = (347 : Nat)))) \\u2227 (((348 = (348 : Nat)) \\u2227 (349 = (349 : Nat))) \\u2227 ((350 = (350 : Nat)) \\u2227 (351 = (351 : Nat))))))) \\u2227 ((((((352 = (352 : Nat)) \\u2227 (353 = (353 : Nat))) \\u2227 ((354 = (354 : Nat)) \\u2227 (355 = (355 : Nat)))) \\u2227 (((356 = (356 : Nat)) \\u2227 (357 = (357 : Nat))) \\u2227 ((358 = (358 : Nat)) \\u2227 (359 = (359 : Nat))))) \\u2227 ((((360 = (360 : Nat)) \\u2227 (361 = (361 : Nat))) \\u2227 ((362 = (362 : Nat)) \\u2227 (363 = (363 : Nat)))) \\u2227 (((364 = (364 : Nat)) \\u2227 (365 = (365 : Nat))) \\u2227 ((366 = (366 : Nat)) \\u2227 (367 = (367 : Nat)))))) \\u2227 (((((368 = (368 : Nat)) \\u2227 (369 = (369 : Nat))) \\u2227 ((370 = (370 : Nat)) \\u2227 (371 = (371 : Nat)))) \\u2227 (((372 = (372 : Nat)) \\u2227 (373 = (373 : Nat))) \\u2227 ((374 = (374 : Nat)) \\u2227 (375 = (375 : Nat))))) \\u2227 ((((376 = (376 : Nat)) \\u2227 (377 = (377 : Nat))) \\u2227 ((378 = (378 : Nat)) \\u2227 (379 = (379 : Nat)))) \\u2227 (((380 = (380 : Nat)) \\u2227 (381 = (381 : Nat))) \\u2227 ((382 = (382 : Nat)) \\u2227 (383 = (383 : Nat))))))))) \\u2227 ((((((((384 = (384 : Nat)) \\u2227 (385 = (385 : Nat))) \\u2227 ((386 = (386 : Nat)) \\u2227 (387 = (387 : Nat)))) \\u2227 (((388 = (388 : Nat)) \\u2227 (389 = (389 : Nat))) \\u2227 ((390 = (390 : Nat)) \\u2227 (391 = (391 : Nat))))) \\u2227 ((((392 = (392 : Nat)) \\u2227 (393 = (393 : Nat))) \\u2227 ((394 = (394 : Nat)) \\u2227 (395 = (395 : Nat)))) \\u2227 (((396 = (396 : Nat)) \\u2227 (397 = (397 : Nat))) \\u2227 ((398 = (398 : Nat)) \\u2227 (399 = (399 : Nat)))))) \\u2227 (((((400 = (400 : Nat)) \\u2227 (401 = (401 : Nat))) \\u2227 ((402 = (402 : Nat)) \\u2227 (403 = (403 : Nat)))) \\u2227 (((404 = (404 : Nat)) \\u2227 (405 = (405 : Nat))) \\u2227 ((406 = (406 : Nat)) \\u2227 (407 = (407 : Nat))))) \\u2227 ((((408 = (408 : Nat)) \\u2227 (409 = (409 : Nat))) \\u2227 ((410 = (410 : Nat)) \\u2227 (411 = (411 : Nat)))) \\u2227 (((412 = (412 : Nat)) \\u2227 (413 = (413 : Nat))) \\u2227 ((414 = (414 : Nat)) \\u2227 (415 = (415 : Nat))))))) \\u2227 ((((((416 = (416 : Nat)) \\u2227 (417 = (417 : Nat))) \\u2227 ((418 = (418 : Nat)) \\u2227 (419 = (419 : Nat)))) \\u2227 (((420 = (420 : Nat)) \\u2227 (421 = (421 : Nat))) \\u2227 ((422 = (422 : Nat)) \\u2227 (423 = (423 : Nat))))) \\u2227 ((((424 = (424 : Nat)) \\u2227 (425 = (425 : Nat))) \\u2227 ((426 = (426 : Nat)) \\u2227 (427 = (427 : Nat)))) \\u2227 (((428 = (428 : Nat)) \\u2227 (429 = (429 : Nat))) \\u2227 ((430 = (430 : Nat)) \\u2227 (431 = (431 : Nat)))))) \\u2227 (((((432 = (432 : Nat)) \\u2227 (433 = (433 : Nat))) \\u2227 ((434 = (434 : Nat)) \\u2227 (435 = (435 : Nat)))) \\u2227 (((436 = (436 : Nat)) \\u2227 (437 = (437 : Nat))) \\u2227 ((438 = (438 : Nat)) \\u2227 (439 = (439 : Nat))))) \\u2227 ((((440 = (440 : Nat)) \\u2227 (441 = (441 : Nat))) \\u2227 ((442 = (442 : Nat)) \\u2227 (443 = (443 : Nat)))) \\u2227 (((444 = (444 : Nat)) \\u2227 (445 = (445 : Nat))) \\u2227 ((446 = (446 : Nat)) \\u2227 (447 = (447 : Nat)))))))) \\u2227 (((((((448 = (448 : Nat)) \\u2227 (449 = (449 : Nat))) \\u2227 ((450 = (450 : Nat)) \\u2227 (451 = (451 : Nat)))) \\u2227 (((452 = (452 : Nat)) \\u2227 (453 = (453 : Nat))) \\u2227 ((454 = (454 : Nat)) \\u2227 (455 = (455 : Nat))))) \\u2227 ((((456 = (456 : Nat)) \\u2227 (457 = (457 : Nat))) \\u2227 ((458 = (458 : Nat)) \\u2227 (459 = (459 : Nat)))) \\u2227 (((460 = (460 : Nat)) \\u2227 (461 = (461 : Nat))) \\u2227 ((462 = (462 : Nat)) \\u2227 (463 = (463 : Nat)))))) \\u2227 (((((464 = (464 : Nat)) \\u2227 (465 = (465 : Nat))) \\u2227 ((466 = (466 : Nat)) \\u2227 (467 = (467 : Nat)))) \\u2227 (((468 = (468 : Nat)) \\u2227 (469 = (469 : Nat))) \\u2227 ((470 = (470 : Nat)) \\u2227 (471 = (471 : Nat))))) \\u2227 ((((472 = (472 : Nat)) \\u2227 (473 = (473 : Nat))) \\u2227 ((474 = (474 : Nat)) \\u2227 (475 = (475 : Nat)))) \\u2227 (((476 = (476 : Nat)) \\u2227 (477 = (477 : Nat))) \\u2227 ((478 = (478 : Nat)) \\u2227 (479 = (479 : Nat))))))) \\u2227 ((((((480 = (480 : Nat)) \\u2227 (481 = (481 : Nat))) \\u2227 ((482 = (482 : Nat)) \\u2227 (483 = (483 : Nat)))) \\u2227 (((484 = (484 : Nat)) \\u2227 (485 = (485 : Nat))) \\u2227 ((486 = (486 : Nat)) \\u2227 (487 = (487 : Nat))))) \\u2227 ((((488 = (488 : Nat)) \\u2227 (489 = (489 : Nat))) \\u2227 ((490 = (490 : Nat)) \\u2227 (491 = (491 : Nat)))) \\u2227 (((492 = (492 : Nat)) \\u2227 (493 = (493 : Nat))) \\u2227 ((494 = (494 : Nat)) \\u2227 (495 = (495 : Nat)))))) \\u2227 (((((496 = (496 : Nat)) \\u2227 (497 = (497 : Nat))) \\u2227 ((498 = (498 : Nat)) \\u2227 (499 = (499 : Nat)))) \\u2227 (((500 = (500 : Nat)) \\u2227 (501 = (501 : Nat))) \\u2227 ((502 = (502 : Nat)) \\u2227 (503 = (503 : Nat))))) \\u2227 ((((504 = (504 : Nat)) \\u2227 (505 = (505 : Nat))) \\u2227 ((506 = (506 : Nat)) \\u2227 (507 = (507 : Nat)))) \\u2227 (((508 = (508 : Nat)) \\u2227 (509 = (509 : Nat))) \\u2227 ((510 = (510 : Nat)) \\u2227 (511 = (511 : Nat)))))))))))\"}",
+      "response_line": "{\"stateId\":0,\"root\":\"_uniq.11782\"}",
+      "response": {
+        "stateId": 0,
+        "root": "_uniq.11782"
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "expr": "(And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 0) (Eq.refl 1)) (And.intro (Eq.refl 2) (Eq.refl 3))) (And.intro (And.intro (Eq.refl 4) (Eq.refl 5)) (And.intro (Eq.refl 6) (Eq.refl 7)))) (And.intro (And.intro (And.intro (Eq.refl 8) (Eq.refl 9)) (And.intro (Eq.refl 10) (Eq.refl 11))) (And.intro (And.intro (Eq.refl 12) (Eq.refl 13)) (And.intro (Eq.refl 14) (Eq.refl 15))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 16) (Eq.refl 17)) (And.intro (Eq.refl 18) (Eq.refl 19))) (And.intro (And.intro (Eq.refl 20) (Eq.refl 21)) (And.intro (Eq.refl 22) (Eq.refl 23)))) (And.intro (And.intro (And.intro (Eq.refl 24) (Eq.refl 25)) (And.intro (Eq.refl 26) (Eq.refl 27))) (And.intro (And.intro (Eq.refl 28) (Eq.refl 29)) (And.intro (Eq.refl 30) (Eq.refl 31)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 32) (Eq.refl 33)) (And.intro (Eq.refl 34) (Eq.refl 35))) (And.intro (And.intro (Eq.refl 36) (Eq.refl 37)) (And.intro (Eq.refl 38) (Eq.refl 39)))) (And.intro (And.intro (And.intro (Eq.refl 40) (Eq.refl 41)) (And.intro (Eq.refl 42) (Eq.refl 43))) (And.intro (And.intro (Eq.refl 44) (Eq.refl 45)) (And.intro (Eq.refl 46) (Eq.refl 47))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 48) (Eq.refl 49)) (And.intro (Eq.refl 50) (Eq.refl 51))) (And.intro (And.intro (Eq.refl 52) (Eq.refl 53)) (And.intro (Eq.refl 54) (Eq.refl 55)))) (And.intro (And.intro (And.intro (Eq.refl 56) (Eq.refl 57)) (And.intro (Eq.refl 58) (Eq.refl 59))) (And.intro (And.intro (Eq.refl 60) (Eq.refl 61)) (And.intro (Eq.refl 62) (Eq.refl 63))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 64) (Eq.refl 65)) (And.intro (Eq.refl 66) (Eq.refl 67))) (And.intro (And.intro (Eq.refl 68) (Eq.refl 69)) (And.intro (Eq.refl 70) (Eq.refl 71)))) (And.intro (And.intro (And.intro (Eq.refl 72) (Eq.refl 73)) (And.intro (Eq.refl 74) (Eq.refl 75))) (And.intro (And.intro (Eq.refl 76) (Eq.refl 77)) (And.intro (Eq.refl 78) (Eq.refl 79))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 80) (Eq.refl 81)) (And.intro (Eq.refl 82) (Eq.refl 83))) (And.intro (And.intro (Eq.refl 84) (Eq.refl 85)) (And.intro (Eq.refl 86) (Eq.refl 87)))) (And.intro (And.intro (And.intro (Eq.refl 88) (Eq.refl 89)) (And.intro (Eq.refl 90) (Eq.refl 91))) (And.intro (And.intro (Eq.refl 92) (Eq.refl 93)) (And.intro (Eq.refl 94) (Eq.refl 95)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 96) (Eq.refl 97)) (And.intro (Eq.refl 98) (Eq.refl 99))) (And.intro (And.intro (Eq.refl 100) (Eq.refl 101)) (And.intro (Eq.refl 102) (Eq.refl 103)))) (And.intro (And.intro (And.intro (Eq.refl 104) (Eq.refl 105)) (And.intro (Eq.refl 106) (Eq.refl 107))) (And.intro (And.intro (Eq.refl 108) (Eq.refl 109)) (And.intro (Eq.refl 110) (Eq.refl 111))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 112) (Eq.refl 113)) (And.intro (Eq.refl 114) (Eq.refl 115))) (And.intro (And.intro (Eq.refl 116) (Eq.refl 117)) (And.intro (Eq.refl 118) (Eq.refl 119)))) (And.intro (And.intro (And.intro (Eq.refl 120) (Eq.refl 121)) (And.intro (Eq.refl 122) (Eq.refl 123))) (And.intro (And.intro (Eq.refl 124) (Eq.refl 125)) (And.intro (Eq.refl 126) (Eq.refl 127)))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 128) (Eq.refl 129)) (And.intro (Eq.refl 130) (Eq.refl 131))) (And.intro (And.intro (Eq.refl 132) (Eq.refl 133)) (And.intro (Eq.refl 134) (Eq.refl 135)))) (And.intro (And.intro (And.intro (Eq.refl 136) (Eq.refl 137)) (And.intro (Eq.refl 138) (Eq.refl 139))) (And.intro (And.intro (Eq.refl 140) (Eq.refl 141)) (And.intro (Eq.refl 142) (Eq.refl 143))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 144) (Eq.refl 145)) (And.intro (Eq.refl 146) (Eq.refl 147))) (And.intro (And.intro (Eq.refl 148) (Eq.refl 149)) (And.intro (Eq.refl 150) (Eq.refl 151)))) (And.intro (And.intro (And.intro (Eq.refl 152) (Eq.refl 153)) (And.intro (Eq.refl 154) (Eq.refl 155))) (And.intro (And.intro (Eq.refl 156) (Eq.refl 157)) (And.intro (Eq.refl 158) (Eq.refl 159)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 160) (Eq.refl 161)) (And.intro (Eq.refl 162) (Eq.refl 163))) (And.intro (And.intro (Eq.refl 164) (Eq.refl 165)) (And.intro (Eq.refl 166) (Eq.refl 167)))) (And.intro (And.intro (And.intro (Eq.refl 168) (Eq.refl 169)) (And.intro (Eq.refl 170) (Eq.refl 171))) (And.intro (And.intro (Eq.refl 172) (Eq.refl 173)) (And.intro (Eq.refl 174) (Eq.refl 175))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 176) (Eq.refl 177)) (And.intro (Eq.refl 178) (Eq.refl 179))) (And.intro (And.intro (Eq.refl 180) (Eq.refl 181)) (And.intro (Eq.refl 182) (Eq.refl 183)))) (And.intro (And.intro (And.intro (Eq.refl 184) (Eq.refl 185)) (And.intro (Eq.refl 186) (Eq.refl 187))) (And.intro (And.intro (Eq.refl 188) (Eq.refl 189)) (And.intro (Eq.refl 190) (Eq.refl 191))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 192) (Eq.refl 193)) (And.intro (Eq.refl 194) (Eq.refl 195))) (And.intro (And.intro (Eq.refl 196) (Eq.refl 197)) (And.intro (Eq.refl 198) (Eq.refl 199)))) (And.intro (And.intro (And.intro (Eq.refl 200) (Eq.refl 201)) (And.intro (Eq.refl 202) (Eq.refl 203))) (And.intro (And.intro (Eq.refl 204) (Eq.refl 205)) (And.intro (Eq.refl 206) (Eq.refl 207))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 208) (Eq.refl 209)) (And.intro (Eq.refl 210) (Eq.refl 211))) (And.intro (And.intro (Eq.refl 212) (Eq.refl 213)) (And.intro (Eq.refl 214) (Eq.refl 215)))) (And.intro (And.intro (And.intro (Eq.refl 216) (Eq.refl 217)) (And.intro (Eq.refl 218) (Eq.refl 219))) (And.intro (And.intro (Eq.refl 220) (Eq.refl 221)) (And.intro (Eq.refl 222) (Eq.refl 223)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 224) (Eq.refl 225)) (And.intro (Eq.refl 226) (Eq.refl 227))) (And.intro (And.intro (Eq.refl 228) (Eq.refl 229)) (And.intro (Eq.refl 230) (Eq.refl 231)))) (And.intro (And.intro (And.intro (Eq.refl 232) (Eq.refl 233)) (And.intro (Eq.refl 234) (Eq.refl 235))) (And.intro (And.intro (Eq.refl 236) (Eq.refl 237)) (And.intro (Eq.refl 238) (Eq.refl 239))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 240) (Eq.refl 241)) (And.intro (Eq.refl 242) (Eq.refl 243))) (And.intro (And.intro (Eq.refl 244) (Eq.refl 245)) (And.intro (Eq.refl 246) (Eq.refl 247)))) (And.intro (And.intro (And.intro (Eq.refl 248) (Eq.refl 249)) (And.intro (Eq.refl 250) (Eq.refl 251))) (And.intro (And.intro (Eq.refl 252) (Eq.refl 253)) (And.intro (Eq.refl 254) (Eq.refl 255))))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 256) (Eq.refl 257)) (And.intro (Eq.refl 258) (Eq.refl 259))) (And.intro (And.intro (Eq.refl 260) (Eq.refl 261)) (And.intro (Eq.refl 262) (Eq.refl 263)))) (And.intro (And.intro (And.intro (Eq.refl 264) (Eq.refl 265)) (And.intro (Eq.refl 266) (Eq.refl 267))) (And.intro (And.intro (Eq.refl 268) (Eq.refl 269)) (And.intro (Eq.refl 270) (Eq.refl 271))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 272) (Eq.refl 273)) (And.intro (Eq.refl 274) (Eq.refl 275))) (And.intro (And.intro (Eq.refl 276) (Eq.refl 277)) (And.intro (Eq.refl 278) (Eq.refl 279)))) (And.intro (And.intro (And.intro (Eq.refl 280) (Eq.refl 281)) (And.intro (Eq.refl 282) (Eq.refl 283))) (And.intro (And.intro (Eq.refl 284) (Eq.refl 285)) (And.intro (Eq.refl 286) (Eq.refl 287)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 288) (Eq.refl 289)) (And.intro (Eq.refl 290) (Eq.refl 291))) (And.intro (And.intro (Eq.refl 292) (Eq.refl 293)) (And.intro (Eq.refl 294) (Eq.refl 295)))) (And.intro (And.intro (And.intro (Eq.refl 296) (Eq.refl 297)) (And.intro (Eq.refl 298) (Eq.refl 299))) (And.intro (And.intro (Eq.refl 300) (Eq.refl 301)) (And.intro (Eq.refl 302) (Eq.refl 303))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 304) (Eq.refl 305)) (And.intro (Eq.refl 306) (Eq.refl 307))) (And.intro (And.intro (Eq.refl 308) (Eq.refl 309)) (And.intro (Eq.refl 310) (Eq.refl 311)))) (And.intro (And.intro (And.intro (Eq.refl 312) (Eq.refl 313)) (And.intro (Eq.refl 314) (Eq.refl 315))) (And.intro (And.intro (Eq.refl 316) (Eq.refl 317)) (And.intro (Eq.refl 318) (Eq.refl 319))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 320) (Eq.refl 321)) (And.intro (Eq.refl 322) (Eq.refl 323))) (And.intro (And.intro (Eq.refl 324) (Eq.refl 325)) (And.intro (Eq.refl 326) (Eq.refl 327)))) (And.intro (And.intro (And.intro (Eq.refl 328) (Eq.refl 329)) (And.intro (Eq.refl 330) (Eq.refl 331))) (And.intro (And.intro (Eq.refl 332) (Eq.refl 333)) (And.intro (Eq.refl 334) (Eq.refl 335))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 336) (Eq.refl 337)) (And.intro (Eq.refl 338) (Eq.refl 339))) (And.intro (And.intro (Eq.refl 340) (Eq.refl 341)) (And.intro (Eq.refl 342) (Eq.refl 343)))) (And.intro (And.intro (And.intro (Eq.refl 344) (Eq.refl 345)) (And.intro (Eq.refl 346) (Eq.refl 347))) (And.intro (And.intro (Eq.refl 348) (Eq.refl 349)) (And.intro (Eq.refl 350) (Eq.refl 351)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 352) (Eq.refl 353)) (And.intro (Eq.refl 354) (Eq.refl 355))) (And.intro (And.intro (Eq.refl 356) (Eq.refl 357)) (And.intro (Eq.refl 358) (Eq.refl 359)))) (And.intro (And.intro (And.intro (Eq.refl 360) (Eq.refl 361)) (And.intro (Eq.refl 362) (Eq.refl 363))) (And.intro (And.intro (Eq.refl 364) (Eq.refl 365)) (And.intro (Eq.refl 366) (Eq.refl 367))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 368) (Eq.refl 369)) (And.intro (Eq.refl 370) (Eq.refl 371))) (And.intro (And.intro (Eq.refl 372) (Eq.refl 373)) (And.intro (Eq.refl 374) (Eq.refl 375)))) (And.intro (And.intro (And.intro (Eq.refl 376) (Eq.refl 377)) (And.intro (Eq.refl 378) (Eq.refl 379))) (And.intro (And.intro (Eq.refl 380) (Eq.refl 381)) (And.intro (Eq.refl 382) (Eq.refl 383)))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 384) (Eq.refl 385)) (And.intro (Eq.refl 386) (Eq.refl 387))) (And.intro (And.intro (Eq.refl 388) (Eq.refl 389)) (And.intro (Eq.refl 390) (Eq.refl 391)))) (And.intro (And.intro (And.intro (Eq.refl 392) (Eq.refl 393)) (And.intro (Eq.refl 394) (Eq.refl 395))) (And.intro (And.intro (Eq.refl 396) (Eq.refl 397)) (And.intro (Eq.refl 398) (Eq.refl 399))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 400) (Eq.refl 401)) (And.intro (Eq.refl 402) (Eq.refl 403))) (And.intro (And.intro (Eq.refl 404) (Eq.refl 405)) (And.intro (Eq.refl 406) (Eq.refl 407)))) (And.intro (And.intro (And.intro (Eq.refl 408) (Eq.refl 409)) (And.intro (Eq.refl 410) (Eq.refl 411))) (And.intro (And.intro (Eq.refl 412) (Eq.refl 413)) (And.intro (Eq.refl 414) (Eq.refl 415)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 416) (Eq.refl 417)) (And.intro (Eq.refl 418) (Eq.refl 419))) (And.intro (And.intro (Eq.refl 420) (Eq.refl 421)) (And.intro (Eq.refl 422) (Eq.refl 423)))) (And.intro (And.intro (And.intro (Eq.refl 424) (Eq.refl 425)) (And.intro (Eq.refl 426) (Eq.refl 427))) (And.intro (And.intro (Eq.refl 428) (Eq.refl 429)) (And.intro (Eq.refl 430) (Eq.refl 431))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 432) (Eq.refl 433)) (And.intro (Eq.refl 434) (Eq.refl 435))) (And.intro (And.intro (Eq.refl 436) (Eq.refl 437)) (And.intro (Eq.refl 438) (Eq.refl 439)))) (And.intro (And.intro (And.intro (Eq.refl 440) (Eq.refl 441)) (And.intro (Eq.refl 442) (Eq.refl 443))) (And.intro (And.intro (Eq.refl 444) (Eq.refl 445)) (And.intro (Eq.refl 446) (Eq.refl 447))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 448) (Eq.refl 449)) (And.intro (Eq.refl 450) (Eq.refl 451))) (And.intro (And.intro (Eq.refl 452) (Eq.refl 453)) (And.intro (Eq.refl 454) (Eq.refl 455)))) (And.intro (And.intro (And.intro (Eq.refl 456) (Eq.refl 457)) (And.intro (Eq.refl 458) (Eq.refl 459))) (And.intro (And.intro (Eq.refl 460) (Eq.refl 461)) (And.intro (Eq.refl 462) (Eq.refl 463))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 464) (Eq.refl 465)) (And.intro (Eq.refl 466) (Eq.refl 467))) (And.intro (And.intro (Eq.refl 468) (Eq.refl 469)) (And.intro (Eq.refl 470) (Eq.refl 471)))) (And.intro (And.intro (And.intro (Eq.refl 472) (Eq.refl 473)) (And.intro (Eq.refl 474) (Eq.refl 475))) (And.intro (And.intro (Eq.refl 476) (Eq.refl 477)) (And.intro (Eq.refl 478) (Eq.refl 479)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 480) (Eq.refl 481)) (And.intro (Eq.refl 482) (Eq.refl 483))) (And.intro (And.intro (Eq.refl 484) (Eq.refl 485)) (And.intro (Eq.refl 486) (Eq.refl 487)))) (And.intro (And.intro (And.intro (Eq.refl 488) (Eq.refl 489)) (And.intro (Eq.refl 490) (Eq.refl 491))) (And.intro (And.intro (Eq.refl 492) (Eq.refl 493)) (And.intro (Eq.refl 494) (Eq.refl 495))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 496) (Eq.refl 497)) (And.intro (Eq.refl 498) (Eq.refl 499))) (And.intro (And.intro (Eq.refl 500) (Eq.refl 501)) (And.intro (Eq.refl 502) (Eq.refl 503)))) (And.intro (And.intro (And.intro (Eq.refl 504) (Eq.refl 505)) (And.intro (Eq.refl 506) (Eq.refl 507))) (And.intro (And.intro (Eq.refl 508) (Eq.refl 509)) (And.intro (Eq.refl 510) (Eq.refl 511))))))))))"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"expr\":\"(And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 0) (Eq.refl 1)) (And.intro (Eq.refl 2) (Eq.refl 3))) (And.intro (And.intro (Eq.refl 4) (Eq.refl 5)) (And.intro (Eq.refl 6) (Eq.refl 7)))) (And.intro (And.intro (And.intro (Eq.refl 8) (Eq.refl 9)) (And.intro (Eq.refl 10) (Eq.refl 11))) (And.intro (And.intro (Eq.refl 12) (Eq.refl 13)) (And.intro (Eq.refl 14) (Eq.refl 15))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 16) (Eq.refl 17)) (And.intro (Eq.refl 18) (Eq.refl 19))) (And.intro (And.intro (Eq.refl 20) (Eq.refl 21)) (And.intro (Eq.refl 22) (Eq.refl 23)))) (And.intro (And.intro (And.intro (Eq.refl 24) (Eq.refl 25)) (And.intro (Eq.refl 26) (Eq.refl 27))) (And.intro (And.intro (Eq.refl 28) (Eq.refl 29)) (And.intro (Eq.refl 30) (Eq.refl 31)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 32) (Eq.refl 33)) (And.intro (Eq.refl 34) (Eq.refl 35))) (And.intro (And.intro (Eq.refl 36) (Eq.refl 37)) (And.intro (Eq.refl 38) (Eq.refl 39)))) (And.intro (And.intro (And.intro (Eq.refl 40) (Eq.refl 41)) (And.intro (Eq.refl 42) (Eq.refl 43))) (And.intro (And.intro (Eq.refl 44) (Eq.refl 45)) (And.intro (Eq.refl 46) (Eq.refl 47))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 48) (Eq.refl 49)) (And.intro (Eq.refl 50) (Eq.refl 51))) (And.intro (And.intro (Eq.refl 52) (Eq.refl 53)) (And.intro (Eq.refl 54) (Eq.refl 55)))) (And.intro (And.intro (And.intro (Eq.refl 56) (Eq.refl 57)) (And.intro (Eq.refl 58) (Eq.refl 59))) (And.intro (And.intro (Eq.refl 60) (Eq.refl 61)) (And.intro (Eq.refl 62) (Eq.refl 63))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 64) (Eq.refl 65)) (And.intro (Eq.refl 66) (Eq.refl 67))) (And.intro (And.intro (Eq.refl 68) (Eq.refl 69)) (And.intro (Eq.refl 70) (Eq.refl 71)))) (And.intro (And.intro (And.intro (Eq.refl 72) (Eq.refl 73)) (And.intro (Eq.refl 74) (Eq.refl 75))) (And.intro (And.intro (Eq.refl 76) (Eq.refl 77)) (And.intro (Eq.refl 78) (Eq.refl 79))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 80) (Eq.refl 81)) (And.intro (Eq.refl 82) (Eq.refl 83))) (And.intro (And.intro (Eq.refl 84) (Eq.refl 85)) (And.intro (Eq.refl 86) (Eq.refl 87)))) (And.intro (And.intro (And.intro (Eq.refl 88) (Eq.refl 89)) (And.intro (Eq.refl 90) (Eq.refl 91))) (And.intro (And.intro (Eq.refl 92) (Eq.refl 93)) (And.intro (Eq.refl 94) (Eq.refl 95)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 96) (Eq.refl 97)) (And.intro (Eq.refl 98) (Eq.refl 99))) (And.intro (And.intro (Eq.refl 100) (Eq.refl 101)) (And.intro (Eq.refl 102) (Eq.refl 103)))) (And.intro (And.intro (And.intro (Eq.refl 104) (Eq.refl 105)) (And.intro (Eq.refl 106) (Eq.refl 107))) (And.intro (And.intro (Eq.refl 108) (Eq.refl 109)) (And.intro (Eq.refl 110) (Eq.refl 111))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 112) (Eq.refl 113)) (And.intro (Eq.refl 114) (Eq.refl 115))) (And.intro (And.intro (Eq.refl 116) (Eq.refl 117)) (And.intro (Eq.refl 118) (Eq.refl 119)))) (And.intro (And.intro (And.intro (Eq.refl 120) (Eq.refl 121)) (And.intro (Eq.refl 122) (Eq.refl 123))) (And.intro (And.intro (Eq.refl 124) (Eq.refl 125)) (And.intro (Eq.refl 126) (Eq.refl 127)))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 128) (Eq.refl 129)) (And.intro (Eq.refl 130) (Eq.refl 131))) (And.intro (And.intro (Eq.refl 132) (Eq.refl 133)) (And.intro (Eq.refl 134) (Eq.refl 135)))) (And.intro (And.intro (And.intro (Eq.refl 136) (Eq.refl 137)) (And.intro (Eq.refl 138) (Eq.refl 139))) (And.intro (And.intro (Eq.refl 140) (Eq.refl 141)) (And.intro (Eq.refl 142) (Eq.refl 143))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 144) (Eq.refl 145)) (And.intro (Eq.refl 146) (Eq.refl 147))) (And.intro (And.intro (Eq.refl 148) (Eq.refl 149)) (And.intro (Eq.refl 150) (Eq.refl 151)))) (And.intro (And.intro (And.intro (Eq.refl 152) (Eq.refl 153)) (And.intro (Eq.refl 154) (Eq.refl 155))) (And.intro (And.intro (Eq.refl 156) (Eq.refl 157)) (And.intro (Eq.refl 158) (Eq.refl 159)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 160) (Eq.refl 161)) (And.intro (Eq.refl 162) (Eq.refl 163))) (And.intro (And.intro (Eq.refl 164) (Eq.refl 165)) (And.intro (Eq.refl 166) (Eq.refl 167)))) (And.intro (And.intro (And.intro (Eq.refl 168) (Eq.refl 169)) (And.intro (Eq.refl 170) (Eq.refl 171))) (And.intro (And.intro (Eq.refl 172) (Eq.refl 173)) (And.intro (Eq.refl 174) (Eq.refl 175))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 176) (Eq.refl 177)) (And.intro (Eq.refl 178) (Eq.refl 179))) (And.intro (And.intro (Eq.refl 180) (Eq.refl 181)) (And.intro (Eq.refl 182) (Eq.refl 183)))) (And.intro (And.intro (And.intro (Eq.refl 184) (Eq.refl 185)) (And.intro (Eq.refl 186) (Eq.refl 187))) (And.intro (And.intro (Eq.refl 188) (Eq.refl 189)) (And.intro (Eq.refl 190) (Eq.refl 191))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 192) (Eq.refl 193)) (And.intro (Eq.refl 194) (Eq.refl 195))) (And.intro (And.intro (Eq.refl 196) (Eq.refl 197)) (And.intro (Eq.refl 198) (Eq.refl 199)))) (And.intro (And.intro (And.intro (Eq.refl 200) (Eq.refl 201)) (And.intro (Eq.refl 202) (Eq.refl 203))) (And.intro (And.intro (Eq.refl 204) (Eq.refl 205)) (And.intro (Eq.refl 206) (Eq.refl 207))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 208) (Eq.refl 209)) (And.intro (Eq.refl 210) (Eq.refl 211))) (And.intro (And.intro (Eq.refl 212) (Eq.refl 213)) (And.intro (Eq.refl 214) (Eq.refl 215)))) (And.intro (And.intro (And.intro (Eq.refl 216) (Eq.refl 217)) (And.intro (Eq.refl 218) (Eq.refl 219))) (And.intro (And.intro (Eq.refl 220) (Eq.refl 221)) (And.intro (Eq.refl 222) (Eq.refl 223)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 224) (Eq.refl 225)) (And.intro (Eq.refl 226) (Eq.refl 227))) (And.intro (And.intro (Eq.refl 228) (Eq.refl 229)) (And.intro (Eq.refl 230) (Eq.refl 231)))) (And.intro (And.intro (And.intro (Eq.refl 232) (Eq.refl 233)) (And.intro (Eq.refl 234) (Eq.refl 235))) (And.intro (And.intro (Eq.refl 236) (Eq.refl 237)) (And.intro (Eq.refl 238) (Eq.refl 239))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 240) (Eq.refl 241)) (And.intro (Eq.refl 242) (Eq.refl 243))) (And.intro (And.intro (Eq.refl 244) (Eq.refl 245)) (And.intro (Eq.refl 246) (Eq.refl 247)))) (And.intro (And.intro (And.intro (Eq.refl 248) (Eq.refl 249)) (And.intro (Eq.refl 250) (Eq.refl 251))) (And.intro (And.intro (Eq.refl 252) (Eq.refl 253)) (And.intro (Eq.refl 254) (Eq.refl 255))))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 256) (Eq.refl 257)) (And.intro (Eq.refl 258) (Eq.refl 259))) (And.intro (And.intro (Eq.refl 260) (Eq.refl 261)) (And.intro (Eq.refl 262) (Eq.refl 263)))) (And.intro (And.intro (And.intro (Eq.refl 264) (Eq.refl 265)) (And.intro (Eq.refl 266) (Eq.refl 267))) (And.intro (And.intro (Eq.refl 268) (Eq.refl 269)) (And.intro (Eq.refl 270) (Eq.refl 271))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 272) (Eq.refl 273)) (And.intro (Eq.refl 274) (Eq.refl 275))) (And.intro (And.intro (Eq.refl 276) (Eq.refl 277)) (And.intro (Eq.refl 278) (Eq.refl 279)))) (And.intro (And.intro (And.intro (Eq.refl 280) (Eq.refl 281)) (And.intro (Eq.refl 282) (Eq.refl 283))) (And.intro (And.intro (Eq.refl 284) (Eq.refl 285)) (And.intro (Eq.refl 286) (Eq.refl 287)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 288) (Eq.refl 289)) (And.intro (Eq.refl 290) (Eq.refl 291))) (And.intro (And.intro (Eq.refl 292) (Eq.refl 293)) (And.intro (Eq.refl 294) (Eq.refl 295)))) (And.intro (And.intro (And.intro (Eq.refl 296) (Eq.refl 297)) (And.intro (Eq.refl 298) (Eq.refl 299))) (And.intro (And.intro (Eq.refl 300) (Eq.refl 301)) (And.intro (Eq.refl 302) (Eq.refl 303))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 304) (Eq.refl 305)) (And.intro (Eq.refl 306) (Eq.refl 307))) (And.intro (And.intro (Eq.refl 308) (Eq.refl 309)) (And.intro (Eq.refl 310) (Eq.refl 311)))) (And.intro (And.intro (And.intro (Eq.refl 312) (Eq.refl 313)) (And.intro (Eq.refl 314) (Eq.refl 315))) (And.intro (And.intro (Eq.refl 316) (Eq.refl 317)) (And.intro (Eq.refl 318) (Eq.refl 319))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 320) (Eq.refl 321)) (And.intro (Eq.refl 322) (Eq.refl 323))) (And.intro (And.intro (Eq.refl 324) (Eq.refl 325)) (And.intro (Eq.refl 326) (Eq.refl 327)))) (And.intro (And.intro (And.intro (Eq.refl 328) (Eq.refl 329)) (And.intro (Eq.refl 330) (Eq.refl 331))) (And.intro (And.intro (Eq.refl 332) (Eq.refl 333)) (And.intro (Eq.refl 334) (Eq.refl 335))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 336) (Eq.refl 337)) (And.intro (Eq.refl 338) (Eq.refl 339))) (And.intro (And.intro (Eq.refl 340) (Eq.refl 341)) (And.intro (Eq.refl 342) (Eq.refl 343)))) (And.intro (And.intro (And.intro (Eq.refl 344) (Eq.refl 345)) (And.intro (Eq.refl 346) (Eq.refl 347))) (And.intro (And.intro (Eq.refl 348) (Eq.refl 349)) (And.intro (Eq.refl 350) (Eq.refl 351)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 352) (Eq.refl 353)) (And.intro (Eq.refl 354) (Eq.refl 355))) (And.intro (And.intro (Eq.refl 356) (Eq.refl 357)) (And.intro (Eq.refl 358) (Eq.refl 359)))) (And.intro (And.intro (And.intro (Eq.refl 360) (Eq.refl 361)) (And.intro (Eq.refl 362) (Eq.refl 363))) (And.intro (And.intro (Eq.refl 364) (Eq.refl 365)) (And.intro (Eq.refl 366) (Eq.refl 367))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 368) (Eq.refl 369)) (And.intro (Eq.refl 370) (Eq.refl 371))) (And.intro (And.intro (Eq.refl 372) (Eq.refl 373)) (And.intro (Eq.refl 374) (Eq.refl 375)))) (And.intro (And.intro (And.intro (Eq.refl 376) (Eq.refl 377)) (And.intro (Eq.refl 378) (Eq.refl 379))) (And.intro (And.intro (Eq.refl 380) (Eq.refl 381)) (And.intro (Eq.refl 382) (Eq.refl 383)))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 384) (Eq.refl 385)) (And.intro (Eq.refl 386) (Eq.refl 387))) (And.intro (And.intro (Eq.refl 388) (Eq.refl 389)) (And.intro (Eq.refl 390) (Eq.refl 391)))) (And.intro (And.intro (And.intro (Eq.refl 392) (Eq.refl 393)) (And.intro (Eq.refl 394) (Eq.refl 395))) (And.intro (And.intro (Eq.refl 396) (Eq.refl 397)) (And.intro (Eq.refl 398) (Eq.refl 399))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 400) (Eq.refl 401)) (And.intro (Eq.refl 402) (Eq.refl 403))) (And.intro (And.intro (Eq.refl 404) (Eq.refl 405)) (And.intro (Eq.refl 406) (Eq.refl 407)))) (And.intro (And.intro (And.intro (Eq.refl 408) (Eq.refl 409)) (And.intro (Eq.refl 410) (Eq.refl 411))) (And.intro (And.intro (Eq.refl 412) (Eq.refl 413)) (And.intro (Eq.refl 414) (Eq.refl 415)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 416) (Eq.refl 417)) (And.intro (Eq.refl 418) (Eq.refl 419))) (And.intro (And.intro (Eq.refl 420) (Eq.refl 421)) (And.intro (Eq.refl 422) (Eq.refl 423)))) (And.intro (And.intro (And.intro (Eq.refl 424) (Eq.refl 425)) (And.intro (Eq.refl 426) (Eq.refl 427))) (And.intro (And.intro (Eq.refl 428) (Eq.refl 429)) (And.intro (Eq.refl 430) (Eq.refl 431))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 432) (Eq.refl 433)) (And.intro (Eq.refl 434) (Eq.refl 435))) (And.intro (And.intro (Eq.refl 436) (Eq.refl 437)) (And.intro (Eq.refl 438) (Eq.refl 439)))) (And.intro (And.intro (And.intro (Eq.refl 440) (Eq.refl 441)) (And.intro (Eq.refl 442) (Eq.refl 443))) (And.intro (And.intro (Eq.refl 444) (Eq.refl 445)) (And.intro (Eq.refl 446) (Eq.refl 447))))))) (And.intro (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 448) (Eq.refl 449)) (And.intro (Eq.refl 450) (Eq.refl 451))) (And.intro (And.intro (Eq.refl 452) (Eq.refl 453)) (And.intro (Eq.refl 454) (Eq.refl 455)))) (And.intro (And.intro (And.intro (Eq.refl 456) (Eq.refl 457)) (And.intro (Eq.refl 458) (Eq.refl 459))) (And.intro (And.intro (Eq.refl 460) (Eq.refl 461)) (And.intro (Eq.refl 462) (Eq.refl 463))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 464) (Eq.refl 465)) (And.intro (Eq.refl 466) (Eq.refl 467))) (And.intro (And.intro (Eq.refl 468) (Eq.refl 469)) (And.intro (Eq.refl 470) (Eq.refl 471)))) (And.intro (And.intro (And.intro (Eq.refl 472) (Eq.refl 473)) (And.intro (Eq.refl 474) (Eq.refl 475))) (And.intro (And.intro (Eq.refl 476) (Eq.refl 477)) (And.intro (Eq.refl 478) (Eq.refl 479)))))) (And.intro (And.intro (And.intro (And.intro (And.intro (Eq.refl 480) (Eq.refl 481)) (And.intro (Eq.refl 482) (Eq.refl 483))) (And.intro (And.intro (Eq.refl 484) (Eq.refl 485)) (And.intro (Eq.refl 486) (Eq.refl 487)))) (And.intro (And.intro (And.intro (Eq.refl 488) (Eq.refl 489)) (And.intro (Eq.refl 490) (Eq.refl 491))) (And.intro (And.intro (Eq.refl 492) (Eq.refl 493)) (And.intro (Eq.refl 494) (Eq.refl 495))))) (And.intro (And.intro (And.intro (And.intro (Eq.refl 496) (Eq.refl 497)) (And.intro (Eq.refl 498) (Eq.refl 499))) (And.intro (And.intro (Eq.refl 500) (Eq.refl 501)) (And.intro (Eq.refl 502) (Eq.refl 503)))) (And.intro (And.intro (And.intro (Eq.refl 504) (Eq.refl 505)) (And.intro (Eq.refl 506) (Eq.refl 507))) (And.intro (And.intro (Eq.refl 508) (Eq.refl 509)) (And.intro (Eq.refl 510) (Eq.refl 511))))))))))\"}",
+      "response_line": "{\"validation\":{\"version\":3,\"scope\":\"execution-closure-and-representation-aware-audit\",\"checked\":true},\"transition\":{\"version\":1,\"siblings\":[],\"selected\":\"_uniq.11782\",\"introduced\":[],\"extra\":[],\"dormant\":[],\"direct\":[],\"closed\":[],\"changed\":[]},\"nextStateId\":1,\"messages\":[],\"hasUnsafe\":false,\"hasSorry\":false,\"goals\":[]}",
+      "response": {
+        "validation": {
+          "version": 3,
+          "scope": "execution-closure-and-representation-aware-audit",
+          "checked": true
+        },
+        "transition": {
+          "version": 1,
+          "siblings": [],
+          "selected": "_uniq.11782",
+          "introduced": [],
+          "extra": [],
+          "dormant": [],
+          "direct": [],
+          "closed": [],
+          "changed": []
+        },
+        "nextStateId": 1,
+        "messages": [],
+        "hasUnsafe": false,
+        "hasSorry": false,
+        "goals": []
+      }
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 1,
+        "maxHeartbeats": 1
+      },
+      "request_line": "goal.certify {\"stateId\":1,\"maxHeartbeats\":1}",
+      "response_line": "{\"version\":1,\"status\":\"inconclusive\",\"reason\":\"Kernel heartbeat budget exhausted\"}",
+      "response": {
+        "version": 1,
+        "status": "inconclusive",
+        "reason": "Kernel heartbeat budget exhausted"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":2}",
+      "response": {
+        "nGoals": 2
+      }
+    },
+    {
+      "command": "goal.certify",
+      "request": {
+        "stateId": 1
+      },
+      "request_line": "goal.certify {\"stateId\":1}",
+      "response_line": "{\"version\":1,\"status\":\"certified\",\"receipt\":{\"version\":1,\"rootType\":\"0f0e9ffa2c062baa\",\"root\":\"_uniq.11782\",\"proof\":\"b5d98efe300af527\",\"levels\":[],\"lean\":\"4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4\",\"identity\":\"lean-expr-digest-v1\",\"environment\":\"d369580a291d477d\",\"axioms\":[],\"auxiliary\":[]}}",
+      "response": {
+        "version": 1,
+        "status": "certified",
+        "receipt": {
+          "version": 1,
+          "rootType": "0f0e9ffa2c062baa",
+          "root": "_uniq.11782",
+          "proof": "b5d98efe300af527",
+          "levels": [],
+          "lean": "4.10.0-rc1 3b58e0649156610ce3aeed4f7b5c652340c668d4",
+          "identity": "lean-expr-digest-v1",
+          "environment": "d369580a291d477d",
+          "axioms": [],
+          "auxiliary": []
+        }
+      }
+    },
+    {
+      "command": "frontend.process",
+      "request": {
+        "file": "example : True := by contract_heartbeat",
+        "invocations": false,
+        "sorrys": false
+      },
+      "request_line": "frontend.process {\"file\":\"example : True := by contract_heartbeat\",\"invocations\":false,\"sorrys\":false}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":100,\"kind\":\"heartbeats\"},\"recovery\":\"session-unusable\",\"error\":\"resource\",\"desc\":\"Lean command heartbeat budget exhausted\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 100,
+          "kind": "heartbeats"
+        },
+        "recovery": "session-unusable",
+        "error": "resource",
+        "desc": "Lean command heartbeat budget exhausted"
+      }
+    }
+  ]
+}
