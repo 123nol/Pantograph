@@ -24,10 +24,15 @@ A resource error includes `resource.version: 2`, a `resource.kind`, a phase
 - `heartbeats`: the limit uses Lean's `maxHeartbeats` option units; each unit
   counts one thousand underlying heartbeats. It does not measure elapsed seconds.
 - `recursion-depth`: Lean's `maxRecDepth` was reached (`throwMaxRecDepthAt`,
-  recognized with Lean's `Exception.isMaxRecDepth`). The limit is the command's
-  configured `maxRecDepth`, in recursive nesting levels. Code that raises the
-  depth locally inside the command (`set_option maxRecDepth … in`,
-  `withAtLeastMaxRecDepth`) is not reflected in it.
+  recognized with Lean's `Exception.isMaxRecDepth`). The limit is in recursive
+  nesting levels: the bound of the innermost `set_option maxRecDepth N in` scope
+  (tactic or term) that the exception left, or else the command's configured
+  `maxRecDepth`. Each scope records its bound before its context unwinds, so
+  nested scopes report the inner one, and a raised bound is reported as raised.
+  A `by` block inside a term scope is elaborated after that scope exits, so the
+  outer bound is the one that applied to it. Limits changed programmatically by
+  tactic code (`withAtLeastMaxRecDepth`, Mathlib's `sudo set_option`) are not
+  captured.
 
 Version 2 replaces version 1; there is no version-1 negotiation. A known
 resource cause does not by itself make the session reusable: recovery follows
