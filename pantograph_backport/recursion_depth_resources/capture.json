@@ -1,8 +1,8 @@
 {
   "protocol_version": 3,
-  "source_base": "c53879de5c3013fd8fdae36fb30f716bfdf10838",
+  "source_base": "6293e16f460d2f8ebe84677258d190ed2fe948b8",
   "source_dirty": false,
-  "binary_sha256": "997e5f20d2364d4394c2a2355a790cdb79cd7e6a03e6eaf7ce31f3cd9594d56b",
+  "binary_sha256": "56cfdd7e4c967b3ae41a2d3730303a924933a7b61c885629fef8d0987b6f5950",
   "toolchain": "leanprover/lean4:v4.10.0-rc1",
   "imports": [
     "Init",
@@ -316,6 +316,64 @@
           "version": 2,
           "phase": "execute",
           "limit": 200,
+          "kind": "recursion-depth"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean maximum recursion depth reached"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":1}",
+      "response": {
+        "nGoals": 1
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "set_option maxRecDepth 30 in contract_recursion"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"set_option maxRecDepth 30 in contract_recursion\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":30,\"kind\":\"recursion-depth\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean maximum recursion depth reached\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 30,
+          "kind": "recursion-depth"
+        },
+        "recovery": "command-rolled-back",
+        "error": "resource",
+        "desc": "Lean maximum recursion depth reached"
+      }
+    },
+    {
+      "command": "stat",
+      "request": {},
+      "request_line": "stat {}",
+      "response_line": "{\"nGoals\":1}",
+      "response": {
+        "nGoals": 1
+      }
+    },
+    {
+      "command": "goal.tactic",
+      "request": {
+        "stateId": 0,
+        "tactic": "set_option maxRecDepth 100 in contract_recursion"
+      },
+      "request_line": "goal.tactic {\"stateId\":0,\"tactic\":\"set_option maxRecDepth 100 in contract_recursion\"}",
+      "response_line": "{\"resource\":{\"version\":2,\"phase\":\"execute\",\"limit\":100,\"kind\":\"recursion-depth\"},\"recovery\":\"command-rolled-back\",\"error\":\"resource\",\"desc\":\"Lean maximum recursion depth reached\"}",
+      "response": {
+        "resource": {
+          "version": 2,
+          "phase": "execute",
+          "limit": 100,
           "kind": "recursion-depth"
         },
         "recovery": "command-rolled-back",

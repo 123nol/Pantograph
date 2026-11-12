@@ -33,12 +33,15 @@ tree, binary sha256 recorded in the file):
   first closes the goal and then exhausts it, both roll back to the entry state;
 - heartbeat exhaustion keeps its envelope, now with `version: 2`;
 - a recursion failure inside `frontend.process` is reported by Lean's command
-  elaborator as that command's error message, and the session continues.
+  elaborator as that command's error message, and the session continues;
+- under a launch limit of 200, `set_option maxRecDepth 30 in contract_recursion`
+  and `set_option maxRecDepth 100 in contract_recursion` report limits 30 and
+  100, as the scope applied them, and roll back.
 
-`native-tests.log`: the Lean suite (431 assertions, including recursion-depth
-rollback in every phase, repeated exhaustion without leaked allocations, and
-inconclusive certification for both kinds) and the three raw executable
-harnesses.
+`native-tests.log`: the Lean suite (440 assertions, including recursion-depth
+rollback in every phase, repeated exhaustion without leaked allocations,
+inconclusive certification for both kinds, and scoped limits: nested, raised,
+term scopes and a postponed `by` block) and the three raw executable harnesses.
 
 Not covered here: replaying the archived miniF2F bundles, which need the
 pinned Mathlib runtime they were recorded with, and the 11 `fun_prop`

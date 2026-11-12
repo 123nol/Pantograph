@@ -1,4 +1,4 @@
-{"version":1,"state_id":null,"repl_command_sequence":3076,"render_status":"rendered","phase":"execute","operation":"stat","kind":"pantograph-command-failure","internal_exception_id":null,"goal_index":null,"exception_category":"error","detail_truncated":false,"detail":"unexpected failure"}
+{"version":1,"state_id":null,"repl_command_sequence":3085,"render_status":"rendered","phase":"execute","operation":"stat","kind":"pantograph-command-failure","internal_exception_id":null,"goal_index":null,"exception_category":"error","detail_truncated":false,"detail":"unexpected failure"}
 Transaction/Command rollback and native budgets:
   ✓ goal printing preserves subsequent environment additions
   ✓ heartbeats in execute has a single recoverable resource envelope
@@ -28,6 +28,15 @@ Transaction/Command rollback and native budgets:
   ✓ a real tactic exhausting the recursion depth is a rolled-back resource
   ✓ another tactic on the retained input certifies in the same session
   ✓ repeated recursion exhaustion leaks no allocations
+  ✓ set_option maxRecDepth 30 in contract_recursion reports limit 30 and rolls back
+  ✓ set_option maxRecDepth 100 in contract_recursion reports limit 100 and rolls back
+  ✓ set_option maxRecDepth 1000 in contract_recursion reports limit 1000 and rolls back
+  ✓ set_option maxRecDepth 30 in (set_option maxRecDepth 100 in contract_recursion) reports limit 100 and rolls back
+  ✓ set_option pp.all true in contract_recursion reports limit 200 and rolls back
+  ✓ exact (set_option maxRecDepth 50 in contract_recursion_term) reports limit 50 and rolls back
+  ✓ exact (set_option maxRecDepth 50 in (by contract_recursion)) reports limit 200 and rolls back
+  ✓ a postponed by block runs under the outer limit
+  ✓ an ordinary failure inside a scope is one ordinary rejection
   ✓ a state changed before exhaustion is restored and still certifies
   ✓ unexpected failure ends the session and rejects later dispatch
 Validation/Transition boundary:
@@ -506,7 +515,7 @@ Tactic/Prograde/let via tryLet:
   ✓ exact h
   ✓ (4 root)
 == scripts/test_transactional_resources.py
-PASS: native recovery for heartbeats and recursion depth, certification, framing, fatal shutdown, tracing, and broken output (36 captured exchanges)
+PASS: native recovery for heartbeats and recursion depth, certification, framing, fatal shutdown, tracing, and broken output (40 captured exchanges)
 == scripts/test_failure_diagnostics.py
 PASS: 1 abort sessions, 4 fatal diagnostics, ordinary rejection unchanged
 == scripts/test_scope_aware_validation.py
